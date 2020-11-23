@@ -1,10 +1,11 @@
 <template>
-  <v-app-bar app dense color="primary">
+  <v-app-bar app dense color="secondary">
     <navigation-link to="/" active-class="">
       <v-img
-        :src="require('~/assets/img/ictsc-logo-white.svg')"
-        width="8em"
-        alt="ICTSC"
+        :src="require('~/assets/img/janog47_logo_resized_48.png')"
+        width="18em"
+        alt="JANOG47"
+        class="mx-2"
       />
     </navigation-link>
 
@@ -29,7 +30,7 @@
           <div>
             <v-app-bar-nav-icon
               :ripple="false"
-              color="white"
+              color="black"
               text
               tile
               v-on="on"
@@ -46,7 +47,7 @@
             @click="nav.click"
           >
             <v-list-item-title>
-              <v-icon v-if="nav.icon">{{ nav.icon }}</v-icon>
+              <v-icon v-if="nav.icon" color="black">{{ nav.icon }}</v-icon>
               <div v-else>{{ nav.text }}</div>
             </v-list-item-title>
           </v-list-item>

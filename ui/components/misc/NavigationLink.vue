@@ -6,7 +6,7 @@
     text
     tile
     height="100%"
-    class="white--text px-0"
+    class="black--text px-0"
     :active-class="activeClass"
     @click="$emit('click')"
   >
@@ -27,7 +27,7 @@ export default {
     },
     activeClass: {
       type: String,
-      default: 'primary lighten-1',
+      default: 'secondary darken-1',
     },
   },
 }

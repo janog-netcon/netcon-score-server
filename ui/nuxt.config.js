@@ -82,6 +82,7 @@ export default {
       themes: {
         light: {
           primary: '#e40046',
+          secondary: 'white',
         },
       },
     },
