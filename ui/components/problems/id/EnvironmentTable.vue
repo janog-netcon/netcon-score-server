@@ -178,10 +178,10 @@ export default {
         { text: '種類', value: 'service' },
         { text: '名前', value: 'name' },
         { text: '便利コピー', value: 'copy' },
-        { text: 'パスワード', value: 'password' },
         { text: 'ホスト', value: 'host' },
         { text: 'ポート', value: 'port' },
         { text: 'ユーザー', value: 'user' },
+        { text: 'パスワード', value: 'password' },
       ]
 
       if (this.isStaff) {
@@ -194,7 +194,9 @@ export default {
           { text: '運営用メモ', value: 'secretText' },
         ]
       } else {
-        return [{ text: '共通', value: 'team', align: 'center' }, ...commons]
+        // JANOG47 NETCON では使用しない
+        // return [{ text: '共通', value: 'team', align: 'center' }, ...commons]
+        return commons;
       }
     },
   },
