@@ -49,7 +49,7 @@ module Readable
       when 'ProblemBody'
         %w[corrects genre] if team.player?
       when 'ProblemEnvironment'
-        %w[secret_text] unless team.staff?
+        %w[secret_text machine_image_name] unless team.staff?
       when 'Team'
         list = %w[password_digest]
         list << 'secret_text' unless team.staff?

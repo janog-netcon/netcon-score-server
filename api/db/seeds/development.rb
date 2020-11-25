@@ -212,10 +212,10 @@ def create_problem_environments(problems, teams)
   print 'creating problem_environments...'
   envs = problems.take(10).each_with_object([]) {|problem, memo|
     teams.each do |team|
-      memo << build_stubbed(:problem_environment, problem: problem, team: team)
+      memo << build_stubbed(:problem_environment, problem: problem, machine_image_name: "image_#{problem.id}", team: team)
     end
 
-    Random.rand(1..4).times { memo << build_stubbed(:problem_environment, problem: problem, team: nil) }
+    Random.rand(1..4).times { memo << build_stubbed(:problem_environment, problem: problem, machine_image_name: "image_#{problem.id}", team: nil) }
   }
     .shuffle
 
