@@ -48,7 +48,7 @@ export default class ProblemEnvironment extends BaseModel {
   }
 
   get sshCommand() {
-    return `ssh '${this.user}@${this.host}' -p ${this.port}`
+    return `ssh ${this.user}@${this.host} -p ${this.port}`
   }
 
   get copyText() {
@@ -63,6 +63,18 @@ export default class ProblemEnvironment extends BaseModel {
       return {
         text: this.sshCommand,
         display: 'sshコマンド',
+      }
+    } else if (/^HTTP$/i.test(this.service)) {
+      if (this.port === 80) {
+        return { text: `http://${this.host}/` }
+      } else {
+        return { text: `http://${this.host}:${this.port}/` }
+      }
+    } else if (/^HTTPS$/i.test(this.service)) {
+      if (this.port === 443) {
+        return { text: `https://${this.host}/` }
+      } else {
+        return { text: `https://${this.host}:${this.port}/` }
       }
     } else if (/^Telnet$/i.test(this.service)) {
       return { text: `telnet ${this.host} ${this.port}` }

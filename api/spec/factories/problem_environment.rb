@@ -4,12 +4,12 @@ FactoryBot.define do
   factory :problem_environment do
     # composite primary key
     sequence(:name) {|n| "server#{n}" }
-    sequence(:service) { %w[SSH VNC Telnet].fetch(Random.rand(3)) }
+    sequence(:service) { %w[SSH HTTP HTTPS].sample }
     team { nil }
     problem { nil }
 
-    # IN_WAITING_FOR_START IN_FILE_COPYING IN_INITIALIZE INITIALIZED IN_PLANNING PLANNED IN_APPLYING APPLIED IN_DESTROYING DESTROYED FAILED
-    status { %w[APPLIED IN_DESTROYING PLANNED].sample }
+    # CREATING RUNNING DESTROYING DESTROYED
+    status { %w[CREATING RUNNING DESTROYING].sample }
     sequence(:host) {|n| "host#{n}.local" }
     sequence(:user) {|n| "user#{n}" }
     sequence(:password) {|n| "password#{n}" }

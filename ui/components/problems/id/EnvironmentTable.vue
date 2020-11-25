@@ -118,9 +118,14 @@
             <v-icon>mdi-clipboard-text-outline</v-icon>
           </v-btn>
 
-          {{
-            item.copyText.display ? item.copyText.display : item.copyText.text
-          }}
+          <template v-if="item.copyText.text && item.copyText.text.startsWith('http')">
+            <a :href="item.copyText.text">{{ item.copyText.text }}</a>
+          </template>
+          <template v-else>
+            {{
+              item.copyText.display ? item.copyText.display : item.copyText.text
+            }}
+          </template>
         </template>
 
         <v-card v-if="item.copyText.tooltip">

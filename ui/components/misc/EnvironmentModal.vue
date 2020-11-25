@@ -74,7 +74,7 @@
                   :readonly="sending"
                   :disabled="!isNew"
                   :rules="uniqueRules"
-                  placeholder="SSH, VNC, Telnet, etc..."
+                  placeholder="SSH, HTTP, HTTPS"
                   label="種類"
                   v-on="on"
                 />
