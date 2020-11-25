@@ -57,7 +57,8 @@ services:
       context: yamllint/
     volumes:
       - './:/usr/src/app'
-    command: yamllint -c /usr/src/app/.yamllint /usr/src/app
+    command: echo "yamllint is disabled"
+    # command: yamllint -c /usr/src/app/.yamllint /usr/src/app
 
   push:
     image: openfresh/plasma:0.2.2

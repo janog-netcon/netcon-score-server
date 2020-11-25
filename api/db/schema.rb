@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_25_124948) do
+ActiveRecord::Schema.define(version: 2020_11_25_190551) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -142,7 +142,7 @@ ActiveRecord::Schema.define(version: 2020_11_25_124948) do
     t.string "service", null: false
     t.integer "port", null: false
     t.string "machine_image_name"
-    t.index ["problem_id", "team_id", "name", "service"], name: "problem_environments_on_composit_keys", unique: true
+    t.index ["problem_id", "name", "service"], name: "problem_environments_on_composit_keys", unique: true
     t.index ["problem_id"], name: "index_problem_environments_on_problem_id"
     t.index ["team_id"], name: "index_problem_environments_on_team_id"
   end
