@@ -1,10 +1,7 @@
-ICTSC Score Server
+NETCON Score Server
 ---
 
-[![CircleCI](https://circleci.com/gh/ictsc/ictsc-score-server/tree/develop.svg?style=svg)](https://circleci.com/gh/ictsc/ictsc-score-server)
-![Docker Automated build](https://img.shields.io/docker/automated/upluse10/ictsc-score-server.svg)
-
-The contest site for [ICTSC](http://icttoracon.net/) (ICT Trouble Shooting Contest).
+The contest site for [JANOG47 NETCON](https://www.janog.gr.jp/meeting/janog47/).
 
 It's called also *score server*.  The main feature of this is to propose problem and marking.
 
