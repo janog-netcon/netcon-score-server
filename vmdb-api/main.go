@@ -112,10 +112,10 @@ func QueryProblemEnvironment(c echo.Context, name string) error {
   var err error
 
   if name == "" {
-    q := `SELECT id, status, host, user, password, problem_id, created_at, updated_at, name, service, port, machine_image_name FROM problem_environments`
+    q := `SELECT id, status, host, "user", password, problem_id, created_at, updated_at, name, service, port, machine_image_name FROM problem_environments`
     rows, err = db.Queryx(q)
   } else {
-    q := `SELECT id, status, host, user, password, problem_id, created_at, updated_at, name, service, port, machine_image_name FROM problem_environments WHERE name = $1`
+    q := `SELECT id, status, host, "user", password, problem_id, created_at, updated_at, name, service, port, machine_image_name FROM problem_environments WHERE name = $1`
     rows, err = db.Queryx(q, name)
   }
 
@@ -188,7 +188,7 @@ func CreateOrUpdateProblemEnvironment(c echo.Context) error {
   }
 
   pe_from_db := ProblemEnvironment{}
-  q = `SELECT id, status, host, user, password, problem_id, created_at, updated_at, name, service, port, machine_image_name FROM problem_environments WHERE problem_id = ? AND name = ? AND service = ? LIMIT 1`
+  q = `SELECT id, status, host, "user", password, problem_id, created_at, updated_at, name, service, port, machine_image_name FROM problem_environments WHERE problem_id = ? AND name = ? AND service = ? LIMIT 1`
   err = db.Get(&pe_from_db, db.Rebind(q), pe.ProblemID, pe.Name, pe.Service)
 
   if err != nil {
