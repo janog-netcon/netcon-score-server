@@ -1,6 +1,7 @@
 package main
 
 import (
+  "bytes"
   "database/sql"
   "encoding/json"
   "fmt"
@@ -23,6 +24,7 @@ type MySQLNullString struct {
 }
 
 func (msn MySQLNullString) MarshalJSON() ([]byte, error) {
+  // NOTE: To change escape behaviour, you need to modify here
   if msn.Valid {
     return json.Marshal(msn.String)
   } else {
@@ -146,7 +148,14 @@ func QueryProblemEnvironment(c echo.Context, name string) error {
   // }
 
   // fmt.Println(string(encoded))
-  return c.JSON(http.StatusOK, pes)
+  // return c.JSON(http.StatusOK, pes)
+
+  var b bytes.Buffer
+  encoder := json.NewEncoder(&b)
+  encoder.SetEscapeHTML(false)
+  encoder.Encode(pes)
+
+  return c.JSONBlob(http.StatusOK, b.Bytes())
 }
 
 func ListProblemEnvironment(c echo.Context) error {
@@ -194,7 +203,15 @@ func CreateOrUpdateProblemEnvironment(c echo.Context) error {
     return c.String(http.StatusInternalServerError, "Failed to execute query result")
   }
 
-  return c.JSON(http.StatusOK, pe_from_db)
+  // return c.JSON(http.StatusOK, pe_from_db)
+
+  // NOTE: To output unescaped string, use custom encoder
+  var b bytes.Buffer
+  encoder := json.NewEncoder(&b)
+  encoder.SetEscapeHTML(false)
+  encoder.Encode(pe_from_db)
+
+  return c.JSONBlob(http.StatusOK, b.Bytes())
 }
 
 func DeleteProblemEnvironment(c echo.Context) error {
