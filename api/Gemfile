@@ -47,6 +47,7 @@ gem 'tzinfo-data'
 
 gem 'slack-notifier'
 gem 'bugsnag'
+gem 'rest-client'
 
 # プロダクションに必須ではないがあると便利
 gem 'factory_bot_rails'

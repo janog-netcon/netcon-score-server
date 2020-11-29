@@ -23,6 +23,10 @@ class Acl
 
         problem.latest_answer_created_at(team: team) <= Time.current - Config.grading_delay_sec.seconds &&
           problem.latest_penalty_created_at(team: team) <= Time.current - Config.reset_delay_sec.seconds
+      when 'AcquireProblemEnvironment', 'AbandonProblemEnvironment'
+        # player and opened
+        problem = args.fetch(:problem)
+        team.player? && problem.body.readable?(team: team)
       when 'AddIssueComment', 'TransitionIssueState'
         # staff of issue owner
         team.staff? || args.fetch(:issue).readable?(team: team)

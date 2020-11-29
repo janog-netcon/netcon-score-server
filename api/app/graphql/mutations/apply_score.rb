@@ -17,6 +17,9 @@ module Mutations
       if answer.grade(percent: percent)
         Notification.notify(mutation: self.graphql_name, record: answer)
         { answer: answer.readable(team: self.current_team!) }
+
+        # TODO: (JANOG47 NETCON)満点の場合 (percent == 100) のときは対応する ProblemEnvironment を削除し、同じ Problem の ProblemEnvironment を作るリクエストを叩く
+        #       AbandonProblemEnvironment と同じ処理をすれば良い。最悪コピペしますが ActiveJob で共通化したら良さそう
       else
         add_errors(answer.score)
       end
