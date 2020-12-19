@@ -11,4 +11,8 @@ Rails.application.routes.draw do
     get 'health', to: 'health#health'
     post 'graphql', to: 'graphql#execute'
   end
+
+  if Rails.env.development?
+    mount GraphiQL::Rails::Engine, at: "/api/graphiql", graphql_path: "/api/graphql"
+  end
 end
