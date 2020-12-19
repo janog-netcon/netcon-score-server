@@ -19,26 +19,19 @@ module Mutations
       args = { problem: problem }
       Acl.permit!(mutation: self, args: args)
 
-      # TODO: (JANOG47) 事前条件チェック (他に解いている ProblemEnvironment がないか)
-      #       トランザクションで全体をくるんでやる必要がある
-      try = 0
-
       pes = ProblemEnvironment.transaction do
         pes = ProblemEnvironment.lock.where(problem_id: problem_id, status: "RUNNING_IN_USE", team: self.current_team!)
         raise RecordNotExists.new(ProblemEnvironment, problem_id: problem_id, status: "RUNNING_IN_USE", team: self.current_team!) if pes.empty?
 
         uniq_name = pes.map(&:name).uniq
-        raise "A team #{self.current_team!.id}'s ProblemEnvironments (in RUNNING_IN_USE) for a problem should be unique 'name', but got: #{uniq_name}" unless uniq_name.count != 1
+        if uniq_name.count != 1
+          raise "A team #{self.current_team!.id}'s ProblemEnvironments (in RUNNING_IN_USE) for a problem should have same name, but have #{uniq_name}"
+        end
 
         # TODO: update! で例外出たらどうなるのか確認 (add_errors(pes)) を返す必要がありそう)
         pes.each { |pe| pe.update!(status: "RUNNING_ABANDONED") }
       rescue ActiveRecord::StatementInvalid =>  e
-        if try < 3
-          try += 1
-          retry
-        else
-          raise e
-        end
+        raise e
       end
 
       # VM管理サービスの DELETE を叩く (ActiveJob でやる?)
