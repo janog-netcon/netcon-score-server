@@ -2,7 +2,7 @@ version: '3'
 
 services:
   api:
-    image: upluse10/ictsc-score-server:api
+    image: kyontan/netcon-score-server:api
     env_file: .env
     build:
       context: api/
@@ -27,7 +27,7 @@ services:
       '
 
   ui:
-    image: upluse10/ictsc-score-server:ui
+    image: kyontan/netcon-score-server:ui
     env_file: .env
     build:
       context: ui/
@@ -52,7 +52,7 @@ services:
     ports: ['127.0.0.1:8903:6379']
 
   yamllint:
-    image: upluse10/ictsc-score-server:yamllint
+    image: kyontan/netcon-score-server:yamllint
     build:
       context: yamllint/
     volumes:
