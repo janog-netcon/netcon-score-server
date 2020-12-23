@@ -20,16 +20,16 @@ module Mutations
       Acl.permit!(mutation: self, args: args)
 
       pes = ProblemEnvironment.transaction do
-        pes = ProblemEnvironment.lock.where(problem_id: problem_id, status: "RUNNING_IN_USE", team: self.current_team!)
-        raise RecordNotExists.new(ProblemEnvironment, problem_id: problem_id, status: "RUNNING_IN_USE", team: self.current_team!) if pes.empty?
+        pes = ProblemEnvironment.lock.where(problem_id: problem_id, status: "UNDER_CHALLENGE", team: self.current_team!)
+        raise RecordNotExists.new(ProblemEnvironment, problem_id: problem_id, status: "UNDER_CHALLENGE", team: self.current_team!) if pes.empty?
 
         uniq_name = pes.map(&:name).uniq
         if uniq_name.count != 1
-          raise "A team #{self.current_team!.id}'s ProblemEnvironments (in RUNNING_IN_USE) for a problem should have same name, but have #{uniq_name}"
+          raise "A team #{self.current_team!.id}'s ProblemEnvironments (in UNDER_CHALLENGE) for a problem should have same name, but have #{uniq_name}"
         end
 
         # TODO: update! で例外出たらどうなるのか確認 (add_errors(pes)) を返す必要がありそう)
-        pes.each { |pe| pe.update!(status: "RUNNING_ABANDONED") }
+        pes.each { |pe| pe.update!(status: "ABANDONED") }
       rescue ActiveRecord::StatementInvalid =>  e
         raise e
       end

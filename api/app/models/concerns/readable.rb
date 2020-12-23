@@ -107,8 +107,8 @@ module Readable
         return none if team.audience?
 
         # playerには割り当てられた問題環境しか見せない
-        # NOTE: 'RUNNING_SCORING' 状態のVMは見えないことが望ましいが、採点中のVMがあることをUIが知るすべとして暫定的にこうしている
-        where(team: team, problem: Problem.opened(team: team), status: ['RUNNING_IN_USE', 'RUNNING_SCORING'])
+        # NOTE: 'UNDER_SCORING' 状態のVMは見えないことが望ましいが、採点中のVMがあることをUIが知るすべとして暫定的にこうしている
+        where(team: team, problem: Problem.opened(team: team), status: ['UNDER_CHALLENGE', 'UNDER_SCORING'])
       when 'Team'
         # 自分以下の権限のチームを取得できる
         where(role: -Float::INFINITY..Team.roles[team.role])

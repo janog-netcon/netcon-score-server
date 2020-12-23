@@ -9,7 +9,17 @@ FactoryBot.define do
     problem { nil }
 
     # CREATING RUNNING DESTROYING DESTROYED
-    status { %w[CREATING RUNNING DESTROYING].sample }
+    external_status { %w[PROVISIONING RUNNING STOPPING].sample } # PROVISIONING STAGING RUNNING STOPPING REPAIRING TERMINATED SUSPENDED SUSPENDING
+    status {
+      case external_status
+      when "PROVISIONING", "STAGING"
+        "NOT_READY"
+      when "STOPPING", "REPAIRING", "TERMINATED", "SUSPENDED", "SUSPENDING"
+        "ABANDONED"
+      else # RUNNING
+        %w[READY UNDER_CHALLENGE].sample
+      end
+    } # NOT_READY READY UNDER_CHALLENGE UNDER_SCORING ABANDONED
     sequence(:host) {|n| "host#{n}.local" }
     sequence(:user) {|n| "user#{n}" }
     sequence(:password) {|n| "password#{n}" }
