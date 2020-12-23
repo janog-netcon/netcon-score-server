@@ -66,3 +66,14 @@ services:
     depends_on:
       - redis
     ports: ['127.0.0.1:8904:8080']
+
+  vmdb-api:
+    image: kyontan/netcon-score-server:vmdb-api
+    environment:
+      - DEBUG=1
+    env_file: .env
+    build:
+      context: vmdb-api/
+    depends_on:
+      - db
+    ports: ['127.0.0.1:8905:8080']
