@@ -23,7 +23,7 @@ module Mutations
       end
 
       chosen_pes = ProblemEnvironment.transaction do
-        pes = ProblemEnvironment.lock.where(problem_id: problem_id, status: ["READY", ""], external_status: "RUNNING")
+        pes = ProblemEnvironment.lock.where(problem_id: problem_id, status: ["READY", "", nil], external_status: "RUNNING")
 
         # NOTE: 同じチームから同時に複数のリクエストが来た場合に後続のリクエストを失敗させるため、自チームに割り当てられたpeがないことを確認する
         #       クリティカルセクション内なので、既に割り当てられた pe があればここで発見できる
