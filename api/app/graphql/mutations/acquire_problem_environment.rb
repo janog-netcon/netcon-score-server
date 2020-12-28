@@ -32,7 +32,7 @@ module Mutations
         end
 
         # 今解くことができるVMがない
-        raise RecordNotExists.new(ProblemEnvironment, problem_id: problem_id, status: ["READY", ""], external_status: "RUNNING") if pes.empty?
+        raise AvailableProblemEnvironmentNotExists.new(problem_id: problem_id) if pes.empty?
 
         # 複数 pes があった場合には、先頭のもの (pes.first) を選ぶ
         # また、同じ name で service が異なるものは全て選択する (実体は同一インスタンスのため)
