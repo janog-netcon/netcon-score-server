@@ -138,7 +138,7 @@ class Notification
         ]
       # when 'DeleteAttachment', 'DeleteCategory', 'DeleteProblem', 'DeleteProblemEnvironment', 'DeleteSession', 'DeleteNotice', 'DeleteProblemSupplement', 'DeleteIssueComment'
       else
-        raise UnhandledClass, mutation.graphql_name
+        raise UnhandledClass, mutation
       end
     end
 
