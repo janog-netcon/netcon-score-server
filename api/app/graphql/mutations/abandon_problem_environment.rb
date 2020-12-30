@@ -34,18 +34,34 @@ module Mutations
         raise e
       end
 
+      name = pes.map(&:name).uniq.first
+      problem_id = pes.first.problem_id
+      machine_image_name = pes.first.machine_image_name
+      vmms_base_uri = URI(Rails.configuration.vm_manegement_service_uri)
+
       # VM管理サービスの DELETE を叩く (ActiveJob でやる?)
-      # resp = RestClient.delete "http://vm-management-service/instance/#{uniq_name.first}"
-      # unless (200..299) === resp.code
-      #   # 失敗したらあとで消せば良い
-      # end
+      headers = {}
+      if Rails.configuration.vm_manegement_service_token.present?
+        headers[:authorization] = "Bearer #{Rails.configuration.vm_manegement_service_token}"
+      end
+
+      uri = vmms_base_uri + "/instance/#{name}"
+      res = RestClient.delete(uri.to_s, headers)
+      unless (200..299) === res.code
+        # NOTE: 失敗したらあとで消せば良い
+        Rails.logger.error "DELETE request to vm-management-service failed, name: #{name}, res: #{res}"
+      end
 
       # 同じ問題の VM を再作成する
-      # post_payload = { problem_id: pes.first.id, machine_image_name: pes.first.machine_image_name }
-      # resp = RestClient.post "http://vm-management-service/instance", post_payload.to_json, { content_type: :json, accept: :json }
-      # unless (200..299) === resp.code
-      #   # 失敗したらどうする?
-      # end
+      uri = vmms_base_uri + "/instance"
+      post_payload = { problem_id: problem_id, machine_image_name: machine_image_name }
+      headers[:content_type] = :json
+      headers[:accept] = :json
+      res = RestClient.post(uri.to_s, post_payload.to_json, headers)
+      unless (200..299) === res.code
+        # 失敗したらどうする?
+        Rails.logger.error "POST request to vm-management-service failed, problem_id: #{problem_id}, machine_image_name: #{machine_image_name}, res: #{res}"
+      end
 
       Notification.notify(mutation: self.graphql_name, record: pes) unless silent
 

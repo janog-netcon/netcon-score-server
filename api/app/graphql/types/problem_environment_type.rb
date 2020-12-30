@@ -10,7 +10,8 @@ module Types
     field :name,               String,             null: false
 
     field :service,            String,             null: false
-    field :status,             String,             null: false
+    field :status,             String,             null: true
+    field :external_status,    String,             null: true
     field :host,               String,             null: false
     field :port,               Integer,            null: false
     field :user,               String,             null: false

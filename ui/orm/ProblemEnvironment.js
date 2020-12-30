@@ -13,7 +13,8 @@ export default class ProblemEnvironment extends BaseModel {
       problem: this.belongsTo(orm.Problem, 'problemId'),
       name: this.string(),
       service: this.string(),
-      status: this.string(),
+      status: this.string().nullable(),
+      externalStatus: this.string().nullable(),
       host: this.string(),
       port: this.number(),
       user: this.string(),
@@ -31,6 +32,7 @@ export default class ProblemEnvironment extends BaseModel {
       name: '',
       service: 'SSH',
       status: 'APPLIED',
+      externalStatus: 'APPLIED',
       host: '',
       port: 22,
       user: '',
@@ -87,6 +89,6 @@ export default class ProblemEnvironment extends BaseModel {
   }
 
   static get supportedServices() {
-    return ['SSH', 'SSH(公開鍵)', 'Telnet', 'VNC']
+    return ['SSH', 'SSH(公開鍵)', 'HTTP', 'HTTPS', 'Telnet', 'VNC']
   }
 }
