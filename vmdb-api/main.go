@@ -194,7 +194,7 @@ func createOrUpdateProblemEnvironment(c echo.Context) error {
 
 	if err != nil {
 		c.Echo().Logger.Errorf("Failed to bind payload", err)
-		return c.String(http.StatusInternalServerError, "Failed to parse query result")
+		return err
 	}
 
 	q := `
@@ -208,8 +208,9 @@ func createOrUpdateProblemEnvironment(c echo.Context) error {
 		pe.Status, pe.Host, pe.User, pe.Password, pe.ProblemID, pe.Name, pe.Service, pe.Port, pe.MachineImageName,
 		pe.Status, pe.Host, pe.User, pe.Password, pe.ProblemID, pe.Name, pe.Service, pe.Port, pe.MachineImageName)
 	if err != nil {
-		c.Echo().Logger.Errorf("Failed to run query", err)
-		return c.String(http.StatusInternalServerError, "Failed to execute query")
+		c.Echo().Logger.Errorf("Failed to execute query", err)
+		errMsg := fmt.Sprintf("Failed to execute query: %v", err)
+		return c.String(http.StatusInternalServerError, errMsg)
 	}
 
 	peFromDb := ProblemEnvironment{}
@@ -218,7 +219,8 @@ func createOrUpdateProblemEnvironment(c echo.Context) error {
 
 	if err != nil {
 		c.Echo().Logger.Errorf("Failed to get query result", err)
-		return c.String(http.StatusInternalServerError, "Failed to execute query result")
+		errMsg := fmt.Sprintf("Failed to get query result: %v", err)
+		return c.String(http.StatusInternalServerError, errMsg)
 	}
 
 	// return c.JSON(http.StatusOK, peFromDb)
@@ -238,14 +240,14 @@ func deleteProblemEnvironment(c echo.Context) error {
 	q := `DELETE FROM problem_environments WHERE name = $1`
 	res, err := db.Exec(q, name)
 	if err != nil {
-		c.Echo().Logger.Errorf("Failed to run query", err)
-		return c.String(http.StatusInternalServerError, "Failed to execute query")
+		errMsg := fmt.Sprintf("Failed to execute query: %v", err)
+		return c.String(http.StatusInternalServerError, errMsg)
 	}
 
 	rowCnt, err := res.RowsAffected()
 	if err != nil {
-		c.Echo().Logger.Errorf("Failed to run query", err)
-		return c.String(http.StatusInternalServerError, "Failed to execute query")
+		errMsg := fmt.Sprintf("Failed to execute query: %v", err)
+		return c.String(http.StatusInternalServerError, errMsg)
 	}
 
 	if rowCnt == 0 {
