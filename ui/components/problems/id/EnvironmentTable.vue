@@ -119,7 +119,7 @@
           </v-btn>
 
           <template v-if="item.copyText.text && item.copyText.text.startsWith('http')">
-            <a :href="item.copyText.text">{{ item.copyText.text }}</a>
+            <a :href="item.copyText.text" target="_blank">{{ item.copyText.text }}</a>
           </template>
           <template v-else>
             {{
