@@ -278,6 +278,38 @@ export default class Mutations extends BaseModel {
     })
   }
 
+  static acquireProblemEnvironment ({
+    action,
+    resolve,
+    params: {
+      problemId
+    },
+  }) {
+    return this.sendMutation({
+      action,
+      resolve,
+      mutation: 'acquireProblemEnvironment',
+      params: { problemId },
+      fields: [orm.ProblemEnvironment],
+      type: 'upsert',
+    })
+  }
+
+  static abandonProblemEnvironment ({
+    action,
+    resolve,
+    params: { problemId },
+  }) {
+    return this.sendMutation({
+      action,
+      resolve,
+      mutation: 'abandonProblemEnvironment',
+      params: { problemId },
+      fields: [orm.ProblemEnvironment],
+      type: 'delete',
+    })
+  }
+
   static startIssue({ action, resolve, params: { problemId, text } }) {
     return this.sendMutation({
       action,

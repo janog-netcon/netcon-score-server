@@ -54,6 +54,10 @@ export default class Queries {
     return orm.Problem.eagerFetch(id, ['environments'])
   }
 
+  static problemEnvironments() {
+    return orm.ProblemEnvironment.fetch()
+  }
+
   static problemEnvironment(id) {
     return orm.ProblemEnvironment.eagerFetch(id, [])
   }
@@ -195,6 +199,11 @@ export default class Queries {
         }
         break
       case 'ApplyProblemEnvironment':
+        if (problem.test(path)) {
+          orm.Queries.problemProblemEnvironments(problemId)
+        }
+        break
+      case 'AcquireProblemEnvironment':
         if (problem.test(path)) {
           orm.Queries.problemProblemEnvironments(problemId)
         }
