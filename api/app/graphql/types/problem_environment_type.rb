@@ -20,6 +20,8 @@ module Types
     field :created_at,         Types::DateTime,    null: false
     field :updated_at,         Types::DateTime,    null: false
     field :machine_image_name, String,             null: true
+    field :project,            String,             null: true
+    field :zone,               String,             null: true
 
     belongs_to :team
     belongs_to :problem

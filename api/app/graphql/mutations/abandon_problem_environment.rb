@@ -37,6 +37,8 @@ module Mutations
       name = pes.map(&:name).uniq.first
       problem_id = pes.first.problem_id
       machine_image_name = pes.first.machine_image_name
+      project = pes.first.project
+      zone = pes.first.zone
       vmms_base_uri = URI(Rails.configuration.vm_manegement_service_uri)
 
       # VM管理サービスの DELETE を叩く (ActiveJob でやる?)
@@ -54,7 +56,7 @@ module Mutations
 
       # 同じ問題の VM を再作成する
       uri = vmms_base_uri + "/instance"
-      post_payload = { problem_id: problem_id, machine_image_name: machine_image_name }
+      post_payload = { problem_id: problem_id, machine_image_name: machine_image_name, project: project, zone: zone }
       headers[:content_type] = :json
       headers[:accept] = :json
       res = RestClient.post(uri.to_s, post_payload.to_json, headers)

@@ -20,6 +20,8 @@ export default class ProblemEnvironment extends BaseModel {
       user: this.string(),
       password: this.string(),
       secretText: this.string().nullable(),
+      project: this.string().nullable(),
+      zone: this.string().nullable(),
       createdAt: this.string(),
       updatedAt: this.string(),
     }
@@ -38,6 +40,8 @@ export default class ProblemEnvironment extends BaseModel {
       user: '',
       password: '',
       secretText: '',
+      project: '',
+      zone: '',
     }
   }
 
