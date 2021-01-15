@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-2">
+  <div class="my-2">
     <div class="subtitle-1">{{ title }}</div>
     <div class="caption">{{ body }}</div>
   </div>

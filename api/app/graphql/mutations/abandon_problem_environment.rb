@@ -65,7 +65,7 @@ module Mutations
 
       Notification.notify(mutation: self.graphql_name, record: pes) unless silent
 
-      { problem_environments: pes.map{ |pe| pe.readable(team: self.current_team!) }.compact }
+      { problem_environments: pes }
     end
   end
 end

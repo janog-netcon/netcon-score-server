@@ -77,7 +77,7 @@
         </v-btn>
 
         <markdown v-if="isMarkdown(value)" :content="value" dense />
-        <div v-else class="text-truncate" style="width: 12em">{{ value }}</div>
+        <div v-else class="text-truncate">{{ value }}</div>
       </v-row>
     </template>
 
@@ -175,13 +175,13 @@ export default {
     },
     headers() {
       const commons = [
-        { text: '種類', value: 'service' },
-        { text: '名前', value: 'name' },
         { text: '便利コピー', value: 'copy' },
+        { text: 'パスワード', value: 'password' },
+        { text: 'ユーザー', value: 'user' },
         { text: 'ホスト', value: 'host' },
         { text: 'ポート', value: 'port' },
-        { text: 'ユーザー', value: 'user' },
-        { text: 'パスワード', value: 'password' },
+        { text: '種類', value: 'service' },
+        { text: '名前', value: 'name' },
       ]
 
       if (this.isStaff) {

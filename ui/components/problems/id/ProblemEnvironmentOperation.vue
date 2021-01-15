@@ -2,7 +2,7 @@
   <div>
     <!-- VM作成・削除ボタン -->
     <v-btn 
-      depressed
+      contained
       color="success"
       @click="acquireProblemEnvironmentVM(problem.id)"
       v-if="isSolve"
@@ -10,7 +10,7 @@
       問題を解く
     </v-btn>
     <v-btn 
-      depressed
+      contained
       color="error"
       @click="abandonProblemEnvironmentVM(problem.id)"
       v-if="isRetire"
@@ -18,7 +18,7 @@
       棄権する
     </v-btn>
     <v-btn
-      depressed
+      contained
       disabled
       v-if="isLock"
     >
@@ -59,16 +59,27 @@ export default {
   computed: {
     //「棄権ボタン」を表示するかどうか
     isRetire() {
+      //採点中・削除中は表示しない
+      if(this.isUnderScoringAbandoned) {
+        return false
+      }
       return this.isUnderChallenge
     },
     //「この問題は現在解けません」ボタンを表示するかどうか
     isLock() {
+      //この問題を解いてる時は表示しない
+      if(this.isUnderChallenge) {
+        return false
+      }
+      //全問題の中に解答中がある場合は表示する
       if (this.isUnderChallenges) {
         return true
       }
+      //採点中・削除中はロックする
       if (this.isUnderScoringAbandoned) {
         return true
       }
+      //完答してる場合はロックする
       if (this.isPerfect) {
         return true
       }
@@ -82,10 +93,13 @@ export default {
         return true
       }
     },
-
     //解答中かどうか
     isUnderChallenge() {
-      if (orm.ProblemEnvironment.status === "UNDER_CHALLENGE") {
+      if (this.environments.length < 1) {
+        return false
+      }
+      const status = this.environments[0].status
+      if (status === "UNDER_CHALLENGE") {
         return true
       } else {
         return false
@@ -101,7 +115,11 @@ export default {
     },
     //採点中or削除中かどうか
     isUnderScoringAbandoned() {
-      if (orm.ProblemEnvironment.status === "UNDER_SCORING" || orm.ProblemEnvironment.status === "ABANDONED") {
+      if (this.environments.length < 1) {
+        return false
+      }
+      const status = this.environments[0].status
+      if (status === "UNDER_SCORING" || status === "ABANDONED") {
         return true
       } else {
         return false
@@ -129,7 +147,6 @@ export default {
   },
   methods: {
     async acquireProblemEnvironmentVM(problemId) {
-      console.log(problemId)
       await orm.Mutations.acquireProblemEnvironment({
         action: '問題VM確保',
         params: { problemId: problemId },

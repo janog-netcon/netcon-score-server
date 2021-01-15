@@ -208,6 +208,11 @@ export default class Queries {
           orm.Queries.problemProblemEnvironments(problemId)
         }
         break
+      case 'AbandonProblemEnvironment':
+        if (problem.test(path)) {
+          orm.Queries.problemProblemEnvironments(problemId)
+        }
+        break
       case 'ApplyScore':
         if (problems.test(path) || answers.test(path)) {
           orm.Queries.problemsAnswersTeam()
