@@ -290,7 +290,7 @@ export default class Mutations extends BaseModel {
       resolve,
       mutation: 'acquireProblemEnvironment',
       params: { problemId },
-      fields: [orm.ProblemEnvironment],
+      fields: [[orm.ProblemEnvironment]],
       type: 'upsert',
     })
   }
@@ -305,7 +305,7 @@ export default class Mutations extends BaseModel {
       resolve,
       mutation: 'abandonProblemEnvironment',
       params: { problemId },
-      fields: [orm.ProblemEnvironment],
+      fields: [[orm.ProblemEnvironment]],
       type: 'delete',
     })
   }
