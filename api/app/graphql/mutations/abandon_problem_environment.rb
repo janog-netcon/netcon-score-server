@@ -47,22 +47,33 @@ module Mutations
         headers[:authorization] = "Bearer #{Rails.configuration.vm_manegement_service_token}"
       end
 
+      headers[:content_type] = :json
+      headers[:accept] = :json
+
       uri = vmms_base_uri + "/instance/#{name}"
-      res = RestClient.delete(uri.to_s, headers)
-      unless (200..299) === res.code
-        # NOTE: 失敗したらあとで消せば良い
-        Rails.logger.error "DELETE request to vm-management-service failed, name: #{name}, res: #{res}"
+      # res = RestClient.delete(uri.to_s, headers)
+      delete_payload = { project: project, zone: zone }
+      begin
+        res = RestClient::Request.execute(method: :delete, url: uri.to_s, payload: delete_payload.to_json, headers: headers)
+        unless (200..299) === res.code
+          # NOTE: 失敗したらあとで消せば良い
+          Rails.logger.error "DELETE request to vm-management-service failed, name: #{name}, res: #{res}"
+        end
+      rescue RestClient::ExceptionWithResponse => e
+        Rails.logger.error "DELETE request to vm-management-service failed, payload: #{delete_payload}, code: #{e.code}, res: #{e.response}"
       end
 
       # 同じ問題の VM を再作成する
       uri = vmms_base_uri + "/instance"
       post_payload = { problem_id: problem_id, machine_image_name: machine_image_name, project: project, zone: zone }
-      headers[:content_type] = :json
-      headers[:accept] = :json
       res = RestClient.post(uri.to_s, post_payload.to_json, headers)
-      unless (200..299) === res.code
-        # 失敗したらどうする?
-        Rails.logger.error "POST request to vm-management-service failed, problem_id: #{problem_id}, machine_image_name: #{machine_image_name}, res: #{res}"
+      begin
+        unless (200..299) === res.code
+          # 失敗したらどうする?
+          Rails.logger.error "POST request to vm-management-service failed, problem_id: #{problem_id}, machine_image_name: #{machine_image_name}, res: #{res}"
+        end
+      rescue RestClient::ExceptionWithResponse => e
+        Rails.logger.error "POST request to vm-management-service failed, payload: #{post_payload}, code: #{e.code}, res: #{e.response}"
       end
 
       Notification.notify(mutation: self.graphql_name, record: pes) unless silent
