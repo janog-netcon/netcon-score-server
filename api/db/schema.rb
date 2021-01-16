@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_28_151612) do
+ActiveRecord::Schema.define(version: 2021_01_15_135749) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -143,6 +143,8 @@ ActiveRecord::Schema.define(version: 2020_12_28_151612) do
     t.integer "port", null: false
     t.string "machine_image_name"
     t.string "external_status"
+    t.string "project"
+    t.string "zone"
     t.index ["problem_id", "name", "service"], name: "problem_environments_on_composit_keys", unique: true
     t.index ["problem_id"], name: "index_problem_environments_on_problem_id"
     t.index ["team_id"], name: "index_problem_environments_on_team_id"
