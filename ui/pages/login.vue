@@ -30,6 +30,16 @@
       >
         ログイン
       </v-btn>
+
+      <v-btn
+        to="/signup"
+        color="info"
+        nuxt
+        block
+        class="mt-2"
+      >
+        ユーザー作成
+      </v-btn>
     </v-form>
   </v-container>
 </template>
