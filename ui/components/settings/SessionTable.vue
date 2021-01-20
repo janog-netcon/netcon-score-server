@@ -87,7 +87,7 @@ export default {
       loading: false,
       headers: [
         { text: '権限', value: 'team.role' },
-        { text: 'チーム', value: 'team.displayName' },
+        { text: 'ユーザ', value: 'team.displayName' },
         { text: '最終アクセス時刻', value: 'updatedAtSimple' },
         { text: '最終アクセスIP', value: 'latestIp' },
         { text: 'ログイン時刻', value: 'createdAtSimple' },
@@ -98,7 +98,7 @@ export default {
   computed: {
     sessions() {
       return orm.Session.query().with(['team']).all()
-      // 存在しないチームIDを持つレコードは表示しない
+      // 存在しないユーザIDを持つレコードは表示しない
     },
     hasSessions() {
       return this.sessions.length !== 0

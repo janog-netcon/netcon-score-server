@@ -92,14 +92,14 @@ export default {
       return 0
     },
 
-    // 各チームの最終解答のみの配列にする
+    // 各ユーザの最終解答のみの配列にする
     shrinkAnswers(answers) {
       // teamIdをキーとしたanswerの配列
       const teamsAnswers = this.$_.groupBy(answers, (answer) => answer.teamId)
 
       // TODO: 本戦では未採点の最も古い解答を出すべき
 
-      // そのチームの複数解答を最も新しい解答1つに上書き
+      // そのユーザの複数解答を最も新しい解答1つに上書き
       if (this.realtimeGrading) {
         // 未採点の最も古い解答 or 最高得点
         return Object.keys(teamsAnswers).map((teamId) => {

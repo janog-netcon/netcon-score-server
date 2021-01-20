@@ -43,7 +43,7 @@
             />
             -->
 
-            <label class="caption">チーム</label>
+            <label class="caption">ユーザ</label>
             <v-overflow-btn
               v-model="teamNumber"
               :readonly="sending"
@@ -181,7 +181,7 @@ import NumberTextField from '~/components/commons/NumberTextField'
 /*
   TODO: penvはteamNumberとproblemCodeを持たないからnullになる
 
-  updatedでは問題とチームを変更できない
+  updatedでは問題とユーザを変更できない
     削除して似たのを作り直すしかない
     編集できるのは
   unique name team problem
@@ -280,7 +280,7 @@ export default {
     },
     // 最初に開いた時に実行される
     openedAtFirst() {
-      // チーム選択用
+      // ユーザ選択用
       orm.Queries.teams()
     },
     async submit(force) {

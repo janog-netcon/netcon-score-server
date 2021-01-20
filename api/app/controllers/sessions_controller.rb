@@ -33,6 +33,45 @@ class SessionsController < ApplicationController
     end
   end
 
+  # 動的にTeamを作成しない前提で設計したのでいろいろガタガタ
+  def signup
+    if Config.registration_code != signup_params[:registrationCode]
+      head :forbidden
+      return
+    end
+
+    # TODO: autoincrementにしたほうが良い
+    number = SecureRandom.random_number(2_147_483_647)
+
+    team = Team.new(
+      number: number,
+      name: signup_params[:name],
+      password: signup_params[:password],
+      organization: signup_params[:organization],
+      role: :player,
+      color: '#FFFFFF',
+      beginner: false,
+      secret_text: ''
+    )
+
+    # 無いよりマシ程度だがnameとnumberのユニークバリデーションも行われる
+    if team.save
+      head :created
+      return
+    end
+
+    error_reasons = team.errors.details.values.flatten.pluck(:error).uniq
+
+    # nameかnumberがコンフリクトした
+    if error_reasons.include?(:taken)
+      render json: team.errors.to_json, status: :conflict
+      return
+    end
+
+    # 謎の失敗
+    render json: team.errors.to_json, status: :bad_request
+  end
+
   def logout
     reset_session
     head :no_content
@@ -43,6 +82,10 @@ class SessionsController < ApplicationController
   def login_params
     # wrap_parameter
     params.require(:session).permit(:name, :password)
+  end
+
+  def signup_params
+    params.require(:session).permit(:name, :password, :organization, :registrationCode)
   end
 
   # 必要な値だけ返す

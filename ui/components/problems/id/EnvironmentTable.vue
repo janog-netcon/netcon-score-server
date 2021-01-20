@@ -44,14 +44,14 @@
       >
         <ul class="black--text">
           <li>問題: {{ problem.displayTitle }}</li>
-          <li>チーム: {{ item.displayName || '共通' }}</li>
+          <li>ユーザ: {{ item.displayName || '共通' }}</li>
           <li>種類: {{ item.service }}</li>
           <li>名前: {{ item.name }}</li>
         </ul>
       </countdown-delete-button>
     </template>
 
-    <!-- チーム -->
+    <!-- ユーザ -->
     <template v-slot:item.team.displayName="{ value }">
       <template v-if="!!value">
         {{ value }}
@@ -88,7 +88,7 @@
       </template>
     </template>
 
-    <!-- チーム -->
+    <!-- ユーザ -->
     <template v-slot:item.team="{ value }">
       <v-icon v-if="!value" small>mdi-check</v-icon>
     </template>
@@ -187,7 +187,7 @@ export default {
       if (this.isStaff) {
         return [
           { text: 'action', value: 'action', sortable: false },
-          { text: 'チーム名', value: 'team.displayName' },
+          { text: 'ユーザ名', value: 'team.displayName' },
           { text: '状態', value: 'status' },
           ...commons,
           { text: '更新時刻', value: 'updatedAtSimple' },

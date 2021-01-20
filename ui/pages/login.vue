@@ -4,7 +4,7 @@
       <v-text-field
         v-model="name"
         :rules="nameRules"
-        label="チーム名"
+        label="ユーザ名"
         required
         autofocus
       >
@@ -29,6 +29,16 @@
         block
       >
         ログイン
+      </v-btn>
+
+      <v-btn
+        to="/signup"
+        color="info"
+        nuxt
+        block
+        class="mt-2"
+      >
+        ユーザー作成
       </v-btn>
     </v-form>
   </v-container>
@@ -63,7 +73,7 @@ export default {
         window.location = '/guide'
       } else {
         this.notifyWarning({
-          message: 'チーム名かパスワードが正しくありません',
+          message: 'ユーザ名かパスワードが正しくありません',
         })
       }
 
