@@ -37,7 +37,7 @@
 
     <v-card v-if="isStaff && team.beginner" color="pink lighten-3">
       <div class="text-center">
-        解答サポート対象チームです
+        解答サポート対象ユーザです
         <v-icon>mdi-face-agent</v-icon>
       </div>
     </v-card>
@@ -131,7 +131,7 @@ export default {
       }
     },
     issue() {
-      // 各チームは各問題に対して1つのissueを持つことができる
+      // 各ユーザは各問題に対して1つのissueを持つことができる
       if (this.isPlayer) {
         return this.problem.issues[0]
       } else {

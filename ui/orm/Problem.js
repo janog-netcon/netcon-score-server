@@ -23,7 +23,7 @@ export default class Problem extends BaseModel {
       secretText: this.string().nullable(),
       // 開放時のみ見れるフィールド
       body: this.hasOne(orm.ProblemBody, 'problemId'),
-      // staffは全チームの環境を見える: playerは自チームのみ
+      // staffは全ユーザの環境を見える: playerは自ユーザのみ
       environments: this.hasMany(orm.ProblemEnvironment, 'problemId'),
       supplements: this.hasMany(orm.ProblemSupplement, 'problemId'),
       penalties: this.hasMany(orm.Penalty, 'problemId'),

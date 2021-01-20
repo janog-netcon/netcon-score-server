@@ -4,7 +4,7 @@
       <v-text-field
         v-model="name"
         :rules="nameRules"
-        label="チーム名"
+        label="ユーザ名"
         required
         autofocus
       >
@@ -73,7 +73,7 @@ export default {
         window.location = '/guide'
       } else {
         this.notifyWarning({
-          message: 'チーム名かパスワードが正しくありません',
+          message: 'ユーザ名かパスワードが正しくありません',
         })
       }
 

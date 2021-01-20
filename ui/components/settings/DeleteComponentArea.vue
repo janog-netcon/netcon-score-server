@@ -3,7 +3,7 @@
     <delete-component
       :fetch="fetchTeams"
       :delete="deleteTeam"
-      label="チーム"
+      label="ユーザ"
       item-text="displayName"
       item-value="number"
     />
@@ -48,7 +48,7 @@ export default {
     async deleteTeam(number) {
       let result = false
       await orm.Mutations.deleteTeam({
-        action: 'チーム削除',
+        action: 'ユーザ削除',
         resolve: () => (result = true),
         params: { number },
       })

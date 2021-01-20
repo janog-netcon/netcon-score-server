@@ -87,7 +87,7 @@
             <v-switch
               v-model="teamIsolate"
               :readonly="sending"
-              :label="`チーム間${teamIsolate ? '分離' : '共有'}`"
+              :label="`ユーザ間${teamIsolate ? '分離' : '共有'}`"
               color="primary"
               class="mt-0"
             />

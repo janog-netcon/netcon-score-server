@@ -89,7 +89,7 @@ export default {
         { to: '/answers', text: '解答', if: this.isNotPlayer },
         { to: '/summary', text: '状況', if: this.isNotPlayer },
         { to: '/guide', text: 'ガイド' },
-        { to: '/teams', text: 'チーム' },
+        { to: '/teams', text: 'ユーザ' },
         { to: '/settings', icon: 'mdi-cog-outline', if: this.isStaff },
         {
           to: '/login',

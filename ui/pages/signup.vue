@@ -4,7 +4,7 @@
       <v-text-field
         v-model="name"
         :rules="nameRules"
-        label="チーム名"
+        label="ユーザ名"
         required
         autofocus
       >
@@ -105,7 +105,7 @@ export default {
         case 409:
           // 実はnameだけでなく、numberがコンフリクトしている可能性もある
           this.notifyWarning({
-            message: '既に存在するチーム名です',
+            message: '既に存在するユーザ名です',
           })
           break
         default:

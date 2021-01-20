@@ -8,7 +8,7 @@
         </v-row>
       </v-sheet>
 
-      <!-- 問題名 チーム名 最終返答 -->
+      <!-- 問題名 ユーザ名 最終返答 -->
       <v-col class="pa-0 ml-2 mr-3 card-info">
         <div class="body-2 text-truncate text-left">
           {{ issue.problem.displayTitle }}<br />

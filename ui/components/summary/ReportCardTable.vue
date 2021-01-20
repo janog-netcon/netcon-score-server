@@ -38,7 +38,7 @@
           </div>
         </template>
 
-        <!-- チーム名 -->
+        <!-- ユーザ名 -->
         <template v-slot:item.teamName="{ item }">
           <div class="text-no-wrap">
             <div>{{ item.teamName }}</div>
@@ -117,7 +117,7 @@ export default {
       }
 
       return [
-        { text: 'チーム', value: 'teamName', divider: true },
+        { text: 'ユーザ', value: 'teamName', divider: true },
         {
           text: '順位',
           value: 'rank',
