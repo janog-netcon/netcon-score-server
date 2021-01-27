@@ -24,8 +24,7 @@ module Mutations
 
       num_tries = 0
       max_tries = 3
-      begin
-        chosen_pes = ProblemEnvironment.transaction do
+      chosen_pes = ProblemEnvironment.transaction do
           pes = ProblemEnvironment.lock.where(problem_id: problem_id, status: ["READY", "", nil], external_status: "RUNNING").order(created_at: "ASC")
 
           # NOTE: 同じチームから同時に複数のリクエストが来た場合に後続のリクエストを失敗させるため、自チームに割り当てられたpeがないことを確認する
