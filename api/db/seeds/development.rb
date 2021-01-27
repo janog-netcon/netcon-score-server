@@ -6,6 +6,8 @@ def create_config
   print 'creating configs...'
 
   configs = [
+    { key: :registration_code,              value_type: :string,  value: SecureRandom.alphanumeric },
+
     { key: :competition_section1_start_at,  value_type: :date,    value: Time.zone.parse('2012-09-03 10:00:00') },
     { key: :competition_section1_end_at,    value_type: :date,    value: Time.zone.parse('2112-09-03 12:00:00') },
     { key: :competition_section2_start_at,  value_type: :date,    value: Time.zone.parse('2112-09-03 13:00:00') },
@@ -55,7 +57,8 @@ end
 def create_categories
   print 'creating categories...'
 
-  categories = build_stubbed_list(:category, 10)
+  categories = build_stubbed_list(:category, 1)
+  # categories = build_stubbed_list(:category, 10)
   categories.first.order = 0
 
   Category.import!(categories)
@@ -161,11 +164,11 @@ def create_problems(categories)
   Problem.import!(problems)
   ProblemBody.import!(problems.map(&:body))
 
-  categories.each do |category|
-    category.problems.sort_by(&:order).each_cons(2) do |previous, current|
-      current.update!(previous_problem: previous)
-    end
-  end
+  # categories.each do |category|
+  #   category.problems.sort_by(&:order).each_cons(2) do |previous, current|
+  #     current.update!(previous_problem: previous)
+  #   end
+  # end
 
   puts 'done'
   problems
@@ -210,14 +213,22 @@ end
 
 def create_problem_environments(problems, teams)
   print 'creating problem_environments...'
-  envs = problems.take(10).each_with_object([]) {|problem, memo|
-    teams.each do |team|
-      memo << build_stubbed(:problem_environment, problem: problem, team: team)
-    end
+  envs = problems.each_with_object([]) {|problem, memo|
+  # envs = problems.take(10).each_with_object([]) {|problem, memo|
+    # teams.each do |team|
+    #   memo << build_stubbed(:problem_environment, problem: problem, machine_image_name: "image_#{problem.id}", team: team)
+    # end
 
-    Random.rand(1..4).times { memo << build_stubbed(:problem_environment, problem: problem, team: nil) }
+    # Random.rand(1..4).times { memo << build_stubbed(:problem_environment, problem: problem, machine_image_name: "image_#{problem.id}", team: nil) }
+    Random.rand(2..5).times {
+      pe_ssh = build_stubbed(:problem_environment, problem: problem, machine_image_name: "image_#{problem.id}", team: nil, service: "SSH")
+      pe_https = build_stubbed(:problem_environment, problem: problem, machine_image_name: "image_#{problem.id}", team: nil, service: "HTTPS", name: pe_ssh.name, host: pe_ssh.host, user: pe_ssh.user, password: pe_ssh.password, status: pe_ssh.status, external_status: pe_ssh.external_status)
+      memo << pe_ssh
+      memo << pe_https
+      # memo << build_stubbed(:problem_environment, problem: problem, machine_image_name: "image_#{problem.id}", team: nil)
+    }
   }
-    .shuffle
+    # .shuffle
 
   ProblemEnvironment.import!(envs)
   puts 'done'

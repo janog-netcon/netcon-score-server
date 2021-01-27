@@ -13,12 +13,15 @@ export default class ProblemEnvironment extends BaseModel {
       problem: this.belongsTo(orm.Problem, 'problemId'),
       name: this.string(),
       service: this.string(),
-      status: this.string(),
+      status: this.string().nullable(),
+      externalStatus: this.string().nullable(),
       host: this.string(),
       port: this.number(),
       user: this.string(),
       password: this.string(),
       secretText: this.string().nullable(),
+      project: this.string().nullable(),
+      zone: this.string().nullable(),
       createdAt: this.string(),
       updatedAt: this.string(),
     }
@@ -31,11 +34,14 @@ export default class ProblemEnvironment extends BaseModel {
       name: '',
       service: 'SSH',
       status: 'APPLIED',
+      externalStatus: 'APPLIED',
       host: '',
       port: 22,
       user: '',
       password: '',
       secretText: '',
+      project: '',
+      zone: '',
     }
   }
 
@@ -48,7 +54,7 @@ export default class ProblemEnvironment extends BaseModel {
   }
 
   get sshCommand() {
-    return `ssh '${this.user}@${this.host}' -p ${this.port}`
+    return `ssh ${this.user}@${this.host} -p ${this.port}`
   }
 
   get copyText() {
@@ -64,6 +70,18 @@ export default class ProblemEnvironment extends BaseModel {
         text: this.sshCommand,
         display: 'sshコマンド',
       }
+    } else if (/^HTTP$/i.test(this.service)) {
+      if (this.port === 80) {
+        return { text: `http://${this.host}/` }
+      } else {
+        return { text: `http://${this.host}:${this.port}/` }
+      }
+    } else if (/^HTTPS$/i.test(this.service)) {
+      if (this.port === 443) {
+        return { text: `https://${this.host}/` }
+      } else {
+        return { text: `https://${this.host}:${this.port}/` }
+      }
     } else if (/^Telnet$/i.test(this.service)) {
       return { text: `telnet ${this.host} ${this.port}` }
     } else if (/^VNC$/i.test(this.service)) {
@@ -75,6 +93,6 @@ export default class ProblemEnvironment extends BaseModel {
   }
 
   static get supportedServices() {
-    return ['SSH', 'SSH(公開鍵)', 'Telnet', 'VNC']
+    return ['SSH', 'SSH(公開鍵)', 'HTTP', 'HTTPS', 'Telnet', 'VNC']
   }
 }

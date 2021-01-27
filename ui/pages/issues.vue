@@ -90,7 +90,7 @@ export default {
       return this.$_.sortBy(issues, (i) => this.issueSortValue(i))
     },
     searchFieldPlaceholder() {
-      return this.isStaff ? '問題名 コード 作問者 チーム名' : '問題名'
+      return this.isStaff ? '問題名 コード 作問者 ユーザ名' : '問題名'
     },
     searchParams() {
       if (['', null, undefined].includes(this.issueSearch)) {

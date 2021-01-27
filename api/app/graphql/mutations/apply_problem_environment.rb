@@ -21,7 +21,7 @@ module Mutations
     # 通知無効
     argument :silent,       Boolean, required: false, default_value: false
 
-    # team_numberがnilなら共通として扱う
+    # team_numberがnilなら未割り当てとして扱う
     def resolve(problem_code:, team_number:, name:, service:, status:, host:, port:, user:, password:, secret_text:, silent:)
       Acl.permit!(mutation: self, args: {})
 

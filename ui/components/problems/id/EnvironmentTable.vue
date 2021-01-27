@@ -44,14 +44,14 @@
       >
         <ul class="black--text">
           <li>問題: {{ problem.displayTitle }}</li>
-          <li>チーム: {{ item.displayName || '共通' }}</li>
+          <li>ユーザ: {{ item.displayName || '共通' }}</li>
           <li>種類: {{ item.service }}</li>
           <li>名前: {{ item.name }}</li>
         </ul>
       </countdown-delete-button>
     </template>
 
-    <!-- チーム -->
+    <!-- ユーザ -->
     <template v-slot:item.team.displayName="{ value }">
       <template v-if="!!value">
         {{ value }}
@@ -77,7 +77,7 @@
         </v-btn>
 
         <markdown v-if="isMarkdown(value)" :content="value" dense />
-        <div v-else class="text-truncate" style="width: 12em">{{ value }}</div>
+        <div v-else class="text-truncate">{{ value }}</div>
       </v-row>
     </template>
 
@@ -88,7 +88,7 @@
       </template>
     </template>
 
-    <!-- チーム -->
+    <!-- ユーザ -->
     <template v-slot:item.team="{ value }">
       <v-icon v-if="!value" small>mdi-check</v-icon>
     </template>
@@ -118,9 +118,14 @@
             <v-icon>mdi-clipboard-text-outline</v-icon>
           </v-btn>
 
-          {{
-            item.copyText.display ? item.copyText.display : item.copyText.text
-          }}
+          <template v-if="item.copyText.text && item.copyText.text.startsWith('http')">
+            <a :href="item.copyText.text" target="_blank">{{ item.copyText.text }}</a>
+          </template>
+          <template v-else>
+            {{
+              item.copyText.display ? item.copyText.display : item.copyText.text
+            }}
+          </template>
         </template>
 
         <v-card v-if="item.copyText.tooltip">
@@ -170,26 +175,28 @@ export default {
     },
     headers() {
       const commons = [
-        { text: '種類', value: 'service' },
-        { text: '名前', value: 'name' },
         { text: '便利コピー', value: 'copy' },
         { text: 'パスワード', value: 'password' },
+        { text: 'ユーザー', value: 'user' },
         { text: 'ホスト', value: 'host' },
         { text: 'ポート', value: 'port' },
-        { text: 'ユーザー', value: 'user' },
+        { text: '種類', value: 'service' },
+        { text: '名前', value: 'name' },
       ]
 
       if (this.isStaff) {
         return [
           { text: 'action', value: 'action', sortable: false },
-          { text: 'チーム名', value: 'team.displayName' },
+          { text: 'ユーザ名', value: 'team.displayName' },
           { text: '状態', value: 'status' },
           ...commons,
           { text: '更新時刻', value: 'updatedAtSimple' },
           { text: '運営用メモ', value: 'secretText' },
         ]
       } else {
-        return [{ text: '共通', value: 'team', align: 'center' }, ...commons]
+        // JANOG47 NETCON では使用しない
+        // return [{ text: '共通', value: 'team', align: 'center' }, ...commons]
+        return commons;
       }
     },
   },

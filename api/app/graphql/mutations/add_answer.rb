@@ -17,6 +17,10 @@ module Mutations
       answer = Answer.new
 
       if answer.update(args.merge(bodies: bodies, confirming: false, team: self.current_team!))
+        pes = ProblemEnvironment.lock.where(problem_id: problem_id, status: "UNDER_CHALLENGE", team: self.current_team!)
+        raise RecordNotExists.new(ProblemEnvironment, problem_id: problem_id, status: "UNDER_CHALLENGE", team_id: self.current_team!.id) if pes.empty?
+        pes.each { |pe| pe.update!(status: "UNDER_SCORING") }
+
         # TODO: answer.gradeをジョブで実行する -> after create hook
         answer.grade(percent: nil)
         Notification.notify(mutation: self.graphql_name, record: answer)

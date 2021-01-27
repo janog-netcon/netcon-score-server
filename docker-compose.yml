@@ -2,7 +2,7 @@ version: '3'
 
 services:
   api:
-    image: upluse10/ictsc-score-server:api
+    image: kyontan/netcon-score-server:api
     env_file: .env
     build:
       context: api/
@@ -27,7 +27,7 @@ services:
       '
 
   ui:
-    image: upluse10/ictsc-score-server:ui
+    image: kyontan/netcon-score-server:ui
     env_file: .env
     build:
       context: ui/
@@ -52,12 +52,13 @@ services:
     ports: ['127.0.0.1:8903:6379']
 
   yamllint:
-    image: upluse10/ictsc-score-server:yamllint
+    image: kyontan/netcon-score-server:yamllint
     build:
       context: yamllint/
     volumes:
       - './:/usr/src/app'
-    command: yamllint -c /usr/src/app/.yamllint /usr/src/app
+    command: echo "yamllint is disabled"
+    # command: yamllint -c /usr/src/app/.yamllint /usr/src/app
 
   push:
     image: openfresh/plasma:0.2.2
@@ -65,3 +66,25 @@ services:
     depends_on:
       - redis
     ports: ['127.0.0.1:8904:8080']
+
+  vmdb-api:
+    image: kyontan/netcon-score-server:vmdb-api
+    environment:
+      - DEBUG=1
+    env_file: .env
+    build:
+      context: vmdb-api/
+    depends_on:
+      - db
+    ports: ['127.0.0.1:8905:8080']
+
+  vm-management-service:
+    image: kyontan/netcon-score-server:vm-management-service
+    ports: ['127.0.0.1:8951:80', '127.0.0.1:8950:81']
+    environment:
+      - FLASK_APP=app.py
+      - 'RUN=flask run --host=0.0.0.0 --port=81'
+    tty: true
+    volumes:
+      - './vm-management-service-conf-d:/etc/nginx/conf.d'
+      - './vm-management-service-log:/var/log'

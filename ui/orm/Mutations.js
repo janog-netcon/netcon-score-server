@@ -59,7 +59,7 @@ export default class Mutations extends BaseModel {
 
         // レスポンスから取得したモデルとレコードを関数に渡す
         if (Array.isArray(value)) {
-          value.forEach((v) => func(model, value))
+          value.forEach((v) => func(model, v))
         } else {
           func(model, value)
         }
@@ -274,6 +274,38 @@ export default class Mutations extends BaseModel {
       mutation: 'deleteProblemEnvironment',
       params: { problemEnvironmentId },
       fields: [orm.ProblemEnvironment],
+      type: 'delete',
+    })
+  }
+
+  static acquireProblemEnvironment ({
+    action,
+    resolve,
+    params: {
+      problemId
+    },
+  }) {
+    return this.sendMutation({
+      action,
+      resolve,
+      mutation: 'acquireProblemEnvironment',
+      params: { problemId },
+      fields: [[orm.ProblemEnvironment]],
+      type: 'upsert',
+    })
+  }
+
+  static abandonProblemEnvironment ({
+    action,
+    resolve,
+    params: { problemId },
+  }) {
+    return this.sendMutation({
+      action,
+      resolve,
+      mutation: 'abandonProblemEnvironment',
+      params: { problemId },
+      fields: [[orm.ProblemEnvironment]],
       type: 'delete',
     })
   }

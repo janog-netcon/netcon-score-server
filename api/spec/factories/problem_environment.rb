@@ -4,12 +4,22 @@ FactoryBot.define do
   factory :problem_environment do
     # composite primary key
     sequence(:name) {|n| "server#{n}" }
-    sequence(:service) { %w[SSH VNC Telnet].fetch(Random.rand(3)) }
+    sequence(:service) { %w[SSH HTTP HTTPS].sample }
     team { nil }
     problem { nil }
 
-    # IN_WAITING_FOR_START IN_FILE_COPYING IN_INITIALIZE INITIALIZED IN_PLANNING PLANNED IN_APPLYING APPLIED IN_DESTROYING DESTROYED FAILED
-    status { %w[APPLIED IN_DESTROYING PLANNED].sample }
+    # CREATING RUNNING DESTROYING DESTROYED
+    external_status { %w[PROVISIONING RUNNING STOPPING].sample } # PROVISIONING STAGING RUNNING STOPPING REPAIRING TERMINATED SUSPENDED SUSPENDING
+    status {
+      case external_status
+      when "PROVISIONING", "STAGING"
+        "NOT_READY"
+      when "STOPPING", "REPAIRING", "TERMINATED", "SUSPENDED", "SUSPENDING"
+        "ABANDONED"
+      else # RUNNING
+        %w[READY UNDER_CHALLENGE].sample
+      end
+    } # NOT_READY READY UNDER_CHALLENGE UNDER_SCORING ABANDONED
     sequence(:host) {|n| "host#{n}.local" }
     sequence(:user) {|n| "user#{n}" }
     sequence(:password) {|n| "password#{n}" }

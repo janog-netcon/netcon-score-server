@@ -8,7 +8,7 @@
     <v-row justify="center">
       <v-col cols="auto">
         <export-import-buttons
-          label="チーム一覧"
+          label="ユーザ一覧"
           filename-prefix="teams"
           :fetch="fetchTeams"
           :apply="applyTeam"
@@ -57,7 +57,7 @@
       <v-col class="fixed-width">
         <item-select-button
           :fetch="fetchTeams"
-          label="チーム 追加・編集"
+          label="ユーザ 追加・編集"
           item-text="displayName"
         >
           <template v-slot="{ item, isNew }">

@@ -23,6 +23,14 @@
     <!-- 問題情報 -->
     <info-chips-area :problem="problem" class="mt-2 ml-0" />
 
+
+    <!-- 問題環境の作成・削除 -->
+    <problem-environment-operation
+      :problem="problem"
+      :environments="problem.environments"
+      class="py-2"
+    />
+
     <!-- 補足 -->
     <supplement-area
       v-if="problem.supplements.length !== 0 || isStaff"
@@ -61,6 +69,7 @@ import PenButton from '~/components/commons/PenButton'
 import EnvironmentArea from '~/components/problems/id/EnvironmentArea'
 import ProblemModal from '~/components/misc/ProblemModal'
 import InfoChipsArea from '~/components/problems/id/InfoChipsArea'
+import ProblemEnvironmentOperation from '~/components/problems/id/ProblemEnvironmentOperation'
 import SupplementArea from '~/components/problems/id/SupplementArea'
 
 export default {
@@ -71,6 +80,7 @@ export default {
     EnvironmentArea,
     ProblemModal,
     InfoChipsArea,
+    ProblemEnvironmentOperation,
     SupplementArea,
   },
   props: {

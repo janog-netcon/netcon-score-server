@@ -49,7 +49,7 @@ module Readable
       when 'ProblemBody'
         %w[corrects genre] if team.player?
       when 'ProblemEnvironment'
-        %w[secret_text] unless team.staff?
+        %w[external_status secret_text machine_image_name project zone] unless team.staff?
       when 'Team'
         list = %w[password_digest]
         list << 'secret_text' unless team.staff?
@@ -106,8 +106,9 @@ module Readable
         # グローバル問題で共通の環境を作ることがあるため、audienceには完全非公開
         return none if team.audience?
 
-        # playerには展開が完了した問題環境しか見せない
-        where(team: [team, nil], problem: Problem.opened(team: team)) # , status: 'APPLIED')
+        # playerには割り当てられた問題環境しか見せない
+        # NOTE: 'UNDER_SCORING' 状態のVMは見えないことが望ましいが、採点中のVMがあることをUIが知るすべとして暫定的にこうしている
+        where(team: team, problem: Problem.opened(team: team), status: ['UNDER_CHALLENGE', 'UNDER_SCORING'])
       when 'Team'
         # 自分以下の権限のチームを取得できる
         where(role: -Float::INFINITY..Team.roles[team.role])

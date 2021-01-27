@@ -8,7 +8,7 @@
 
       <!-- 右の質問・解答パネル -->
       <v-col cols="6" class="py-0">
-        <!-- チーム名&セレクタ -->
+        <!-- ユーザ名&セレクタ -->
         <v-overflow-btn
           v-if="isNotPlayer"
           v-model="selectedTeamId"
@@ -16,7 +16,7 @@
           :items="teams"
           item-text="displayName"
           item-value="id"
-          label="チーム選択"
+          label="ユーザ選択"
           auto-select-first
           clearable
           editable
@@ -181,7 +181,7 @@ export default {
   },
   methods: {
     hashTailTeamId() {
-      // プレイヤーならURL末尾にチームIDを付与しない
+      // プレイヤーならURL末尾にユーザIDを付与しない
       // playerではselectedTeamId === currentTeamId
 
       // fetchCurrentSession中だとrole判定ができないので応急処置

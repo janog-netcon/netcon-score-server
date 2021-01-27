@@ -39,7 +39,7 @@
               :readonly="sending"
               :disabled="!isNew"
               :rules="isNew ? numberRules : []"
-              label="チーム番号"
+              label="ユーザ番号"
               only-integer
               class="pt-4"
             />
@@ -48,7 +48,7 @@
               v-model="name"
               :readonly="sending"
               :rules="nameRules"
-              label="チーム名"
+              label="ユーザ名"
             />
 
             <v-text-field
@@ -147,7 +147,7 @@ export default {
   },
   computed: {
     modalTitle() {
-      return this.isNew ? 'チーム追加' : 'チーム編集'
+      return this.isNew ? 'ユーザ追加' : 'ユーザ編集'
     },
   },
   watch: {
@@ -173,7 +173,7 @@ export default {
     },
     // -- END --
 
-    // 既に全チームがfetchされている必要がある
+    // 既に全ユーザがfetchされている必要がある
     isUniqueName(name) {
       const sameNameTeams = orm.Team.query().where('name', name).get()
 

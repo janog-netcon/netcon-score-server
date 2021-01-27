@@ -12,8 +12,8 @@
 
       <v-col cols="3" class="py-0">
         <flow-item
-          :title="`運営が採点 (最速${gradingDelayString})`"
-          :body="`解答後${gradingDelayString}間は再解答できません`"
+          :title="`運営が採点`"
+          :body="`採点に時間がかかる場合があります`"
         />
       </v-col>
 

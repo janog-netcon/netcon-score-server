@@ -14,7 +14,7 @@ require 'action_controller/railtie'
 # require 'action_text/engine'
 # require 'action_view/railtie'
 # require 'action_cable/engine'
-# require 'sprockets/railtie'
+require 'sprockets/railtie'
 # require 'rails/test_unit/railtie'
 
 # Require the gems listed in Gemfile, including any gems
@@ -51,5 +51,8 @@ module Api
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    config.vm_manegement_service_uri = ENV.fetch("VM_MANAGEMENT_SERVICE_URI", "http://127.0.0.1:8950/")
+    config.vm_manegement_service_token = ENV.fetch("VM_MANAGEMENT_SERVICE_TOKEN", nil)
   end
 end

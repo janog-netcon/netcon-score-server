@@ -179,6 +179,7 @@ class Config < ApplicationRecord
         competition_time: competition_time,
 
         # そのまま
+        registration_code: registration_code,
         competition_stop: competition_stop,
         all_problem_force_open_at: all_problem_force_open_at,
         grading_delay_sec: grading_delay_sec,
@@ -190,6 +191,9 @@ class Config < ApplicationRecord
       }
     end
   end
+
+  # netcon
+  record_accessor :registration_code
 
   # 1日目午前, 午後, ...
   record_accessor :competition_section1_start_at

@@ -138,7 +138,7 @@ class Notification
         ]
       # when 'DeleteAttachment', 'DeleteCategory', 'DeleteProblem', 'DeleteProblemEnvironment', 'DeleteSession', 'DeleteNotice', 'DeleteProblemSupplement', 'DeleteIssueComment'
       else
-        raise UnhandledClass, mutation.graphql_name
+        raise UnhandledClass, mutation
       end
     end
 
@@ -168,7 +168,7 @@ class Notification
         problem = issue.problem
 
         <<~MSG
-          #{problem.writer}質問追加
+          #{problem.writer} 質問追加
           #{build_team_and_problem_summary(team: issue.team, problem: problem)}
         MSG
       else

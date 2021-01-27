@@ -1,6 +1,6 @@
 FROM ruby:2.7.0-alpine3.11
 
-LABEL maintainer "ICTSC"
+LABEL maintainer "JANOG NETCON"
 
 ENV LANG ja_JP.UTF-8
 ENV LC_ALL ja_JP.UTF-8

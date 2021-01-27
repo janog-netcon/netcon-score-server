@@ -4,6 +4,7 @@ module ConfigHelpers
   module_function
 
   def set_configs! # rubocop:disable Metrics/MethodLength
+    Config.create!(key: :registration_code,              value_type: :string,  value: SecureRandom.alphanumeric)
     Config.create!(key: :competition_section1_start_at,  value_type: :date,    value: Time.zone.parse('2012-09-03 10:00:00 +0900'))
     Config.create!(key: :competition_section1_end_at,    value_type: :date,    value: Time.zone.parse('2112-09-03 12:00:00 +0900'))
     Config.create!(key: :competition_section2_start_at,  value_type: :date,    value: Time.zone.parse('2112-09-03 13:00:00 +0900'))

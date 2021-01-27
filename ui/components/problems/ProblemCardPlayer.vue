@@ -4,7 +4,7 @@
     <template v-if="problem.isReadable">
       <!-- タイトル -->
       <v-row no-gutters class="flex-nowrap">
-        <div class="truncate-clamp2" style="height: 3.4em">
+        <div class="truncate-clamp2" style="height: 3em; font-size: 1.4em">
           {{ problem.title }}
         </div>
       </v-row>
@@ -114,38 +114,23 @@ export default {
       return `${this.maxScoreAnswer.percent}% ${this.maxScoreAnswer.point}/${this.problem.perfectPoint}点`
     },
     currentState() {
-      if (this.inResetting) {
-        this.changeColor('warning lighten-2')
-        return 'リセット中'
-      } else if (this.problem.answers.length === 0) {
+      if (this.problem.answers.length === 0) {
         this.changeColor('')
         return '未解答'
-      } else if (this.unscoredAnswers.length === 0) {
-        this.changeColor('')
-        return '採点中'
       } else if (this.maxScoreAnswer && this.maxScoreAnswer.percent >= 100) {
         this.changeColor('success lighten-1')
         return '満点'
+      } else if (this.unscoredAnswers.length != 0) {
+        this.changeColor('#bfbfbf')
+        return '採点中'
       } else {
-        this.changeColor('')
-        return '解答済み'
+        this.changeColor('cyan')
+        return '採点済み'
       }
       // 未突破 基準突破
     },
     currentAnswerable() {
-      // 解答可能か
-      if (this.inGrading || this.inResetting) {
-        const count = this.timeSimpleStringJp(
-          Math.max(
-            this.latestAnswerDelayFinishInSec,
-            this.latestPenaltyDelayFinishInSec
-          )
-        )
-
-        return `解答・リセット可能まで${count}`
-      } else {
-        return '解答・リセット可能'
-      }
+        return ``
     },
   },
   methods: {
