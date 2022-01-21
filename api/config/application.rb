@@ -54,5 +54,9 @@ module Api
 
     config.vm_manegement_service_uri = ENV.fetch("VM_MANAGEMENT_SERVICE_URI", "http://127.0.0.1:8950/")
     config.vm_manegement_service_token = ENV.fetch("VM_MANAGEMENT_SERVICE_TOKEN", nil)
+
+    # config for local problem
+    config.local_problem_code = "aki-02"
+    config.local_problem_answer = "123456789"
   end
 end

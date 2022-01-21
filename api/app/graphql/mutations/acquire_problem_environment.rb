@@ -17,6 +17,13 @@ module Mutations
       args = { problem: problem }
       Acl.permit!(mutation: self, args: args)
 
+      # JANOG49 bypass local problem
+      Rails.logger.debug(problem.code)
+      Rails.logger.debug(Rails.configuration.local_problem_code)
+      if problem.code == Rails.configuration.local_problem_code
+        return { problem_environments: nil }
+      end
+
       # NOTE: ここはトランザクション外なので、同時に2つのリクエストが来たときは、ここで引っかからない
       if ProblemEnvironment.exists?(problem_id: problem_id, team: self.current_team!, status: "UNDER_CHALLENGE")
         raise ProblemEnvironmentAlreadyAssigned.new(self.current_team!, problem_id)
