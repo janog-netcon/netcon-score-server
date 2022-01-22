@@ -15,6 +15,7 @@ module Mutations
       Acl.permit!(mutation: self, args: args)
 
       answer = Answer.new
+
       if answer.update(args.merge(bodies: bodies, confirming: false, team: self.current_team!))
         # for local problem
         if Config.local_problem_codes.split(",").exclude?(problem.code)
