@@ -11,19 +11,11 @@ module Mutations
       answer = Answer.find_by(id: answer_id)
       raise RecordNotExists.new(Answer, id: answer_id) if answer.nil?
 
-      problem = Problem.find_by(id: answer.problem_id)
-      raise RecordNotExists.new(Problem, id: problem_id) if problem.nil?
-
       Acl.permit!(mutation: self, args: {})
 
       # gradeでscoreレコードが作られる
       if answer.grade(percent: percent)
         Notification.notify(mutation: self.graphql_name, record: answer)
-
-        #JANOG49 bypass local problem
-        if problem.code == Rails.configuration.local_problem_code
-          return { answer: answer.readable(team: self.current_team!) }
-        end
 
         # (JANOG47 NETCON)満点の場合 (percent == 100) のときは対応する ProblemEnvironment を削除し、同じ Problem の ProblemEnvironment を作るリクエストを叩く
         # TODO: AbandonProblemEnvironment と同じ処理をすれば良い。現状コピペ

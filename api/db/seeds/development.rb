@@ -7,6 +7,7 @@ def create_config
 
   configs = [
     { key: :registration_code,              value_type: :string,  value: SecureRandom.alphanumeric },
+    { key: :local_problem_codes,              value_type: :string,  value: "default_code" },
 
     { key: :competition_section1_start_at,  value_type: :date,    value: Time.zone.parse('2012-09-03 10:00:00') },
     { key: :competition_section1_end_at,    value_type: :date,    value: Time.zone.parse('2112-09-03 12:00:00') },

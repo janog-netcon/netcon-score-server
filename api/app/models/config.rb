@@ -180,6 +180,7 @@ class Config < ApplicationRecord
 
         # そのまま
         registration_code: registration_code,
+        local_problem_codes: local_problem_codes,
         competition_stop: competition_stop,
         all_problem_force_open_at: all_problem_force_open_at,
         grading_delay_sec: grading_delay_sec,
@@ -194,6 +195,7 @@ class Config < ApplicationRecord
 
   # netcon
   record_accessor :registration_code
+  record_accessor :local_problem_codes
 
   # 1日目午前, 午後, ...
   record_accessor :competition_section1_start_at

@@ -15,29 +15,20 @@ module Mutations
       Acl.permit!(mutation: self, args: args)
 
       answer = Answer.new
-
       if answer.update(args.merge(bodies: bodies, confirming: false, team: self.current_team!))
-        # JANOG49 bypass locall problem
-	if problem.code == Rails.configuration.local_problem_code
-          if bodies[0][0] == Rails.configuration.local_problem_answer
-            answer.grade(percent: 100)
-            { answer: answer.readable(team: self.current_team!) }
-          else
-            answer.grade(percent: 0)
-            { answer: answer.readable(team: self.current_team!) }
-          end
-        else
+        # for local problem
+        if Config.local_problem_codes.split(",").exclude?(problem.code)
           pes = ProblemEnvironment.lock.where(problem_id: problem_id, status: "UNDER_CHALLENGE", team: self.current_team!)
           raise RecordNotExists.new(ProblemEnvironment, problem_id: problem_id, status: "UNDER_CHALLENGE", team_id: self.current_team!.id) if pes.empty?
           pes.each { |pe| pe.update!(status: "UNDER_SCORING") }
-
-          # TODO: answer.gradeをジョブで実行する -> after create hook
-          answer.grade(percent: nil)
-          Notification.notify(mutation: self.graphql_name, record: answer)
-
-          # gradeでcacheにscoreが残るためreloadして消す
-          { answer: answer.reload.readable(team: self.current_team!) }
         end
+
+        # TODO: answer.gradeをジョブで実行する -> after create hook
+        answer.grade(percent: nil)
+        Notification.notify(mutation: self.graphql_name, record: answer)
+
+        # gradeでcacheにscoreが残るためreloadして消す
+        { answer: answer.reload.readable(team: self.current_team!) }
       else
         add_errors(answer)
       end

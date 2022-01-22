@@ -17,10 +17,8 @@ module Mutations
       args = { problem: problem }
       Acl.permit!(mutation: self, args: args)
 
-      # JANOG49 bypass local problem
-      Rails.logger.debug(problem.code)
-      Rails.logger.debug(Rails.configuration.local_problem_code)
-      if problem.code == Rails.configuration.local_problem_code
+      # for local problem
+      if Config.local_problem_codes.split(",").include?(problem.code)
         return { problem_environments: nil }
       end
 
