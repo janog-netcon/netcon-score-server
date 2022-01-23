@@ -17,6 +17,11 @@ module Mutations
       args = { problem: problem }
       Acl.permit!(mutation: self, args: args)
 
+      # for local problem
+      if Config.local_problem_codes.split(",").include?(problem.code)
+        return { problem_environments: nil }
+      end
+
       # NOTE: ここはトランザクション外なので、同時に2つのリクエストが来たときは、ここで引っかからない
       if ProblemEnvironment.exists?(problem_id: problem_id, team: self.current_team!, status: "UNDER_CHALLENGE")
         raise ProblemEnvironmentAlreadyAssigned.new(self.current_team!, problem_id)
