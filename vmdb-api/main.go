@@ -99,7 +99,7 @@ func main() {
 	}
 	dbUser := lookupEnvOrExit("POSTGRES_USER")
 	dbPassword := lookupEnvOrExit("POSTGRES_PASSWORD")
-	dbDatabase := lookupEnvOrExit("POSTGRES_DATABASE")
+	dbDatabase := lookupEnvOrExit("POSTGRES_DB")
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", dbHost, dbPort, dbUser, dbPassword, dbDatabase)
 
 	var err error
