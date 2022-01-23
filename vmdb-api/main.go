@@ -88,6 +88,7 @@ func main() {
 	e.GET("/problem-environments/:name", getProblemEnvironment)
 	e.POST("/problem-environments", createOrUpdateProblemEnvironment)
 	e.DELETE("/problem-environments/:name", deleteProblemEnvironment)
+	e.GET("/answer-id", getAnswerId)
 
 	// export POSTGRES_HOST=localhost POSTGRES_PORT=8902 POSTGRES_USER=postgres POSTGRES_PASSWORD=postgres POSTGRES_DATABASE=development
 
@@ -257,4 +258,36 @@ func deleteProblemEnvironment(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusNoContent)
+}
+
+type Answer struct {
+	ID               string       `db:"id" json:"answer_id"`
+}
+
+// answer_id is required for auto-scoring
+func getAnswerId(c echo.Context) error {
+	problem_id := c.QueryParam("problem_id")
+	name := c.QueryParam("name")
+
+	pes := Answer{}
+
+	q := `
+        SELECT answers.id
+        FROM problem_environments INNER JOIN answers ON (answers.team_id=problem_environments.team_id and answers.problem_id=problem_environments.problem_id)
+        WHERE problem_environments.problem_id=$1 and problem_environments.name=$2 ORDER BY answers.created_at DESC;
+        `
+
+	err := db.Get(&pes, db.Rebind(q), problem_id, name)
+	if err != nil {
+		c.Echo().Logger.Errorf("Failed to get query result", err)
+		errMsg := fmt.Sprintf("Failed to get query result: %v", err)
+		return c.String(http.StatusInternalServerError, errMsg)
+	}
+
+	var b bytes.Buffer
+	encoder := json.NewEncoder(&b)
+	encoder.SetEscapeHTML(false)
+	encoder.Encode(pes)
+
+	return c.JSONBlob(http.StatusOK, b.Bytes())
 }
