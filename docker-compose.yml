@@ -41,6 +41,8 @@ services:
   db:
     image: postgres:11.3-alpine
     env_file: .env
+    volumes:
+      - 'pgdata:/var/lib/postgresql/data'
     stdin_open: true
     tty: true
     ports: ['127.0.0.1:8902:5432']
@@ -88,3 +90,6 @@ services:
     volumes:
       - './vm-management-service-conf-d:/etc/nginx/conf.d'
       - './vm-management-service-log:/var/log'
+
+volumes:
+  pgdata:
