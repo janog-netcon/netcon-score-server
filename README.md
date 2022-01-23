@@ -1,7 +1,7 @@
 NETCON Score Server
 ---
 
-The contest site for [JANOG47 NETCON](https://www.janog.gr.jp/meeting/janog47/).
+The contest site for [JANOG49 NETCON](https://www.janog.gr.jp/meeting/janog49).
 
 It's called also *score server*.  The main feature of this is to propose problem and marking.
 

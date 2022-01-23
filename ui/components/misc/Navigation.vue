@@ -1,13 +1,30 @@
 <template>
   <v-app-bar app dense color="secondary">
-    <navigation-link to="/" active-class="">
+    <navigation-link to="/" active-class="" class="mr-2 ml-1">
       <v-img
-        :src="require('~/assets/img/janog47_logo_resized_48.png')"
-        width="18em"
-        alt="JANOG47"
-        class="mx-2"
+        :src="require('~/assets/img/janog49_logo_96.png')"
+        height="48"
+        width="259"
+        class="my-2"
+        alt="JANOG49"
       />
     </navigation-link>
+
+    <div style="font-weight: bold; margin-top: auto; margin-bottom: 5px; margin-left: 5px;">Sponsored by:</div>
+    <v-btn href="https://www.ntt.com/index.html" class="black--text mr-1 px-0" tile text height="48px" min-width="106px">
+      <img
+        :src="require('~/assets/img/janog49_docomobusiness_96.png')"
+        height="48"
+        alt="NTTコミュニケーションズ"
+      />
+    </v-btn>
+    <v-btn href="https://www.haradacorp.co.jp/" class="black--text mr-1 px-0" tile text height="48px" min-width="96px">
+      <img
+        :src="require('~/assets/img/janog49_harada_96.png')"
+        height="48"
+        alt="HARADA CORPORATION"
+      />
+    </v-btn>
 
     <v-spacer />
 
@@ -147,4 +164,8 @@ export default {
 ::v-deep
   .v-toolbar__content
     padding: 0px
+
+  // よくわからんけどこれをつけるとアクティブリンクの色が直る
+  .theme--light.v-btn--active::before
+    opacity: 0
 </style>

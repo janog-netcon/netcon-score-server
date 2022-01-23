@@ -13,7 +13,7 @@ export default {
       {
         hid: 'description',
         name: 'description',
-        content: 'JANOG47 NETCON スコアサーバー',
+        content: 'JANOG49 NETCON スコアサーバー',
       },
     ],
     link: [{ rel: 'icon', type: 'image/png', href: '/favicon.png' }],
