@@ -1,4 +1,4 @@
-FROM ruby:2.7.0-alpine3.11
+FROM ruby:2.7.5-alpine
 
 LABEL maintainer "JANOG NETCON"
 
