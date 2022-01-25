@@ -6,7 +6,7 @@ export default {
   },
   head: {
     title: 'スコアサーバー',
-    titleTemplate: '%s | JANOG47 NETCON',
+    titleTemplate: '%s | JANOG49 NETCON',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
