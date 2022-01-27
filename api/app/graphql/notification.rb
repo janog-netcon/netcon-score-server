@@ -179,7 +179,7 @@ class Notification
     def build_team_and_problem_summary(team:, problem:)
       <<-MSG
         問題: #{problem.code} - #{problem.body.title}
-        チーム: No#{team.number} - #{team.name}
+        チーム: No:#{team.number} - #{team.name}
       MSG
     end
   end
