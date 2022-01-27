@@ -1,32 +1,43 @@
 <template>
-  <v-app-bar app dense color="secondary">
-    <navigation-link to="/" active-class="" class="mr-2 ml-1">
+  <v-app-bar app dense color="secondary" elevation="1">
+    <navigation-link to="/" active-class="" class="mr-2 ml-2">
       <v-img
         :src="require('~/assets/img/janog49_logo_96.png')"
-        height="48"
-        width="259"
-        class="my-2"
+        height="32"
+        width="173"
+        aheight="48"
+        awidth="259"
+        class="m-2"
         alt="JANOG49"
       />
+      <div
+        style="color: #1a1a1a; font-weight: 700; font-size: 22px; line-height: 1; letter-spacing: -1px; margin: auto 10px -2px 5px;"
+      >NETCON</div>
     </navigation-link>
 
-    <div style="font-weight: bold; margin-top: auto; margin-bottom: 5px; margin-left: 5px;">Sponsored by:</div>
-    <v-btn href="https://www.ntt.com/index.html" class="black--text mr-1 px-0" tile text height="48px" min-width="106px">
+    <v-spacer />
+
+    <div
+      style="font-weight: bold; margin: auto 0 3px"
+    >Supported by:</div>
+    <v-btn href="https://www.ntt.com/index.html" class="black--text mr-1 px-0" tile text height="48px" min-width="86px">
       <img
         :src="require('~/assets/img/janog49_docomobusiness_96.png')"
-        height="48"
+        xheight="48"
+        height="34"
+        style="margin-top: auto"
         alt="NTTコミュニケーションズ"
       />
     </v-btn>
-    <v-btn href="https://www.haradacorp.co.jp/" class="black--text mr-1 px-0" tile text height="48px" min-width="96px">
+    <v-btn href="https://www.haradacorp.co.jp/" class="black--text mr-1 px-0" tile text height="48px" min-width="76px">
       <img
         :src="require('~/assets/img/janog49_harada_96.png')"
-        height="48"
+        height="34"
+        xheight="48"
+        style="margin-top: auto"
         alt="HARADA CORPORATION"
       />
     </v-btn>
-
-    <v-spacer />
 
     <template v-if="isWide">
       <navigation-link
