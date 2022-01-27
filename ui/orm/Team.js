@@ -32,7 +32,8 @@ export default class Team extends BaseModel {
   }
 
   get displayName() {
-    return `No.${this.number} ${this.name}`
+    // return `No.${this.number} ${this.name}`
+    return `${this.name}`
   }
 
   get numberStr() {
@@ -55,8 +56,8 @@ export default class Team extends BaseModel {
     return Team.all().filter((t) => t.isPlayer)
   }
 
-  // team99は毎回使われるテストユーザー
+  // debug は毎回使われるテストユーザー
   static get playersWithoutTeam99() {
-    return Team.all().filter((t) => t.isPlayer && t.name !== 'team99')
+    return Team.all().filter((t) => t.isPlayer && t.name !== 'debug' && t.organization !== 'JANOG')
   }
 }
