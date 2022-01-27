@@ -28,7 +28,7 @@ module Mutations
 
           # (再採点時など)問題VMがないこともあるので、許容する
           # raise RecordNotExists.new(ProblemEnvironment, problem_id: answer.problem_id, status: "UNDER_SCORING", team_id: answer.team_id) if pes.empty?
-          next if pes.empty?
+          next [] if pes.empty?
 
           uniq_name = pes.map(&:name).uniq
           if uniq_name.count != 1
