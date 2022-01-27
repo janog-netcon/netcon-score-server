@@ -6,23 +6,26 @@
       color="success"
       @click="acquireProblemEnvironmentVM(problem.id)"
       v-if="isSolve"
+      width="100%"
     >
-      問題を解く
+      この問題にチャレンジする (接続情報を取得します)
     </v-btn>
     <v-btn 
       contained
       color="error"
       @click="abandonProblemEnvironmentVM(problem.id)"
       v-if="isRetire"
+      width="100%"
     >
-      棄権する
+      この問題を諦める (ペナルティはありません / 再チャレンジもできます)
     </v-btn>
     <v-btn
       contained
       disabled
       v-if="isLock"
+      width="100%"
     >
-      ロック中
+      ロック中 (採点待ち、もしくは他の問題にチャレンジ中です)
     </v-btn>
   </div>
 </template>
@@ -119,7 +122,8 @@ export default {
         return false
       }
       const status = this.environments[0].status
-      if (status === "UNDER_SCORING" || status === "ABANDONED") {
+      // if (status === "UNDER_SCORING" || status === "ABANDONED") {
+      if (status === "UNDER_SCORING") {
         return true
       } else {
         return false
