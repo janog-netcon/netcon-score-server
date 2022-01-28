@@ -87,5 +87,20 @@ services:
       - './vm-management-service-conf-d:/etc/nginx/conf.d'
       - './vm-management-service-log:/var/log'
 
+  scheduler:
+    image: hnron-public.sakuracr.jp/netcon-cli:latest
+    tty: true
+    volumes:
+      - './scheduler.yaml:/scheduler.yaml'
+      - './scheduler-log:/scheduler-log'
+    command: ["scheduler", "start", "--config", "/scheduler.yaml", "--log-file-path", "/scheduler-log/scheduler.log"]
+    # oneshotで実行する場合
+    #command: ["scheduler", "start", "--config", "/scheduler.yaml", "--oneshot"]
+
+  exporter:
+    image: kyontan/netcon-score-server-exporter:latest
+    env_file: .env
+    ports: ['127.0.0.1:8906:4567']
+
 volumes:
   pgdata:
