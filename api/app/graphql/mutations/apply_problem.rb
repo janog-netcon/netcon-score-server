@@ -41,6 +41,8 @@ module Mutations
       unless category_code.nil?
         category = Category.find_by(code: category_code)
         raise RecordNotExists.new(Category, code: category_code) if category.nil?
+      else
+        category = Category.first rescue nil
       end
 
       unless previous_problem_code.nil?
