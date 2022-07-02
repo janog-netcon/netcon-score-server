@@ -6,14 +6,14 @@ export default {
   },
   head: {
     title: 'スコアサーバー',
-    titleTemplate: '%s | JANOG49 NETCON',
+    titleTemplate: '%s | JANOG50 NETCON',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       {
         hid: 'description',
         name: 'description',
-        content: 'JANOG49 NETCON スコアサーバー',
+        content: 'JANOG50 NETCON スコアサーバー',
       },
     ],
     link: [{ rel: 'icon', type: 'image/png', href: '/favicon.png' }],

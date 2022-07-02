@@ -2,13 +2,13 @@
   <v-app-bar app dense color="secondary" elevation="1">
     <navigation-link to="/" active-class="" class="mr-2 ml-2">
       <v-img
-        :src="require('~/assets/img/janog49_logo_96.png')"
+        :src="require('~/assets/img/janog50_logo.png')"
         height="32"
-        width="173"
+        width="185"
         aheight="48"
-        awidth="259"
+        awidth="275"
         class="m-2"
-        alt="JANOG49"
+        alt="JANOG50"
       />
       <div
         style="color: #1a1a1a; font-weight: 700; font-size: 22px; line-height: 1; letter-spacing: -1px; margin: auto 10px -2px 5px;"
@@ -20,22 +20,22 @@
     <div
       style="font-weight: bold; margin: auto 0 3px"
     >Supported by:</div>
-    <v-btn href="https://www.ntt.com/index.html" class="black--text mr-1 px-0" tile text height="48px" min-width="86px">
-      <img
-        :src="require('~/assets/img/janog49_docomobusiness_96.png')"
-        xheight="48"
-        height="34"
-        style="margin-top: auto"
-        alt="NTTコミュニケーションズ"
-      />
-    </v-btn>
     <v-btn href="https://www.haradacorp.co.jp/" class="black--text mr-1 px-0" tile text height="48px" min-width="76px">
       <img
-        :src="require('~/assets/img/janog49_harada_96.png')"
+        :src="require('~/assets/img/janog50_harada_96.png')"
         height="34"
         xheight="48"
         style="margin-top: auto"
         alt="HARADA CORPORATION"
+      />
+    </v-btn>
+    <v-btn href="https://www.seikoh-giken.co.jp/" class="black--text mr-1 px-0" tile text height="48px" min-width="154px">
+      <img
+        :src="require('~/assets/img/janog50_seikoh_giken_96.png')"
+        xheight="48"
+        height="34"
+        style="margin-top: auto"
+        alt="株式会社 精工技研"
       />
     </v-btn>
 
