@@ -60,7 +60,7 @@ module Mutations
           Rails.logger.error "DELETE request to vm-management-service failed, name: #{name}, res: #{res}"
         end
       rescue RestClient::ExceptionWithResponse => e
-        Rails.logger.error "DELETE request to vm-management-service failed, payload: #{delete_payload}, code: #{e.code}, res: #{e.response}"
+        Rails.logger.error "DELETE request to vm-management-service failed, payload: #{delete_payload}, code: #{e.http_code}, res: #{e.response}"
       end
 
       # 同じ問題の VM を再作成する
@@ -73,7 +73,7 @@ module Mutations
           Rails.logger.error "POST request to vm-management-service failed, problem_id: #{problem_id}, machine_image_name: #{machine_image_name}, res: #{res}"
         end
       rescue RestClient::ExceptionWithResponse => e
-        Rails.logger.error "POST request to vm-management-service failed, payload: #{post_payload}, code: #{e.code}, res: #{e.response}"
+        Rails.logger.error "POST request to vm-management-service failed, payload: #{post_payload}, code: #{e.http_code}, res: #{e.response}"
       end
 
       Notification.notify(mutation: self.graphql_name, record: pes) unless silent

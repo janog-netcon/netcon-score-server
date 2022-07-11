@@ -66,10 +66,10 @@ module Mutations
             res = RestClient::Request.execute(method: :delete, url: uri.to_s, payload: delete_payload.to_json, headers: headers)
             unless (200..299) === res.code
               # NOTE: 失敗したらあとで消せば良い
-              Rails.logger.error "DELETE request to vm-management-service failed, name: #{name}, res: #{res}"
+              Rails.logger.error "DELETE request to vm-management-service failed, #{uri}, payload: #{delete_payload.to_json}, name: #{name}, res: #{res}"
             end
           rescue RestClient::ExceptionWithResponse => e
-            Rails.logger.error "DELETE request to vm-management-service failed, payload: #{delete_payload}, code: #{e.code}, res: #{e.response}"
+            Rails.logger.error "DELETE request to vm-management-service failed, #{uri}, payload: #{delete_payload.to_json}, name: #{name}, res: #{res}"
           end
 
           # 同じ問題の VM を再作成する
