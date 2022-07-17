@@ -8,7 +8,7 @@ class Notification
       Rails.logger.debug { "Notification published #{mutation}".green }
 
       slack_message = build_slack_message(mutation: mutation, record: record)
-      SlackNotifierJob.perform_later(slack_message) if slack_message.present?
+      SlackNotifierJob.perform_later(slack_message, mutation: mutation) if slack_message.present?
 
       # 非同期通知が原因でリクエストが失敗しないようにする
     rescue StandardError => e
