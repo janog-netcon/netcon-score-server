@@ -151,11 +151,10 @@ class Notification
 
       case mutation
       when 'AddAnswer'
-        # TODO: ホスト名がハードコードされているのを環境変数か何かで解消する
         <<~MSG
           #{record.problem.writer} 解答提出
           #{build_team_and_problem_summary(team: record.team, problem: record.problem)}
-          リンク: https://netcon.janog.gr.jp/problems/#{record.problem_id}#answers=#{record.team_id}
+          リンク: #{Rails.application.config.score_server_domain}/problems/#{record.problem_id}#answers=#{record.team_id}
         MSG
       when 'AddPenalty'
         # メンションしない
