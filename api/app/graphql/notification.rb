@@ -171,6 +171,7 @@ class Notification
         <<~MSG
           #{problem.writer} 質問追加
           #{build_team_and_problem_summary(team: issue.team, problem: problem)}
+          リンク: #{Rails.application.config.score_server_domain}/problems/#{record.problem_id}#issues=#{record.team_id}
         MSG
       else
         nil
