@@ -8,7 +8,7 @@ class Notification
       Rails.logger.debug { "Notification published #{mutation}".green }
 
       slack_message = build_slack_message(mutation: mutation, record: record)
-      SlackNotifierJob.perform_later(slack_message) if slack_message.present?
+      SlackNotifierJob.perform_later(slack_message, mutation: mutation) if slack_message.present?
 
       # 非同期通知が原因でリクエストが失敗しないようにする
     rescue StandardError => e
@@ -151,11 +151,10 @@ class Notification
 
       case mutation
       when 'AddAnswer'
-        # TODO: ホスト名がハードコードされているのを環境変数か何かで解消する
         <<~MSG
           #{record.problem.writer} 解答提出
           #{build_team_and_problem_summary(team: record.team, problem: record.problem)}
-          リンク: https://netcon.janog.gr.jp/problems/#{record.problem_id}#answers=#{record.team_id}
+          リンク: #{Rails.application.config.score_server_domain}/problems/#{record.problem_id}#answers=#{record.team_id}
         MSG
       when 'AddPenalty'
         # メンションしない
@@ -172,6 +171,7 @@ class Notification
         <<~MSG
           #{problem.writer} 質問追加
           #{build_team_and_problem_summary(team: issue.team, problem: problem)}
+          リンク: #{Rails.application.config.score_server_domain}/problems/#{record.problem_id}#issues=#{record.team_id}
         MSG
       else
         nil
