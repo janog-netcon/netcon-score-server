@@ -150,3 +150,6 @@ __pycache__/
 var.yml
 deploy_ready_output
 env.yaml
+
+vm-management-service-conf-d/*
+vm-management-service-log/*
