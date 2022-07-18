@@ -8,11 +8,10 @@
 class SlackNotifierJob < ApplicationJob
   queue_as :default
 
-  def perform(message, mutation)
-    return if Rails.application.config.slack_webhook_url.blank? or RaRails.application.config.slack_answer_channel or Rails.application.config.slack_question_channel
-
+  def perform(message, mutation:)
+    return if Rails.application.config.slack_webhook_url.blank? or Rails.application.config.slack_answer_channel.blank? or Rails.application.config.slack_question_channel.blank?
     case mutation
-    when "AddAnswer"
+    when 'AddAnswer'
       notifier = Slack::Notifier.new(Rails.application.config.slack_webhook_url) do
         defaults channel: Rails.application.config.slack_answer_channel
       end
@@ -20,7 +19,7 @@ class SlackNotifierJob < ApplicationJob
       notifier = Slack::Notifier.new(Rails.application.config.slack_webhook_url) do
         defaults channel: Rails.application.config.slack_question_channel
       end
-
+    end
     notifier.ping(message)
   end
 end

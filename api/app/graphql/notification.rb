@@ -167,11 +167,10 @@ class Notification
 
         issue = record.issue
         problem = issue.problem
-
         <<~MSG
           #{problem.writer} 質問追加
           #{build_team_and_problem_summary(team: issue.team, problem: problem)}
-          リンク: #{Rails.application.config.score_server_domain}/problems/#{record.problem_id}#issues=#{record.team_id}
+          リンク: #{Rails.application.config.score_server_domain}/problems/#{issue.problem_id}#issues=#{issue.team_id}
         MSG
       else
         nil
