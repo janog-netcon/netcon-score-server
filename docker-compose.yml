@@ -80,38 +80,38 @@ services:
       - db
     ports: ['127.0.0.1:8905:8080']
 
-  vm-management-service:
-    image: kyontan/netcon-score-server:vm-management-service
-    ports: ['127.0.0.1:8951:80', '127.0.0.1:8950:81']
-    volumes:
-      - './vm-management-service-conf-d:/etc/nginx/conf.d'
-      - './vm-management-service-log:/var/log'
+  #vm-management-service:
+  #  image: kyontan/netcon-score-server:vm-management-service
+  #  ports: ['127.0.0.1:8951:80', '127.0.0.1:8950:81']
+  #  volumes:
+  #    - './vm-management-service-conf-d:/etc/nginx/conf.d'
+  #    - './vm-management-service-log:/var/log'
 
-  scheduler:
-    image: kyontan/netcon-score-server:scheduler
-    tty: true
-    volumes:
-      - './scheduler.yaml:/scheduler.yaml'
-      - './scheduler-log:/scheduler-log'
-    command: ["scheduler", "start", "--config", "/scheduler.yaml", "--log-file-path", "/scheduler-log/scheduler.log"]
-    # oneshotで実行する場合
-    #command: ["scheduler", "start", "--config", "/scheduler.yaml", "--oneshot"]
+  #scheduler:
+  #  image: kyontan/netcon-score-server:scheduler
+  #  tty: true
+  #  volumes:
+  #    - './scheduler.yaml:/scheduler.yaml'
+  #    - './scheduler-log:/scheduler-log'
+  #  command: ["scheduler", "start", "--config", "/scheduler.yaml", "--log-file-path", "/scheduler-log/scheduler.log"]
+  #  # oneshotで実行する場合
+  #  #command: ["scheduler", "start", "--config", "/scheduler.yaml", "--oneshot"]
 
-  coordinator:
-    image: kyontan/netcon-score-server:coordinator
-    tty: true
-    volumes:
-      - './networkcontest-58d9c7749479.json:/var/app/creds.json'
-    environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/var/app/creds.json
-    command: ["--auth_type", "sa", "--project", "networkcontest", "--zones", "asia-northeast1-b", "asia-northeast2-a", "asia-east1-b", "--vmdb_url", "http://vmdb-api:8080", "--loop", "true", "--loop_interval", "60"]
-    # dry_runしてinterval10秒
-    #command: ["--dry_run", "true", "--auth_type", "sa", "--project", "networkcontest", "--zones", "asia-northeast1-b", "asia-northeast2-a", "asia-east1-b", "--vmdb_url", "http://vmdb-api:8080", "--loop", "true", "--loop_interval", "10"]
+  #coordinator:
+  #  image: kyontan/netcon-score-server:coordinator
+  #  tty: true
+  #  volumes:
+  #    - './networkcontest-58d9c7749479.json:/var/app/creds.json'
+  #  environment:
+  #    - GOOGLE_APPLICATION_CREDENTIALS=/var/app/creds.json
+  #  command: ["--auth_type", "sa", "--project", "networkcontest", "--zones", "asia-northeast1-b", "asia-northeast2-a", "asia-east1-b", "--vmdb_url", "http://vmdb-api:8080", "--loop", "true", "--loop_interval", "60"]
+  #  # dry_runしてinterval10秒
+  #  #command: ["--dry_run", "true", "--auth_type", "sa", "--project", "networkcontest", "--zones", "asia-northeast1-b", "asia-northeast2-a", "asia-east1-b", "--vmdb_url", "http://vmdb-api:8080", "--loop", "true", "--loop_interval", "10"]
 
-  exporter:
-    image: kyontan/netcon-score-server-exporter:latest
-    env_file: .env
-    ports: ['127.0.0.1:8906:4567']
+  #exporter:
+  #  image: kyontan/netcon-score-server-exporter:latest
+  #  env_file: .env
+  #  ports: ['127.0.0.1:8906:4567']
 
 volumes:
   pgdata:
