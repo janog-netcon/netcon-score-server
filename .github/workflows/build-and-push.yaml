@@ -1,0 +1,57 @@
+name: Build and Push image to gcr.io
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-and-push-to-gcr-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
+      - uses: RafikFarhad/push-to-gcr-github-action@v5-beta
+        with:
+          registry: asia.gcr.io
+          project_id: networkcontest
+          image_name: api
+          image_tag: latest
+          dockerfile: ./api/Dockerfile
+          context: ./api
+  build-and-push-to-gcr-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
+      - uses: RafikFarhad/push-to-gcr-github-action@v5-beta
+        with:
+          registry: asia.gcr.io
+          project_id: networkcontest
+          image_name: ui
+          image_tag: latest
+          dockerfile: ./ui/Dockerfile
+          context: ./ui
+  build-and-push-to-gcr-vmdb-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
+      - uses: RafikFarhad/push-to-gcr-github-action@v5-beta
+        with:
+          registry: asia.gcr.io
+          project_id: networkcontest
+          image_name: vmdb-api
+          image_tag: latest
+          dockerfile: ./vmdb-api/Dockerfile
+          context: ./vmdb-api
