@@ -33,7 +33,7 @@ module Mutations
       headers[:content_type] = :json
       headers[:accept] = :json
 
-      post_endpoint = Pathname(Rails.configuration.gateway_url) / "/problem"
+      post_endpoint = Pathname(Rails.configuration.gateway_url) / "problem"
       post_payload = { problem_name: problem.code }
 
       begin

@@ -50,7 +50,7 @@ module Mutations
           headers = {}
           headers[:accept] = :json
 
-          delete_endpoint = Pathname(Rails.configuration.gateway_url) / "/problem/#{problem_environment_name}"
+          delete_endpoint = Pathname(Rails.configuration.gateway_url) / "problem/#{problem_environment_name}"
 
           begin
             res = RestClient::Request.execute(method: :delete, url: uri.to_s, headers: headers)
