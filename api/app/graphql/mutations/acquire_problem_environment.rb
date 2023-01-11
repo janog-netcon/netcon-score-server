@@ -62,7 +62,7 @@ module Mutations
         team: self.current_team!,
         secret_text: "",
         name: environment_name,
-        service: "ssh",
+        service: "SSH",
         port: ssh_port,
         status: "UNDER_CHALLENGE"
       )
