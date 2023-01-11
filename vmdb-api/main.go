@@ -46,21 +46,18 @@ func (msn *MySQLNullString) UnmarshalJSON(data []byte) error {
 
 type ProblemEnvironment struct {
 	// create_table "problem_environments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-	ID               uuid.UUID       `db:"id" json:"id"`
-	InnerStatus      MySQLNullString `db:"status" json:"inner_status"`
-	Status           MySQLNullString `db:"external_status" json:"status"`
-	Host             string          `db:"host" json:"host"`
-	User             string          `db:"user" json:"user"`
-	Password         string          `db:"password" json:"password"`
-	ProblemID        uuid.UUID       `db:"problem_id" json:"problem_id"`
-	CreatedAt        time.Time       `db:"created_at" json:"created_at"`
-	UpdatedAt        time.Time       `db:"updated_at" json:"updated_at"`
-	Name             string          `db:"name" json:"name"`
-	Service          string          `db:"service" json:"service"`
-	Port             int             `db:"port" json:"port"`
-	MachineImageName MySQLNullString `db:"machine_image_name" json:"machine_image_name"` // nullable
-	Project          MySQLNullString `db:"project" json:"project"`                       // nullable
-	Zone             MySQLNullString `db:"zone" json:"zone"`                             // nullable
+	ID          uuid.UUID       `db:"id" json:"id"`
+	InnerStatus MySQLNullString `db:"status" json:"inner_status"`
+	Status      MySQLNullString `db:"external_status" json:"status"`
+	Host        string          `db:"host" json:"host"`
+	User        string          `db:"user" json:"user"`
+	Password    string          `db:"password" json:"password"`
+	ProblemID   uuid.UUID       `db:"problem_id" json:"problem_id"`
+	CreatedAt   time.Time       `db:"created_at" json:"created_at"`
+	UpdatedAt   time.Time       `db:"updated_at" json:"updated_at"`
+	Name        string          `db:"name" json:"name"`
+	Service     string          `db:"service" json:"service"`
+	Port        int             `db:"port" json:"port"`
 	// TeamID           uuid.UUID       `db:"team_id" json:"team_id"` // nullable
 	SecretText string `db:"secret_text" json:"secret_text"`
 }
@@ -134,10 +131,10 @@ func QueryProblemEnvironment(c echo.Context, name string) error {
 	var err error
 
 	if name == "" {
-		q := `SELECT id, status, external_status, host, "user", password, problem_id, created_at, updated_at, name, service, port, machine_image_name, project, zone, secret_text FROM problem_environments`
+		q := `SELECT id, status, external_status, host, "user", password, problem_id, created_at, updated_at, name, service, port, secret_text FROM problem_environments`
 		rows, err = db.Queryx(q)
 	} else {
-		q := `SELECT id, status, external_status, host, "user", password, problem_id, created_at, updated_at, name, service, port, machine_image_name, project, zone, secret_text FROM problem_environments WHERE name = $1`
+		q := `SELECT id, status, external_status, host, "user", password, problem_id, created_at, updated_at, name, service, port, secret_text FROM problem_environments WHERE name = $1`
 		rows, err = db.Queryx(q, name)
 	}
 
@@ -201,15 +198,15 @@ func createOrUpdateProblemEnvironment(c echo.Context) error {
 	}
 
 	q := `
-    INSERT INTO problem_environments (external_status, host, "user", password, problem_id, name, service, port, machine_image_name, secret_text, project, zone, created_at, updated_at)
+    INSERT INTO problem_environments (external_status, host, "user", password, problem_id, name, service, port, secret_text, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     ON CONFLICT (problem_id, name, service)
-    DO UPDATE SET external_status=?, host=?, "user"=?, password=?, problem_id=?, name=?, service=?, port=?, machine_image_name=?, secret_text=?, project=?, zone=?, updated_at=NOW()
+    DO UPDATE SET external_status=?, host=?, "user"=?, password=?, problem_id=?, name=?, service=?, port=?, secret_text=?, updated_at=NOW()
   `
 
 	_, err = db.Exec(db.Rebind(q),
-		pe.Status, pe.Host, pe.User, pe.Password, pe.ProblemID, pe.Name, pe.Service, pe.Port, pe.MachineImageName, pe.SecretText, pe.Project, pe.Zone,
-		pe.Status, pe.Host, pe.User, pe.Password, pe.ProblemID, pe.Name, pe.Service, pe.Port, pe.MachineImageName, pe.SecretText, pe.Project, pe.Zone)
+		pe.Status, pe.Host, pe.User, pe.Password, pe.ProblemID, pe.Name, pe.Service, pe.Port, pe.SecretText,
+		pe.Status, pe.Host, pe.User, pe.Password, pe.ProblemID, pe.Name, pe.Service, pe.Port, pe.SecretText)
 	if err != nil {
 		c.Echo().Logger.Errorf("Failed to execute query", err)
 		errMsg := fmt.Sprintf("Failed to execute query: %v", err)
@@ -217,7 +214,7 @@ func createOrUpdateProblemEnvironment(c echo.Context) error {
 	}
 
 	peFromDb := ProblemEnvironment{}
-	q = `SELECT id, status, external_status, host, "user", password, problem_id, created_at, updated_at, name, service, port, machine_image_name, secret_text, project, zone FROM problem_environments WHERE problem_id = ? AND name = ? AND service = ? LIMIT 1`
+	q = `SELECT id, status, external_status, host, "user", password, problem_id, created_at, updated_at, name, service, port, secret_text FROM problem_environments WHERE problem_id = ? AND name = ? AND service = ? LIMIT 1`
 	err = db.Get(&peFromDb, db.Rebind(q), pe.ProblemID, pe.Name, pe.Service)
 
 	if err != nil {
@@ -261,7 +258,7 @@ func deleteProblemEnvironment(c echo.Context) error {
 }
 
 type Answer struct {
-	ID               string       `db:"id" json:"answer_id"`
+	ID string `db:"id" json:"answer_id"`
 }
 
 // answer_id is required for auto-scoring
