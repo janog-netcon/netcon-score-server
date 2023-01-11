@@ -67,7 +67,7 @@ module Mutations
         status: "UNDER_CHALLENGE"
       )
 
-      Notification.notify(mutation: self.graphql_name, record: chosen_pes) unless silent
+      Notification.notify(mutation: self.graphql_name, record: [pe]) unless silent
 
       { problem_environments: [pe] }
     end
