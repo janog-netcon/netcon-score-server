@@ -39,7 +39,7 @@ module Mutations
       begin
         res = RestClient::Request.execute(method: :post, url: post_endpoint.to_s, payload: post_payload.to_json, headers: headers)
         if res.code == 406
-          raise ProblemEnvironmentNotReady(problem_id)
+          raise ProblemEnvironmentNotReady.new(problem_id)
         end
 
         unless (200..299) === res.code
