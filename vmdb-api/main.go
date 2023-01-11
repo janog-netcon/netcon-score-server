@@ -48,7 +48,6 @@ type ProblemEnvironment struct {
 	// create_table "problem_environments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
 	ID          uuid.UUID       `db:"id" json:"id"`
 	InnerStatus MySQLNullString `db:"status" json:"inner_status"`
-	Status      MySQLNullString `db:"external_status" json:"status"`
 	Host        string          `db:"host" json:"host"`
 	User        string          `db:"user" json:"user"`
 	Password    string          `db:"password" json:"password"`

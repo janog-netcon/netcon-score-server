@@ -11,7 +11,6 @@ module Types
 
     field :service,            String,             null: false
     field :status,             String,             null: true
-    field :external_status,    String,             null: true
     field :host,               String,             null: false
     field :port,               Integer,            null: false
     field :user,               String,             null: false
@@ -19,9 +18,6 @@ module Types
     field :secret_text,        String,             null: true
     field :created_at,         Types::DateTime,    null: false
     field :updated_at,         Types::DateTime,    null: false
-    field :machine_image_name, String,             null: true
-    field :project,            String,             null: true
-    field :zone,               String,             null: true
 
     belongs_to :team
     belongs_to :problem

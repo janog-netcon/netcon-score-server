@@ -217,16 +217,16 @@ def create_problem_environments(problems, teams)
   envs = problems.each_with_object([]) {|problem, memo|
   # envs = problems.take(10).each_with_object([]) {|problem, memo|
     # teams.each do |team|
-    #   memo << build_stubbed(:problem_environment, problem: problem, machine_image_name: "image_#{problem.id}", team: team)
+    #   memo << build_stubbed(:problem_environment, problem: problem, team: team)
     # end
 
-    # Random.rand(1..4).times { memo << build_stubbed(:problem_environment, problem: problem, machine_image_name: "image_#{problem.id}", team: nil) }
+    # Random.rand(1..4).times { memo << build_stubbed(:problem_environment, problem: problem, team: nil) }
     Random.rand(2..5).times {
-      pe_ssh = build_stubbed(:problem_environment, problem: problem, machine_image_name: "image_#{problem.id}", team: nil, service: "SSH")
-      pe_https = build_stubbed(:problem_environment, problem: problem, machine_image_name: "image_#{problem.id}", team: nil, service: "HTTPS", name: pe_ssh.name, host: pe_ssh.host, user: pe_ssh.user, password: pe_ssh.password, status: pe_ssh.status, external_status: pe_ssh.external_status)
+      pe_ssh = build_stubbed(:problem_environment, problem: problem, team: nil, service: "SSH")
+      pe_https = build_stubbed(:problem_environment, problem: problem, team: nil, service: "HTTPS", name: pe_ssh.name, host: pe_ssh.host, user: pe_ssh.user, password: pe_ssh.password, status: pe_ssh.status)
       memo << pe_ssh
       memo << pe_https
-      # memo << build_stubbed(:problem_environment, problem: problem, machine_image_name: "image_#{problem.id}", team: nil)
+      # memo << build_stubbed(:problem_environment, problem: problem, team: nil)
     }
   }
     # .shuffle
