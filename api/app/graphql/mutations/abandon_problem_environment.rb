@@ -43,7 +43,7 @@ module Mutations
       delete_endpoint = Pathname(Rails.configuration.gateway_url) / "problem/#{problem_environment_name}"
 
       begin
-        res = RestClient::Request.execute(method: :delete, url: uri.to_s, headers: headers)
+        res = RestClient::Request.execute(method: :delete, url: delete_endpoint.to_s, headers: headers)
         unless (200..299) === res.code
           # NOTE: 失敗したらあとで消せば良い
           Rails.logger.error "DELETE request to gateway failed, problem_environment_name: #{problem_environment_name}, res: #{res}"
