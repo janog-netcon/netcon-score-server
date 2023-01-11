@@ -38,6 +38,10 @@ module Mutations
 
       begin
         res = RestClient::Request.execute(method: :post, url: post_endpoint.to_s, payload: post_payload.to_json, headers: headers)
+        if res.code == 406
+          raise ProblemEnvironmentNotReady(problem_id)
+        end
+
         unless (200..299) === res.code
           # NOTE: 失敗したらあとで消せば良い
           Rails.logger.error "POST request to gateway failed, problem_code: #{problem.code}, res: #{res}"

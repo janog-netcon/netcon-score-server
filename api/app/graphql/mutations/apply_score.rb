@@ -54,7 +54,7 @@ module Mutations
 
           begin
             res = RestClient::Request.execute(method: :delete, url: delete_endpoint.to_s, headers: headers)
-            unless (200..299) === res.code
+            unless (200..299) === res.code || 404 === res.code
               # NOTE: 失敗したらあとで消せば良い
               Rails.logger.error "DELETE request to gateway failed, problem_environment_name: #{problem_environment_name}, res: #{res}"
             end
