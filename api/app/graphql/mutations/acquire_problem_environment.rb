@@ -46,11 +46,13 @@ module Mutations
         Rails.logger.error "POST request to gateway failed, payload: #{post_payload}, code: #{e.http_code}, res: #{e.response}"
       end
 
-      environment_name = res.dig("items", 0, "problemEnvironment", "metadata", "name")
-      ssh_ip_address   = res.dig("items", 0, "worker", "status", "workerInfo", "externalIPAddress")
+      response_json = JSON.parse(res.body)
+
+      environment_name = response_json.dig("response", "items", 0, "problemEnvironment", "metadata", "name")
+      ssh_ip_address   = response_json.dig("response", "items", 0, "worker", "status", "workerInfo", "externalIPAddress")
       ssh_user         = "nc_#{environment_name}"
-      ssh_port         = res.dig("items", 0, "worker", "status", "workerInfo", "port")
-      ssh_password     = res.dig("items", 0, "problemEnvironment", "status", "password")
+      ssh_port         = response_json.dig("response", "items", 0, "worker", "status", "workerInfo", "externalPort")
+      ssh_password     = response_json.dig("response", "items", 0, "problemEnvironment", "status", "password")
 
       pe = ProblemEnvironment.create(
         host: ssh_ip_address,
