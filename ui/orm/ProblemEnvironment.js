@@ -31,14 +31,11 @@ export default class ProblemEnvironment extends BaseModel {
       name: '',
       service: 'SSH',
       status: 'APPLIED',
-      externalStatus: 'APPLIED',
       host: '',
       port: 22,
       user: '',
       password: '',
       secretText: '',
-      project: '',
-      zone: '',
     }
   }
 
