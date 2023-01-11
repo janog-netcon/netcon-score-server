@@ -34,46 +34,22 @@ module Mutations
         raise e
       end
 
-      name = pes.map(&:name).uniq.first
-      problem_id = pes.first.problem_id
-      machine_image_name = pes.first.machine_image_name
-      project = pes.first.project
-      zone = pes.first.zone
-      vmms_base_uri = URI(Rails.configuration.vm_manegement_service_uri)
+      problem_environment_name = pes.map(&:name).uniq.first
 
-      # VM管理サービスの DELETE を叩く (ActiveJob でやる?)
+      # gateway の DELETE を叩く
       headers = {}
-      if Rails.configuration.vm_manegement_service_token.present?
-        headers[:authorization] = "Bearer #{Rails.configuration.vm_manegement_service_token}"
-      end
-
-      headers[:content_type] = :json
       headers[:accept] = :json
 
-      uri = vmms_base_uri + "/instance/#{name}"
-      # res = RestClient.delete(uri.to_s, headers)
-      delete_payload = { project: project, zone: zone }
+      delete_endpoint = Pathname(config.gateway_url) / "/problem/#{problem_environment_name}"
+
       begin
-        res = RestClient::Request.execute(method: :delete, url: uri.to_s, payload: delete_payload.to_json, headers: headers)
+        res = RestClient::Request.execute(method: :delete, url: uri.to_s, headers: headers)
         unless (200..299) === res.code
           # NOTE: 失敗したらあとで消せば良い
-          Rails.logger.error "DELETE request to vm-management-service failed, name: #{name}, res: #{res}"
+          Rails.logger.error "DELETE request to gateway failed, problem_environment_name: #{problem_environment_name}, res: #{res}"
         end
       rescue RestClient::ExceptionWithResponse => e
-        Rails.logger.error "DELETE request to vm-management-service failed, payload: #{delete_payload}, code: #{e.http_code}, res: #{e.response}"
-      end
-
-      # 同じ問題の VM を再作成する
-      uri = vmms_base_uri + "/instance"
-      post_payload = { problem_id: problem_id, machine_image_name: machine_image_name, project: project, zone: zone }
-      res = RestClient.post(uri.to_s, post_payload.to_json, headers)
-      begin
-        unless (200..299) === res.code
-          # 失敗したらどうする?
-          Rails.logger.error "POST request to vm-management-service failed, problem_id: #{problem_id}, machine_image_name: #{machine_image_name}, res: #{res}"
-        end
-      rescue RestClient::ExceptionWithResponse => e
-        Rails.logger.error "POST request to vm-management-service failed, payload: #{post_payload}, code: #{e.http_code}, res: #{e.response}"
+        Rails.logger.error "DELETE request to gateway failed, code: #{e.http_code}, res: #{e.response}"
       end
 
       Notification.notify(mutation: self.graphql_name, record: pes) unless silent

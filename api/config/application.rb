@@ -52,7 +52,6 @@ module Api
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
-    config.vm_manegement_service_uri = ENV.fetch("VM_MANAGEMENT_SERVICE_URI", "http://vm-management-service:81/")
-    config.vm_manegement_service_token = ENV.fetch("VM_MANAGEMENT_SERVICE_TOKEN", nil)
+    config.gateway_url = ENV.fetch("GATEWAY_URL", "http://gateway:80/")
   end
 end
