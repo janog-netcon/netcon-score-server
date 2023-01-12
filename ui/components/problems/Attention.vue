@@ -9,9 +9,10 @@
       </template>
       <template v-else-if="gradingDelaySec !== 0">
         <li>
-          採点結果は解答を提出してから{{ gradingDelayString }}後に返ってきます。
+          自動採点が対応している問題の場合、採点結果は解答を提出してから3分以内には返ってきます。
         </li>
-        <li>{{ gradingDelayString }}間はその問題へ再解答できません。</li>
+        <li>手動採点の場合はベストエフォートで採点をしています。夜間は手動採点をしていません。</li>
+        <li>採点中ははその問題へ再解答できません。</li>
       </template>
 
       <li>
