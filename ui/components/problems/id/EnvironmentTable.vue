@@ -176,10 +176,10 @@ export default {
     headers() {
       const commons = [
         { text: '便利コピー', value: 'copy' },
+        { text: 'パスワード', value: 'password' },
         { text: 'ホスト', value: 'host' },
         { text: 'ポート', value: 'port' },
         { text: 'ユーザー', value: 'user' },
-        { text: 'パスワード', value: 'password' },
         { text: '種類', value: 'service' },
         { text: '名前', value: 'name' },
       ]
