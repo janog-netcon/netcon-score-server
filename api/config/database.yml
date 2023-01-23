@@ -24,10 +24,11 @@ default: &default
   password: <%= ENV.fetch('POSTGRES_PASSWORD') %>
   host: <%= ENV.fetch('POSTGRES_HOST') %>
   port: 5432
+  database: <%= ENV.fetch('POSTGRES_DB') %>
+
 
 development:
   <<: *default
-  database: development
 
   # Schema search path. The server defaults to $user,public
   # schema_search_path: myapp,sharedapp,public
