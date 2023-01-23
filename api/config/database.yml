@@ -66,4 +66,3 @@ test:
 #
 production:
   <<: *default
-  database: production
