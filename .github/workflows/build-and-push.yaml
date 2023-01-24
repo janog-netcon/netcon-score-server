@@ -21,7 +21,25 @@ jobs:
           image_tag: latest
           dockerfile: ./api/Dockerfile
           context: ./api
-  build-and-push-to-gcr-ui:
+  build-and-push-to-gcr-ui-develop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
+      - uses: RafikFarhad/push-to-gcr-github-action@v5-beta
+        with:
+          registry: asia.gcr.io
+          project_id: networkcontest
+          image_name: ui-develop
+          image_tag: latest
+          dockerfile: ./ui/Dockerfile
+          target: develop
+          context: ./ui
+  build-and-push-to-gcr-ui-production:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

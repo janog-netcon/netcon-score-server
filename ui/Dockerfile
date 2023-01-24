@@ -1,6 +1,6 @@
-FROM node:13.8.0-alpine
+FROM node:13.8.0-alpine AS develop
 
-LABEL maintainer "ICTSC"
+LABEL maintainer "JANOG NETCON"
 CMD ["yarn", "start"]
 WORKDIR /usr/src/app
 
@@ -26,3 +26,9 @@ RUN yarn install
 
 COPY . /usr/src/app/
 RUN yarn run build
+
+# production build
+
+FROM nginx
+COPY --from=develop /usr/src/app/dist /srv
+COPY ./nginx.conf /etc/nginx/nginx.conf
