@@ -136,9 +136,8 @@ class Notification
             problem_id: record.issue.problem_id
           }
         ]
-      # when 'DeleteAttachment', 'DeleteCategory', 'DeleteProblem', 'DeleteProblemEnvironment', 'DeleteSession', 'DeleteNotice', 'DeleteProblemSupplement', 'DeleteIssueComment'
       else
-        raise UnhandledClass, mutation
+        # raise UnhandledClass, mutation
       end
     end
 
