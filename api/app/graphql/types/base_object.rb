@@ -100,7 +100,7 @@ module Types
         query = self.fields
           .fetch(name)
           .arguments
-          .map {|(key, arg)| "$#{key}: #{arg.type.graphql_definition}" }
+          .map {|(key, arg)| "$#{key}: #{arg.type.to_type_signature}" }
           .join(', ')
 
         query.empty? ? '' : "(#{query})"

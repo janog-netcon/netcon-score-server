@@ -13,7 +13,6 @@ Rails.application.configure do
     Bullet.bugsnag = false
     Bullet.console = false
     Bullet.alert = false
-    Bullet.growl = false
     Bullet.honeybadger = false
     Bullet.airbrake = false
     Bullet.rollbar = false

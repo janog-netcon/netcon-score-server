@@ -28,7 +28,16 @@ default: &default
 
 
 development:
-  <<: *default
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see Rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  user: <%= ENV.fetch('POSTGRES_USER') %>
+  password: <%= ENV.fetch('POSTGRES_PASSWORD') %>
+  host: <%= ENV.fetch('POSTGRES_HOST') %>
+  port: 5432
+  database: <%= ENV.fetch('POSTGRES_DB') %>
 
   # Schema search path. The server defaults to $user,public
   # schema_search_path: myapp,sharedapp,public
@@ -43,7 +52,15 @@ development:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see Rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  user: <%= ENV.fetch('POSTGRES_USER') %>
+  password: <%= ENV.fetch('POSTGRES_PASSWORD') %>
+  host: <%= ENV.fetch('POSTGRES_HOST') %>
+  port: 5432
   database: test
 
 # As with config/secrets.yml, you never want to store sensitive information,
@@ -66,4 +83,13 @@ test:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
 production:
-  <<: *default
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see Rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  user: <%= ENV.fetch('POSTGRES_USER') %>
+  password: <%= ENV.fetch('POSTGRES_PASSWORD') %>
+  host: <%= ENV.fetch('POSTGRES_HOST') %>
+  port: 5432
+  database: <%= ENV.fetch('POSTGRES_DB') %>
