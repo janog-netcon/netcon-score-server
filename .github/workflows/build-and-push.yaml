@@ -8,61 +8,85 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Authenticate to Google Cloud
-        id: auth
-        uses: google-github-actions/auth@v1
+      - uses: google-github-actions/auth@v1
         with:
-          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
-      - uses: RafikFarhad/push-to-gcr-github-action@v5-beta
+          workload_identity_provider: "projects/907031882243/locations/global/workloadIdentityPools/github/providers/github"
+          service_account: "github-actions-score-server-ci@networkcontest.iam.gserviceaccount.com"
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - name: Use gcloud CLI
+        run: gcloud info
+      - name: Export credentials for Docker
+        run: gcloud auth configure-docker asia-northeast1-docker.pkg.dev -q
+      - name: Set up Docker buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build and push API container
+        uses: docker/build-push-action@v3
         with:
-          registry: asia.gcr.io
-          project_id: networkcontest
-          image_name: api
-          image_tag: latest
-          dockerfile: ./api/Dockerfile
           context: ./api
+          file: ./api/Dockerfile
+          push: true
+          tags: |
+            asia-northeast1-docker.pkg.dev/networkcontest/janog53/network-score-server-api:latest
+            asia-northeast1-docker.pkg.dev/networkcontest/janog53/network-score-server-api:master
+            asia-northeast1-docker.pkg.dev/networkcontest/janog53/network-score-server-api:commit-${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
   build-and-push-to-gcr-ui:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Authenticate to Google Cloud
-        id: auth
-        uses: google-github-actions/auth@v1
+      - uses: google-github-actions/auth@v1
         with:
-          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
-      - name: build and push (develop)
-        uses: RafikFarhad/push-to-gcr-github-action@v5-beta
+          workload_identity_provider: "projects/907031882243/locations/global/workloadIdentityPools/github/providers/github"
+          service_account: "github-actions-score-server-ci@networkcontest.iam.gserviceaccount.com"
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - name: Use gcloud CLI
+        run: gcloud info
+      - name: Export credentials for Docker
+        run: gcloud auth configure-docker asia-northeast1-docker.pkg.dev -q
+      - name: Set up Docker buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build and push UI container
+        uses: docker/build-push-action@v3
         with:
-          registry: asia.gcr.io
-          project_id: networkcontest
-          image_name: ui-develop
-          image_tag: latest
-          dockerfile: ./ui/Dockerfile
-          target: develop
           context: ./ui
-      - name: build and push (production)
-        uses: RafikFarhad/push-to-gcr-github-action@v5-beta
-        with:
-          registry: asia.gcr.io
-          project_id: networkcontest
-          image_name: ui
-          image_tag: latest
-          dockerfile: ./ui/Dockerfile
-          context: ./ui
+          file: ./ui/Dockerfile
+          push: true
+          tags: |
+            asia-northeast1-docker.pkg.dev/networkcontest/janog53/network-score-server-ui:latest
+            asia-northeast1-docker.pkg.dev/networkcontest/janog53/network-score-server-ui:master
+            asia-northeast1-docker.pkg.dev/networkcontest/janog53/network-score-server-ui:commit-${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
   build-and-push-to-gcr-vmdb-api:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Authenticate to Google Cloud
-        id: auth
-        uses: google-github-actions/auth@v1
+      - uses: google-github-actions/auth@v1
         with:
-          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
-      - uses: RafikFarhad/push-to-gcr-github-action@v5-beta
+          workload_identity_provider: "projects/907031882243/locations/global/workloadIdentityPools/github/providers/github"
+          service_account: "github-actions-score-server-ci@networkcontest.iam.gserviceaccount.com"
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - name: Use gcloud CLI
+        run: gcloud info
+      - name: Export credentials for Docker
+        run: gcloud auth configure-docker asia-northeast1-docker.pkg.dev -q
+      - name: Set up Docker buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build and push vmdb-api container
+        uses: docker/build-push-action@v3
         with:
-          registry: asia.gcr.io
-          project_id: networkcontest
-          image_name: vmdb-api
-          image_tag: latest
-          dockerfile: ./vmdb-api/Dockerfile
           context: ./vmdb-api
+          file: ./vmdb-api/Dockerfile
+          push: true
+          tags: |
+            asia-northeast1-docker.pkg.dev/networkcontest/janog53/network-score-server-vmdb-api:latest
+            asia-northeast1-docker.pkg.dev/networkcontest/janog53/network-score-server-vmdb-api:master
+            asia-northeast1-docker.pkg.dev/networkcontest/janog53/network-score-server-vmdb-api:commit-${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
