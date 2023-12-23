@@ -29,6 +29,6 @@ RUN yarn run build
 
 # production build
 
-FROM nginx
+FROM nginx:1.25.3
 COPY --from=develop /usr/src/app/dist /srv
 COPY ./nginx.conf /etc/nginx/nginx.conf
