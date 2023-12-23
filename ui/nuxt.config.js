@@ -70,12 +70,6 @@ export default {
   moment: {
     locales: ['es-us', 'ja'],
   },
-  proxy: {
-    // 開発時のyarn run devなど、jsでリクエストを受けている場合に使う
-    // 本番環境では前段のLBでリクエストを振り分ける
-    '/api': 'http://api:3000',
-    '/push': 'http://push:8080',
-  },
   vuetify: {
     // customVariables: ['~/assets/css/variables.sass'],
     theme: {
