@@ -8,7 +8,7 @@
         aheight="48"
         awidth="275"
         class="m-2"
-        alt="JANOG51"
+        alt="JANOG53"
       />
       <div
         style="color: #1a1a1a; font-weight: 700; font-size: 22px; line-height: 1; letter-spacing: -1px; margin: auto 10px -2px 5px;"
