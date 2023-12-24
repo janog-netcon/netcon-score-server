@@ -20,6 +20,7 @@ import (
 type Command struct {
 	cobra.Command
 
+	listenAddr             string
 	postgresHost           string
 	postgresUser           string
 	postgresPassword       string
@@ -39,6 +40,7 @@ func NewCommand() Command {
 		RunE: cmd.RunE,
 	}
 
+	cmd.Flags().StringVar(&cmd.listenAddr, "listen-addr", ":3000", "Listen Address for metrics server")
 	cmd.Flags().StringVar(&cmd.postgresHost, "postgres-host", "localhost:5432", "PostgreSQL host")
 	cmd.Flags().StringVar(&cmd.postgresUser, "postgres-user", "postgres", "PostgreSQL user")
 	cmd.Flags().StringVar(&cmd.postgresPassword, "postgres-password", "postgres", "PostgreSQL password")
@@ -74,7 +76,7 @@ func (c *Command) RunE(cmd *cobra.Command, _ []string) error {
 	}
 
 	metricsServer := Server{
-		ListenAddr: ":3000",
+		ListenAddr: c.listenAddr,
 		Handler:    promhttp.HandlerFor(registry, promhttp.HandlerOpts{}),
 	}
 
