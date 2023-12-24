@@ -107,10 +107,32 @@ services:
       - db
     ports: ['127.0.0.1:8905:8080']
 
-  #exporter:
-  #  image: kyontan/netcon-score-server-exporter:latest
-  #  env_file: .env
-  #  ports: ['127.0.0.1:8906:4567']
+  grafana:
+    image: grafana/grafana:10.2.3
+    volumes:
+      - grafana:/var/lib/grafana
+    ports: ['0.0.0.0:8906:3000']
+
+  prometheus:
+    image: prom/prometheus:v2.48.1
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus:/prometheus
+    ports: ['0.0.0.0:8907:9090']
+
+  exporter:
+    image: proelbtn/netcon-score-server-exporter:latest
+    env_file: .env
+    build:
+      context: exporter/
+    command:
+      - --postgres-host=$POSTGRES_HOST
+      - --postgres-user=$POSTGRES_USER
+      - --postgres-password=$POSTGRES_PASSWORD
+      - --postgres-database=$POSTGRES_DB
+      - --postgres-disable-ssl-mode=true
 
 volumes:
   pgdata:
+  grafana:
+  prometheus:
