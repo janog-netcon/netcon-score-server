@@ -96,3 +96,34 @@ jobs:
             asia-northeast1-docker.pkg.dev/networkcontest/janog53/network-score-server-vmdb-api:commit-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  build-and-push-to-gcr-exporter:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: "projects/907031882243/locations/global/workloadIdentityPools/github/providers/github"
+          service_account: "github-actions-score-server-ci@networkcontest.iam.gserviceaccount.com"
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - name: Use gcloud CLI
+        run: gcloud info
+      - name: Export credentials for Docker
+        run: gcloud auth configure-docker asia-northeast1-docker.pkg.dev -q
+      - name: Set up Docker buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build and push exporter container
+        uses: docker/build-push-action@v3
+        with:
+          context: ./exporter
+          file: ./exporter/Dockerfile
+          push: true
+          tags: |
+            asia-northeast1-docker.pkg.dev/networkcontest/janog53/network-score-server-exporter:latest
+            asia-northeast1-docker.pkg.dev/networkcontest/janog53/network-score-server-exporter:master
+            asia-northeast1-docker.pkg.dev/networkcontest/janog53/network-score-server-exporter:commit-${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
