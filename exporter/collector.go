@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/samber/lo"
 )
 
 const namespace = "netcon"
@@ -44,9 +45,11 @@ var (
 		Name:      "problems_total",
 	})
 
-	answersTotal = prometheus.NewGauge(prometheus.GaugeOpts{
+	answersTotal = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Name:      "answers_total",
+	}, []string{
+		"team_id", "problem_id",
 	})
 
 	scores = prometheus.NewGaugeVec(prometheus.GaugeOpts{
@@ -127,7 +130,7 @@ func (c *Collector) collect(ctx context.Context) error {
 		return fmt.Errorf("failed to find problems: %w", err)
 	}
 
-	answers, err := c.Repository.FindAnswers(ctx)
+	allAnswers, err := c.Repository.FindAnswers(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to find answers: %w", err)
 	}
@@ -146,17 +149,21 @@ func (c *Collector) collect(ctx context.Context) error {
 
 	teamsTotal.Set(float64(len(teams)))
 	problemsTotal.Set(float64(len(problems)))
-	answersTotal.Set(float64(len(answers)))
 
 	// DB might be reset during the collection. So, call Reset() before setting metrics.
+	answersTotal.Reset()
 	scores.Reset()
 	for _, team := range teams {
 		for _, problem := range problems {
-			answer := c.findBestAnswerFor(answers, team.ID, problem.ID)
+			teamAnswers := lo.Filter(allAnswers, func(answer Answer, _ int) bool {
+				return answer.TeamID == team.ID && answer.ProblemID == problem.ID
+			})
+			bestAnswer := c.findBestAnswerFor(teamAnswers)
 			score := 0
-			if answer != nil {
-				score = *answer.Point
+			if bestAnswer != nil {
+				score = *bestAnswer.Point
 			}
+			answersTotal.WithLabelValues(team.ID.String(), problem.ID.String()).Set(float64(len(teamAnswers)))
 			scores.WithLabelValues(team.ID.String(), problem.ID.String()).Set(float64(score))
 		}
 	}
@@ -164,21 +171,10 @@ func (c *Collector) collect(ctx context.Context) error {
 	return nil
 }
 
-// findBestAnswers finds the best answers for the team specified with teamID.
-// The Points in the returned slice are guaranteed to be non-nil.
-func (c *Collector) findBestAnswerFor(answers []Answer, teamID uuid.UUID, problemID uuid.UUID) *Answer {
+// findBestAnswers finds the best answers. The Points in the returned slice are guaranteed to be non-nil.
+func (c *Collector) findBestAnswerFor(answers []Answer) *Answer {
 	var bestAnswer Answer
 	for _, answer := range answers {
-		// Skip answers from other teams
-		if answer.TeamID != teamID {
-			continue
-		}
-
-		// Skip answers for other problems
-		if answer.ProblemID != problemID {
-			continue
-		}
-
 		// Skip answers that are not graded yet
 		if answer.Point == nil {
 			continue
