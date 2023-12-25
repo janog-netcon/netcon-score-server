@@ -16,11 +16,9 @@ type Answer struct {
 }
 
 type Problem struct {
-	bun.BaseModel `bun:"table:problems"`
-
-	ID         uuid.UUID `bun:"id"`
-	Code       string    `bun:"code"`
-	CategoryID uuid.UUID `bun:"category_id"`
+	ID    uuid.UUID `bun:"id"`
+	Code  string    `bun:"code"`
+	Title string    `bun:"title"`
 }
 
 type Score struct {

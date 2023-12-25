@@ -31,12 +31,17 @@ func (r *Repository) FindTeams(ctx context.Context) ([]Team, error) {
 	return teams, nil
 }
 
-func (r *Repository) FindScores(ctx context.Context) ([]Score, error) {
-	var scores []Score
-	if err := r.db.NewSelect().Model(&scores).Scan(ctx); err != nil {
+func (r *Repository) FindProblems(ctx context.Context) ([]Problem, error) {
+	var problems []Problem
+	err := r.db.NewSelect().
+		Column("problems.id", "problems.code", "problem_bodies.title").
+		Table("problems").
+		Join("LEFT JOIN problem_bodies").JoinOn("problems.id = problem_bodies.problem_id").
+		Scan(ctx, &problems)
+	if err != nil {
 		return nil, err
 	}
-	return scores, nil
+	return problems, nil
 }
 
 func (r *Repository) FindAnswers(ctx context.Context) ([]Answer, error) {
