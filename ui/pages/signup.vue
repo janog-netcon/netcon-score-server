@@ -31,11 +31,8 @@
       <v-text-field
         v-model="registrationCode"
         :rules="registrationCodeRules"
-        :type="registrationCodeVisible ? 'text' : 'password'"
-        :append-icon="registrationCodeVisible ? 'mdi-eye' : 'mdi-eye-off'"
         label="登録コード"
         required
-        @click:append="registrationCodeVisible = !registrationCodeVisible"
       >
       </v-text-field>
 
