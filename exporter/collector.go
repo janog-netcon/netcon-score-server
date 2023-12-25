@@ -174,6 +174,11 @@ func (c *Collector) findBestAnswerFor(answers []Answer, teamID uuid.UUID, proble
 			continue
 		}
 
+		// Skip answers for other problems
+		if answer.ProblemID != problemID {
+			continue
+		}
+
 		// Skip answers that are not graded yet
 		if answer.Point == nil {
 			continue
