@@ -2,58 +2,55 @@
   <v-app-bar app dense color="secondary" elevation="1">
     <navigation-link to="/" active-class="" class="mr-2 ml-2">
       <v-img
-        :src="require('~/assets/img/janog51_logo.png')"
-        height="25"
-        width="185"
-        aheight="48"
-        awidth="275"
+        :src="require('~/assets/img/JANOG53_logo.png')"
+        max-height="40px"
+        max-width="160px"
         class="m-2"
         alt="JANOG53"
       />
       <div
-        style="color: #1a1a1a; font-weight: 700; font-size: 22px; line-height: 1; letter-spacing: -1px; margin: auto 10px -2px 5px;"
+        style="color: #1a1a1a; font-weight: 700; font-size: 22px; line-height: 1; letter-spacing: -1px; margin: auto 10px auto 5px;"
       >NETCON</div>
     </navigation-link>
 
     <v-spacer />
 
     <div
-      style="font-weight: bold; margin: auto 0 3px"
+      style="font-weight: bold; margin: auto 8px 8px 0px"
     >Supported by:</div>
-    <v-btn href="https://www.cisco.com/c/ja_jp/index.html" class="black--text mr-1 px-0" tile text height="48px" min-width="80px">
+    <v-btn href="https://www.aten.com/jp/ja/" class="mr-1 px-0" tile text height="48px">
       <img
-        :src="require('~/assets/img/janog51_cisco.png')"
-        height="40"
-        xheight="58"
-        style="margin-top: auto"
-        alt="シスコシステムズ合同会社"
+        :src="require('~/assets/img/JANOG53_aten.png')"
+        style="margin: auto 4px; max-height: 28px"
+        alt="ATENジャパン株式会社"
       />
     </v-btn>
-    <v-btn href="https://www.haradacorp.co.jp/" class="black--text mr-1 px-0" tile text height="48px" min-width="80px">
+    <v-btn href="https://www.exfo.com/" class="mr-1 px-0" tile text height="48px">
       <img
-        :src="require('~/assets/img/janog51_harada_96.png')"
-        height="34"
-        xheight="48"
-        style="margin-top: auto"
-        alt="HARADA CORPORATION"
+        :src="require('~/assets/img/JANOG53_exfo.png')"
+        style="margin: auto 4px; max-height: 21px"
+        alt="EXFO JAPAN株式会社"
       />
     </v-btn>
-    <v-btn href="https://www.seikoh-giken.co.jp/" class="black--text mr-1 px-0" tile text height="48px" min-width="154px">
+    <v-btn href="https://www.seikoh-giken.co.jp/" class="mr-1 px-0" tile text height="48px">
       <img
-        :src="require('~/assets/img/janog51_seikoh_giken_96.png')"
-        xheight="48"
-        height="34"
-        style="margin-top: auto"
-        alt="株式会社 精工技研"
+        :src="require('~/assets/img/JANOG53_seikoh_giken.png')"
+        style="margin: auto 4px; max-height: 34px"
+        alt="株式会社精工技研"
       />
     </v-btn>
-    <v-btn href="https://www.exfo.com/en/" class="black--text mr-1 px-0" tile text height="48px" min-width="120px">
+    <v-btn href="https://www.haradacorp.co.jp/business/aif-infra/" class="mr-1 px-0" tile text height="48px">
       <img
-        :src="require('~/assets/img/janog51_exfo.png')"
-        xheight="48"
-        height="34"
-        style="margin-top: auto"
-        alt="EXFO Japan株式会社"
+        :src="require('~/assets/img/JANOG53_harada.jpg')"
+        style="margin: auto 4px; max-height: 32px"
+        alt="原田産業株式会社"
+      />
+    </v-btn>
+    <v-btn href="https://www.furukawa.co.jp/" class="mr-1 px-0" tile text height="48px">
+      <img
+        :src="require('~/assets/img/JANOG53_furukawa.png')"
+        style="margin: auto 4px; max-height: 20px"
+        alt="古河電気工業株式会社"
       />
     </v-btn>
     <template v-if="isWide">
