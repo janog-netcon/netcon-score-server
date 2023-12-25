@@ -174,6 +174,11 @@ func (c *Collector) findBestAnswerFor(answers []Answer, teamID uuid.UUID, proble
 			continue
 		}
 
+		// Skip answers for other problems
+		if answer.ProblemID != problemID {
+			continue
+		}
+
 		// Skip answers that are not graded yet
 		if answer.Point == nil {
 			continue
@@ -190,13 +195,4 @@ func (c *Collector) findBestAnswerFor(answers []Answer, teamID uuid.UUID, proble
 		return nil
 	}
 	return &bestAnswer
-}
-
-func (c *Collector) findTeamByID(teams []Team, team_id uuid.UUID) *Team {
-	for _, team := range teams {
-		if team.ID == team_id {
-			return &team
-		}
-	}
-	return nil
 }
