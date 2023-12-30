@@ -14,7 +14,7 @@ class Notification
     rescue StandardError => e
       Rails.logger.error e.message
       Rails.logger.error e.backtrace.join("\n")
-      Bugsnag.notify(e)
+      Sentry.capture_exception(e)
     end
 
     private

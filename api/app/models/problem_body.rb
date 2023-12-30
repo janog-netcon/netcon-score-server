@@ -63,8 +63,8 @@ class ProblemBody < ApplicationRecord
       message = "failed to regrade #{failed_count} answer "
       errors.add(:regrade_answers, message)
 
-      # 本来は失敗しないはずの処理なのでBugsnagにも通知しておく
-      Bugsnag.notify(StandardError.new(message))
+      # 本来は失敗しないはずの処理なのでSentryにも通知しておく
+      Sentry.capture_exception(StandardError.new(message))
     end
   end
 end
