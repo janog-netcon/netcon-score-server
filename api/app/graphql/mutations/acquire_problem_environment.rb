@@ -34,11 +34,11 @@ module Mutations
       headers[:accept] = :json
 
       post_endpoint = Pathname(Rails.configuration.gateway_url) / "problem"
-      post_payload = { problem_name: problem.code }
+      post_payload = { problemName: problem.code }
 
       begin
         res = RestClient::Request.execute(method: :post, url: post_endpoint.to_s, payload: post_payload.to_json, headers: headers)
-        if res.code == 406
+        if res.code == 503
           raise ProblemEnvironmentNotReady.new(problem_id)
         end
 
@@ -52,22 +52,16 @@ module Mutations
 
       response_json = JSON.parse(res.body)
 
-      environment_name = response_json.dig("response", "items", 0, "problemEnvironment", "metadata", "name")
-      ssh_ip_address   = response_json.dig("response", "items", 0, "worker", "status", "workerInfo", "externalIPAddress")
-      ssh_user         = "nc_#{environment_name}"
-      ssh_port         = response_json.dig("response", "items", 0, "worker", "status", "workerInfo", "externalPort")
-      ssh_password     = response_json.dig("response", "items", 0, "problemEnvironment", "status", "password")
-
       pe = ProblemEnvironment.create(
-        host: ssh_ip_address,
-        user: ssh_user,
-        password: ssh_password,
+        host: response_json.dig("host"),
+        user: response_json.dig("user"),
+        password: response_json.dig("password"),
         problem_id: problem_id,
         team: self.current_team!,
         secret_text: "",
-        name: environment_name,
+        name: response_json.dig("name"),
         service: "SSH",
-        port: ssh_port,
+        port: response_json.dig("port"),
         status: "UNDER_CHALLENGE"
       )
 

@@ -54,7 +54,7 @@ module Mutations
 
       Notification.notify(mutation: self.graphql_name, record: pes) unless silent
 
-      { problem_environments: [] }
+      { problem_environments: pes }
     end
   end
 end
