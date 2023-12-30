@@ -40,7 +40,7 @@ module Mutations
       begin
         res = RestClient::Request.execute(method: :post, url: post_endpoint.to_s, payload: post_payload.to_json, headers: headers)
       rescue RestClient::ExceptionWithResponse => e
-        Rails.logger.error "POST request to gateway failed, problem_name: #{problem.code}, code: #{e.response.code}"
+        Rails.logger.error "POST request to gateway failed, problem_name: #{problem.code}, code: #{e.response.code}, body: #{e.response.body}"
 
         if e.response.code == 404
           # 問題環境がGatewayに登録されていない場合、問題が登録されていないのと同じエラーを返す
