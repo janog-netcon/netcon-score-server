@@ -20,8 +20,8 @@ module Mutations
       Acl.permit!(mutation: self, args: args)
 
       pes = ProblemEnvironment.transaction do
-        pes = ProblemEnvironment.lock.where(problem_id: problem_id, status: "UNDER_CHALLENGE", team: self.current_team!)
-        raise RecordNotExists.new(ProblemEnvironment, problem_id: problem_id, status: "UNDER_CHALLENGE", team: self.current_team!) if pes.empty?
+        pes = ProblemEnvironment.lock.where(problem_id: problem_id, status: 'UNDER_CHALLENGE', team: self.current_team!)
+        raise RecordNotExists.new(ProblemEnvironment, problem_id: problem_id, status: 'UNDER_CHALLENGE', team: self.current_team!) if pes.empty?
 
         uniq_name = pes.map(&:name).uniq
         if uniq_name.count != 1
@@ -29,8 +29,8 @@ module Mutations
         end
 
         # TODO: update! で例外出たらどうなるのか確認 (add_errors(pes)) を返す必要がありそう)
-        pes.each { |pe| pe.update!(status: "ABANDONED") }
-      rescue ActiveRecord::StatementInvalid =>  e
+        pes.each {|pe| pe.update!(status: 'ABANDONED') }
+      rescue ActiveRecord::StatementInvalid => e
         raise e
       end
 
@@ -43,13 +43,13 @@ module Mutations
       delete_endpoint = Pathname(Rails.configuration.gateway_url) / "problem/#{problem_environment_name}"
 
       begin
-        res = RestClient::Request.execute(method: :delete, url: delete_endpoint.to_s, headers: headers)
-        unless (200..299) === res.code || 404 === res.code
-          # NOTE: 失敗したらあとで消せば良い
-          Rails.logger.error "DELETE request to gateway failed, problem_environment_name: #{problem_environment_name}, res: #{res}"
-        end
+        RestClient::Request.execute(method: :delete, url: delete_endpoint.to_s, headers: headers)
       rescue RestClient::ExceptionWithResponse => e
-        Rails.logger.error "DELETE request to gateway failed, code: #{e.http_code}, res: #{e.response}"
+        Rails.logger.error "DELETE request to gateway failed, problem_environment_name: #{problem_environment_name}, code: #{e.response.code}"
+        # 問題環境が削除されている場合、404が返ることがあるが、問題環境は削除されているので問題ない
+        if e.response.code != 404
+          raise $!
+        end
       end
 
       Notification.notify(mutation: self.graphql_name, record: pes) unless silent

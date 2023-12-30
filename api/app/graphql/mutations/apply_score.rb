@@ -21,10 +21,10 @@ module Mutations
         # TODO: AbandonProblemEnvironment と同じ処理をすれば良い。現状コピペ
         #       ActiveJob で共通化したら良さそう
 
-        new_status = (percent == 100) ? "ABANDONED" : "UNDER_CHALLENGE"
+        new_status = (percent == 100) ? 'ABANDONED' : 'UNDER_CHALLENGE'
 
         pes = ProblemEnvironment.transaction do
-          pes = ProblemEnvironment.lock.where(problem_id: answer.problem_id, status: "UNDER_SCORING", team_id: answer.team_id)
+          pes = ProblemEnvironment.lock.where(problem_id: answer.problem_id, status: 'UNDER_SCORING', team_id: answer.team_id)
 
           # (再採点時など)問題VMがないこともあるので、許容する
           # raise RecordNotExists.new(ProblemEnvironment, problem_id: answer.problem_id, status: "UNDER_SCORING", team_id: answer.team_id) if pes.empty?
@@ -36,13 +36,13 @@ module Mutations
           end
 
           # TODO: update! で例外出たらどうなるのか確認 (add_errors(pes)) を返す必要がありそう)
-          pes.each { |pe| pe.update!(status: new_status) }
-        rescue ActiveRecord::StatementInvalid =>  e
+          pes.each {|pe| pe.update!(status: new_status) }
+        rescue ActiveRecord::StatementInvalid => e
           raise e
         end
 
         if percent == 100
-          Rails.logger.debug "@ApplyScore destroy vm start"
+          Rails.logger.debug '@ApplyScore destroy vm start'
 
           problem_environment_name = pes.map(&:name).uniq.first
 
@@ -53,13 +53,13 @@ module Mutations
           delete_endpoint = Pathname(Rails.configuration.gateway_url) / "problem/#{problem_environment_name}"
 
           begin
-            res = RestClient::Request.execute(method: :delete, url: delete_endpoint.to_s, headers: headers)
-            unless (200..299) === res.code || 404 === res.code
-              # NOTE: 失敗したらあとで消せば良い
-              Rails.logger.error "DELETE request to gateway failed, problem_environment_name: #{problem_environment_name}, res: #{res}"
-            end
+            RestClient::Request.execute(method: :delete, url: delete_endpoint.to_s, headers: headers)
           rescue RestClient::ExceptionWithResponse => e
-            Rails.logger.error "DELETE request to gateway failed, code: #{e.http_code}, res: #{e.response}"
+            Rails.logger.error "DELETE request to gateway failed, problem_environment_name: #{problem_environment_name}, code: #{e.response.code}"
+            # 問題環境が削除されている場合、404が返ることがあるが、問題環境は削除されているので問題ない
+            if e.response.code != 404
+              raise $!
+            end
           end
         end
 
