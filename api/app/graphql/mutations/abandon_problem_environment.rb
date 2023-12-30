@@ -45,7 +45,7 @@ module Mutations
       begin
         RestClient::Request.execute(method: :delete, url: delete_endpoint.to_s, headers: headers)
       rescue RestClient::ExceptionWithResponse => e
-        Rails.logger.error "DELETE request to gateway failed, problem_environment_name: #{problem_environment_name}, code: #{e.response.code}"
+        Rails.logger.error "DELETE request to gateway failed, problem_environment_name: #{problem_environment_name}, code: #{e.response.code}, body: #{e.response.body}"
         # 問題環境が削除されている場合、404が返ることがあるが、問題環境は削除されているので問題ない
         if e.response.code != 404
           raise $!
