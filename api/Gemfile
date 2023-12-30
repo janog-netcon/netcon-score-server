@@ -48,6 +48,9 @@ gem 'tzinfo-data'
 gem 'slack-notifier'
 gem 'rest-client'
 
+gem 'sentry-ruby'
+gem 'sentry-rails'
+
 # 状況表示や成績計算のために使用
 gem 'matrix'
 

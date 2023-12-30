@@ -33,10 +33,10 @@ class GraphqlController < ApplicationController
 
     # GraphQLとして正常なエラーを返すために大体の例外をキャッチする
   rescue StandardError => e
-    # デバッグ用にログとBugsnagに出力
+    # デバッグ用にログとSentryに出力
     Rails.logger.error e.message
     Rails.logger.error e.backtrace.join("\n")
-    Bugsnag.notify(e)
+    Sentry.capture_exception(e)
 
     # GraphQLの仕様に従ったエラーを返す
     render_error :unexpected_error

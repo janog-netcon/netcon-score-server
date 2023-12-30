@@ -21,7 +21,7 @@ class SessionsController < ApplicationController
       session[:created_at] = Time.current
       update_session_info
 
-      # Bugsnagなどでのデバッグ用
+      # Sentryなどでのデバッグ用
       # ログイン後に更新される可能性があるので参考程度にする
       session[:team_name] = team.name
       session[:team_role] = team.role
