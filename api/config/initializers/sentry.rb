@@ -1,16 +1,12 @@
 # frozen_string_literal: true
 
 Sentry.init do |config|
-  config.environment = ENV.fetch('RAILS_ENV', 'development')
-
+  environment = ENV.fetch('RAILS_ENV', 'development')
+  config.debug = environment == 'production'
+  config.environment = environment
   config.breadcrumbs_logger = %i[active_support_logger http_logger]
+  config.include_local_variables = true
 
-  # Set traces_sample_rate to 1.0 to capture 100%
-  # of transactions for performance monitoring.
-  # We recommend adjusting this value in production.
+  config.sample_rate = 1.0
   config.traces_sample_rate = 1.0
-  # or
-  config.traces_sampler = lambda do |_context|
-    true
-  end
 end
