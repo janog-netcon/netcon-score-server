@@ -10,7 +10,6 @@ Rails.application.configure do
     Bullet.rails_logger = true
     Bullet.bullet_logger = true
 
-    Bullet.bugsnag = false
     Bullet.console = false
     Bullet.alert = false
     Bullet.honeybadger = false
