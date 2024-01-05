@@ -1,11 +1,27 @@
-module github.com/janog-netcon/netcon-score-server/vmdb
+module github.com/janog-netcon/netcno-score-server/vmdb-api
 
-go 1.15
+go 1.21.5
 
 require (
-	github.com/google/uuid v1.1.2
-	github.com/jmoiron/sqlx v1.2.0
-	github.com/labstack/echo/v4 v4.1.17
-	github.com/labstack/gommon v0.3.0
-	github.com/lib/pq v1.8.0
+	github.com/go-chi/chi/v5 v5.0.11
+	github.com/spf13/cobra v1.8.0
+	github.com/uptrace/bun v1.1.16
+	github.com/uptrace/bun/dialect/pgdialect v1.1.16
+	github.com/uptrace/bun/driver/pgdriver v1.1.16
+)
+
+require (
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
+	golang.org/x/crypto v0.13.0 // indirect
+	mellium.im/sasl v0.3.1 // indirect
+)
+
+require (
+	github.com/google/uuid v1.5.0
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc // indirect
+	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
+	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
+	golang.org/x/sys v0.12.0 // indirect
 )

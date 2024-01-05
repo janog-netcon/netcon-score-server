@@ -1,289 +1,107 @@
 package main
 
 import (
-	"bytes"
+	"context"
 	"database/sql"
-	"encoding/json"
 	"fmt"
-	"net/http"
+	"log/slog"
 	"os"
-	"time"
+	"os/signal"
 
-	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	"github.com/labstack/gommon/log"
-	_ "github.com/lib/pq"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/spf13/cobra"
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/pgdialect"
+	"github.com/uptrace/bun/driver/pgdriver"
 )
 
-var db *sqlx.DB
+type Command struct {
+	cobra.Command
 
-type MySQLNullString struct {
-	sql.NullString
+	listenAddr             string
+	postgresHost           string
+	postgresUser           string
+	postgresPassword       string
+	postgresDatabase       string
+	postgresDisableSSLMode bool
 }
 
-func (msn MySQLNullString) MarshalJSON() ([]byte, error) {
-	// NOTE: To change escape behaviour, you need to modify here
-	if msn.Valid {
-		return json.Marshal(msn.String)
-	} else {
-		return json.Marshal(nil)
+func (c *Command) ExecuteContext(ctx context.Context) error {
+	return c.Command.ExecuteContext(ctx)
+}
+
+func NewCommand() Command {
+	cmd := Command{}
+
+	cmd.Command = cobra.Command{
+		Use:  "netcon-score-server-vmdb-api",
+		RunE: cmd.RunE,
 	}
+
+	cmd.Flags().StringVar(&cmd.listenAddr, "listen-addr", ":8080", "Listen Address for metrics server")
+	cmd.Flags().StringVar(&cmd.postgresHost, "postgres-host", "localhost:5432", "PostgreSQL host")
+	cmd.Flags().StringVar(&cmd.postgresUser, "postgres-user", "postgres", "PostgreSQL user")
+	cmd.Flags().StringVar(&cmd.postgresPassword, "postgres-password", "postgres", "PostgreSQL password")
+	cmd.Flags().StringVar(&cmd.postgresDatabase, "postgres-database", "development", "PostgreSQL password")
+	cmd.Flags().BoolVar(&cmd.postgresDisableSSLMode, "postgres-disable-ssl-mode", false, "Disable SSL to PostgreSQL")
+
+	return cmd
 }
 
-func (msn *MySQLNullString) UnmarshalJSON(data []byte) error {
-	str := string(data)
-	if str == "" || str == "null" {
-		msn.Valid = false
-	} else {
-		msn.Valid = true
-		msn.String = str[1 : len(str)-1]
+func (c *Command) buildDSN() string {
+	dsn := fmt.Sprintf("postgres://%s:%s@%s/%s", c.postgresUser, c.postgresPassword, c.postgresHost, c.postgresDatabase)
+	if c.postgresDisableSSLMode {
+		dsn += "?sslmode=disable"
+	}
+	return dsn
+}
+
+func (c *Command) RunE(cmd *cobra.Command, _ []string) error {
+	ctx, cancel := context.WithCancelCause(cmd.Context())
+	defer cancel(nil)
+
+	dsn := c.buildDSN()
+	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
+	db := bun.NewDB(sqldb, pgdialect.New())
+	repository := NewRepository(db)
+
+	controller := Controller{repo: repository}
+
+	r := chi.NewRouter()
+
+	r.Use(middleware.Logger)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Heartbeat("/healthz"))
+	r.Use(middleware.Recoverer)
+
+	r.Get("/", controller.hello)
+	r.Get("/problem-environments", controller.listProblemEnvironments)
+	r.Get("/answer-id", controller.getAnswerID)
+	r.Get("/local-problem-answers", controller.listLatestUnconfirmedAnswersForLocalProblem)
+
+	server := Server{
+		ListenAddr: c.listenAddr,
+		Handler:    r,
+	}
+
+	if err := server.Run(ctx); err != nil {
+		slog.Error("failed to run VMDB API server", "error", err)
+		return err
 	}
 
 	return nil
 }
 
-type ProblemEnvironment struct {
-	// create_table "problem_environments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-	ID          uuid.UUID       `db:"id" json:"id"`
-	InnerStatus MySQLNullString `db:"status" json:"inner_status"`
-	Host        string          `db:"host" json:"host"`
-	User        string          `db:"user" json:"user"`
-	Password    string          `db:"password" json:"password"`
-	ProblemID   uuid.UUID       `db:"problem_id" json:"problem_id"`
-	CreatedAt   time.Time       `db:"created_at" json:"created_at"`
-	UpdatedAt   time.Time       `db:"updated_at" json:"updated_at"`
-	Name        string          `db:"name" json:"name"`
-	Service     string          `db:"service" json:"service"`
-	Port        int             `db:"port" json:"port"`
-	// TeamID           uuid.UUID       `db:"team_id" json:"team_id"` // nullable
-	SecretText string `db:"secret_text" json:"secret_text"`
-}
-
-func lookupEnvOrExit(name string) string {
-	var str string
-	var ok bool
-	if str, ok = os.LookupEnv(name); !ok {
-		fmt.Fprintf(os.Stderr, "env %s must be set", name)
-	}
-	return str
-}
-
 func main() {
-	// Echo instance
-	e := echo.New()
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, nil)))
 
-	// Middleware
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
 
-	// Routes
-	e.GET("/", hello)
-	e.GET("/problem-environments", listProblemEnvironment)
-	e.GET("/problem-environments/:name", getProblemEnvironment)
-	e.POST("/problem-environments", createOrUpdateProblemEnvironment)
-	e.DELETE("/problem-environments/:name", deleteProblemEnvironment)
-	e.GET("/answer-id", getAnswerId)
-
-	// export POSTGRES_HOST=localhost POSTGRES_PORT=8902 POSTGRES_USER=postgres POSTGRES_PASSWORD=postgres POSTGRES_DATABASE=development
-
-	dbHost := lookupEnvOrExit("POSTGRES_HOST")
-	var dbPort string
-	var ok bool
-	if dbPort, ok = os.LookupEnv("POSTGRES_PORT"); !ok {
-		dbPort = "5432"
+	cmd := NewCommand()
+	if err := cmd.ExecuteContext(ctx); err != nil {
+		slog.Error("failed to execute command", "error", err)
+		os.Exit(1)
 	}
-	dbUser := lookupEnvOrExit("POSTGRES_USER")
-	dbPassword := lookupEnvOrExit("POSTGRES_PASSWORD")
-	dbDatabase := lookupEnvOrExit("POSTGRES_DB")
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", dbHost, dbPort, dbUser, dbPassword, dbDatabase)
-
-	var err error
-	db, err = sqlx.Open("postgres", dsn)
-
-	if err != nil {
-		e.Logger.Fatal(err)
-	}
-
-	defer db.Close()
-
-	if os.Getenv("DEBUG") != "" {
-		e.Logger.SetLevel(log.DEBUG)
-	}
-
-	// Start server
-	e.Logger.Fatal(e.Start(":8080"))
-
-	// query(e.Logger)
-}
-
-// Handler
-func hello(c echo.Context) error {
-	return c.String(http.StatusOK, "This is api for VM Management Service by NETCON Score Server")
-}
-
-// echo request handler that returns problemEnvironments[] as json
-// if name is empty (""), this returns all problemEnvironments
-func QueryProblemEnvironment(c echo.Context, name string) error {
-	var rows *sqlx.Rows
-	var err error
-
-	if name == "" {
-		q := `SELECT id, status, host, "user", password, problem_id, created_at, updated_at, name, service, port, secret_text FROM problem_environments`
-		rows, err = db.Queryx(q)
-	} else {
-		q := `SELECT id, status, host, "user", password, problem_id, created_at, updated_at, name, service, port, secret_text FROM problem_environments WHERE name = $1`
-		rows, err = db.Queryx(q, name)
-	}
-
-	if err != nil {
-		c.Echo().Logger.Errorf("Failed to run query", err)
-		return c.String(http.StatusInternalServerError, "Failed to execute query")
-	}
-
-	pes := []ProblemEnvironment{}
-
-	for rows.Next() {
-		var pe ProblemEnvironment
-		err = rows.StructScan(&pe)
-
-		if err != nil {
-			c.Echo().Logger.Errorf("Failed to StructScan", err)
-			return c.String(http.StatusInternalServerError, "Failed to parse query result")
-		}
-
-		pes = append(pes, pe)
-	}
-
-	// var encoded []byte
-	// encoded, err = json.Marshal(pes)
-
-	// if err != nil {
-	//   c.Echo().Logger.Errorf("Failed to marshal json", err)
-	// }
-
-	// fmt.Println(string(encoded))
-	// return c.JSON(http.StatusOK, pes)
-
-	var b bytes.Buffer
-	encoder := json.NewEncoder(&b)
-	encoder.SetEscapeHTML(false)
-	encoder.Encode(pes)
-
-	return c.JSONBlob(http.StatusOK, b.Bytes())
-}
-
-func listProblemEnvironment(c echo.Context) error {
-	return QueryProblemEnvironment(c, "")
-}
-
-func getProblemEnvironment(c echo.Context) error {
-	name := c.Param("name")
-
-	return QueryProblemEnvironment(c, name)
-}
-
-// echo request handler that upsert (update if exists, insert if not exists) problemEnvironment
-func createOrUpdateProblemEnvironment(c echo.Context) error {
-	pe := ProblemEnvironment{}
-
-	// TODO: validation
-	err := c.Bind(&pe)
-
-	if err != nil {
-		c.Echo().Logger.Errorf("Failed to bind payload", err)
-		return err
-	}
-
-	q := `
-    INSERT INTO problem_environments (host, "user", password, problem_id, name, service, port, secret_text, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
-    ON CONFLICT (problem_id, name, service)
-    DO UPDATE SET host=?, "user"=?, password=?, problem_id=?, name=?, service=?, port=?, secret_text=?, updated_at=NOW()
-  `
-
-	_, err = db.Exec(db.Rebind(q),
-		pe.Host, pe.User, pe.Password, pe.ProblemID, pe.Name, pe.Service, pe.Port, pe.SecretText,
-		pe.Host, pe.User, pe.Password, pe.ProblemID, pe.Name, pe.Service, pe.Port, pe.SecretText)
-	if err != nil {
-		c.Echo().Logger.Errorf("Failed to execute query", err)
-		errMsg := fmt.Sprintf("Failed to execute query: %v", err)
-		return c.String(http.StatusInternalServerError, errMsg)
-	}
-
-	peFromDb := ProblemEnvironment{}
-	q = `SELECT id, status, host, "user", password, problem_id, created_at, updated_at, name, service, port, secret_text FROM problem_environments WHERE problem_id = ? AND name = ? AND service = ? LIMIT 1`
-	err = db.Get(&peFromDb, db.Rebind(q), pe.ProblemID, pe.Name, pe.Service)
-
-	if err != nil {
-		c.Echo().Logger.Errorf("Failed to get query result", err)
-		errMsg := fmt.Sprintf("Failed to get query result: %v", err)
-		return c.String(http.StatusInternalServerError, errMsg)
-	}
-
-	// return c.JSON(http.StatusOK, peFromDb)
-
-	// NOTE: To output unescaped string, use custom encoder
-	var b bytes.Buffer
-	encoder := json.NewEncoder(&b)
-	encoder.SetEscapeHTML(false)
-	encoder.Encode(peFromDb)
-
-	return c.JSONBlob(http.StatusOK, b.Bytes())
-}
-
-func deleteProblemEnvironment(c echo.Context) error {
-	name := c.Param("name")
-
-	q := `DELETE FROM problem_environments WHERE name = $1`
-	res, err := db.Exec(q, name)
-	if err != nil {
-		errMsg := fmt.Sprintf("Failed to execute query: %v", err)
-		return c.String(http.StatusInternalServerError, errMsg)
-	}
-
-	rowCnt, err := res.RowsAffected()
-	if err != nil {
-		errMsg := fmt.Sprintf("Failed to execute query: %v", err)
-		return c.String(http.StatusInternalServerError, errMsg)
-	}
-
-	if rowCnt == 0 {
-		return c.NoContent(http.StatusGone)
-	}
-
-	return c.NoContent(http.StatusNoContent)
-}
-
-type Answer struct {
-	ID string `db:"id" json:"answer_id"`
-}
-
-// answer_id is required for auto-scoring
-func getAnswerId(c echo.Context) error {
-	problem_id := c.QueryParam("problem_id")
-	name := c.QueryParam("name")
-
-	pes := Answer{}
-
-	q := `
-        SELECT answers.id
-        FROM problem_environments INNER JOIN answers ON (answers.team_id=problem_environments.team_id and answers.problem_id=problem_environments.problem_id)
-        WHERE problem_environments.problem_id=$1 and problem_environments.name=$2 ORDER BY answers.created_at DESC;
-        `
-
-	err := db.Get(&pes, db.Rebind(q), problem_id, name)
-	if err != nil {
-		c.Echo().Logger.Errorf("Failed to get query result", err)
-		errMsg := fmt.Sprintf("Failed to get query result: %v", err)
-		return c.String(http.StatusInternalServerError, errMsg)
-	}
-
-	var b bytes.Buffer
-	encoder := json.NewEncoder(&b)
-	encoder.SetEscapeHTML(false)
-	encoder.Encode(pes)
-
-	return c.JSONBlob(http.StatusOK, b.Bytes())
 }
