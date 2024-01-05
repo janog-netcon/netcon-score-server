@@ -63,7 +63,7 @@ func (c *Controller) getAnswerID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	latestAnswer, err := c.repo.findLatestUnconfirmedAnswerBy(
+	latestAnswer, err := c.repo.findLatestAnswerFor(
 		ctx,
 		problemEnvironment.ProblemID.String(),
 		problemEnvironment.TeamID.String(),
@@ -129,7 +129,7 @@ func (c *Controller) listLatestUnconfirmedAnswersForLocalProblem(w http.Response
 			continue
 		}
 
-		answers, err := c.repo.listLatestUnconfirmedAnswersFor(ctx, problem.ID)
+		answers, err := c.repo.listLatestUnscoredAnswersFor(ctx, problem.ID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to list latest unconfirmed Answers", "error", err)
 			w.WriteHeader(http.StatusInternalServerError)
