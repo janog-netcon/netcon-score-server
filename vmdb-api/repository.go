@@ -61,13 +61,15 @@ func (r *Repository) findProblemBy(ctx context.Context, code string) (*Problem, 
 	return &result, nil
 }
 
-func (r *Repository) listLatestUnconfirmedAnswersFor(ctx context.Context, problemID uuid.UUID) ([]Answer, error) {
+func (r *Repository) listLatestUnscoredAnswersFor(ctx context.Context, problemID uuid.UUID) ([]Answer, error) {
 	var result []Answer
-	err := r.db.NewSelect().Model(&result).
-		Where("confirming = ?", false).
+	err := r.db.NewSelect().ColumnExpr("answers.*").
+		Table("answers").
+		Join("INNER JOIN scores").JoinOn("answers.id = scores.answer_id").
+		Where("point IS NULL").
 		Where("problem_id = ?", problemID).
 		Order("created_at DESC").
-		Scan(ctx)
+		Scan(ctx, &result)
 	if err != nil {
 		return nil, err
 	}
