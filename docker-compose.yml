@@ -50,7 +50,6 @@ services:
       traefik.enable: true
       traefik.http.routers.ui.entrypoints: web
       traefik.http.routers.ui.rule: PathPrefix(`/`)
-    image: kyontan/netcon-score-server:ui
     env_file: .env
     build:
       context: ui/
@@ -77,7 +76,6 @@ services:
     ports: ['127.0.0.1:8903:6379']
 
   yamllint:
-    image: kyontan/netcon-score-server:yamllint
     build:
       context: yamllint/
     volumes:
@@ -97,12 +95,18 @@ services:
     ports: ['127.0.0.1:8904:8080']
 
   vmdb-api:
-    image: kyontan/netcon-score-server:vmdb-api
     environment:
       - DEBUG=1
     env_file: .env
     build:
       context: vmdb-api/
+    command:
+      - /server
+      - --postgres-host=$POSTGRES_HOST
+      - --postgres-user=$POSTGRES_USER
+      - --postgres-password=$POSTGRES_PASSWORD
+      - --postgres-database=$POSTGRES_DB
+      - --postgres-disable-ssl-mode=true
     depends_on:
       - db
     ports: ['127.0.0.1:8905:8080']
@@ -121,7 +125,6 @@ services:
     ports: ['0.0.0.0:8907:9090']
 
   exporter:
-    image: proelbtn/netcon-score-server-exporter:latest
     env_file: .env
     build:
       context: exporter/

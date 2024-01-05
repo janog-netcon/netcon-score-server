@@ -1,18 +1,25 @@
-FROM golang:1.15-alpine as builder
+FROM golang:1.21 as builder
 
-WORKDIR /go/src/app
+WORKDIR /workspace
 
-COPY go.mod go.sum ./
+# Copy the Go Modules manifests
+COPY go.mod go.mod
+COPY go.sum go.sum
+# cache deps before building and copying source so that we don't need to re-download as much
+# and so that source changes don't invalidate our downloaded layer
 RUN go mod download
 
-COPY . .
+# Copy the go source
+COPY *.go ./
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/app
+# Build
+RUN CGO_ENABLED=0 go build -a -o server *.go
 
-FROM scratch
+# Use distroless as minimal base image to package the manager binary
+# Refer to https://github.com/GoogleContainerTools/distroless for more details
+FROM gcr.io/distroless/static:nonroot
+WORKDIR /
+COPY --from=builder /workspace/server .
+USER 65532:65532
 
-COPY --from=builder /go/bin/app /go/bin/app
-
-EXPOSE 8080
-
-ENTRYPOINT ["/go/bin/app"]
+ENTRYPOINT ["/server"]
