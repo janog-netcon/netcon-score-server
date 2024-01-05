@@ -74,10 +74,9 @@ func (r *Repository) listLatestUnconfirmedAnswersFor(ctx context.Context, proble
 	return result, nil
 }
 
-func (r *Repository) findLatestUnconfirmedAnswerBy(ctx context.Context, problemID, teamID string) (*Answer, error) {
+func (r *Repository) findLatestAnswerFor(ctx context.Context, problemID, teamID string) (*Answer, error) {
 	var result Answer
 	err := r.db.NewSelect().Model(&result).
-		Where("confirming = ?", false).
 		Where("team_id = ?", teamID).
 		Where("problem_id = ?", problemID).
 		Order("created_at DESC").

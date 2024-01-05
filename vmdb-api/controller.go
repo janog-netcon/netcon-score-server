@@ -63,7 +63,7 @@ func (c *Controller) getAnswerID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	latestAnswer, err := c.repo.findLatestUnconfirmedAnswerBy(
+	latestAnswer, err := c.repo.findLatestAnswerFor(
 		ctx,
 		problemEnvironment.ProblemID.String(),
 		problemEnvironment.TeamID.String(),
