@@ -10,7 +10,7 @@
       <v-col cols="6" class="py-0">
         <!-- ユーザ名&セレクタ -->
         <v-overflow-btn
-          v-if="isNotPlayer"
+          v-if="isStaff"
           v-model="selectedTeamId"
           :loading="teamFetching"
           :items="teams"

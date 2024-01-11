@@ -29,6 +29,7 @@
       :problem="problem"
       :environments="problem.environments"
       class="py-2"
+      v-if="isNotAudience"
     />
 
     <!-- 補足 -->
