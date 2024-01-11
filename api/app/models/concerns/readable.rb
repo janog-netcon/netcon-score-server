@@ -81,7 +81,8 @@ module Readable
       return all if %w[Category Problem].include?(klass)
 
       # 見学者なら一部のテーブルを除き全レコード取得可能
-      return all if team.audience? && all_models(ignore: %w[Attachment Config Notice ProblemEnvironment]).include?(klass)
+      return all if team.audience? && %w[Category Problem ProblemBody ProblemSupplement Team].include?(klass)
+      return where(team: [nil]) if team.audience? && %w[Notice].include?(klass)
 
       case klass
       when 'Answer'
