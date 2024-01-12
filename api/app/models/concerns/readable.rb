@@ -80,9 +80,28 @@ module Readable
       # Problem自体は常時見れるがProblemBody(問題文)はそうではない
       return all if %w[Category Problem].include?(klass)
 
-      # 見学者なら一部のテーブルを除き全レコード取得可能
-      return all if team.audience? && %w[Category Problem ProblemBody ProblemSupplement Team].include?(klass)
-      return where(team: [nil]) if team.audience? && %w[Notice].include?(klass)
+      # 見学者（NETCON guest）には以下のルールで取得させる
+      if team.audience?
+        case klass
+        when 'Team'
+          # 参加者と同じ権限でチームの確認が可能
+          return where(role: -Float::INFINITY..Team.roles[team.role])
+        when 'Category'
+          # Categoryは常に取得可能
+          return all
+        when 'ProblemBody', 'ProblemSupplement'
+          return where(problem: Problem.opened(team: team))
+        when 'ProblemEnvironment'
+          # 勝手に別の参加者の問題環境が見えないようにするために取得不可
+          return none
+        when 'Notice'
+          # 通知は全体宛のもののみ取得可能
+          return where(team: [nil])
+        else
+          # 他のパラメータは取得不可
+          return none
+        end
+      end
 
       case klass
       when 'Answer'
@@ -91,7 +110,7 @@ module Readable
         # レコードが取得不可でもtokenがあればデータ本体は取得可能
         where(team: team)
       when 'Score'
-        return none if !team.staff? && Config.hide_all_score
+        return none if Config.hide_all_score
 
         # joins(:answer).merge(Answer.delay_filter).where(answers: { team: team })
         where(answer: Answer.readable_records(team: team).delay_filter)
@@ -104,12 +123,9 @@ module Readable
       when 'ProblemBody', 'ProblemSupplement'
         where(problem: Problem.opened(team: team))
       when 'ProblemEnvironment'
-        # グローバル問題で共通の環境を作ることがあるため、audienceには完全非公開
-        return none if team.audience?
-
         # playerには割り当てられた問題環境しか見せない
         # NOTE: 'UNDER_SCORING' 状態のVMは見えないことが望ましいが、採点中のVMがあることをUIが知るすべとして暫定的にこうしている
-        where(team: team, problem: Problem.opened(team: team), status: ['UNDER_CHALLENGE', 'UNDER_SCORING'])
+        where(team: team, problem: Problem.opened(team: team), status: %w[UNDER_CHALLENGE UNDER_SCORING])
       when 'Team'
         # 自分以下の権限のチームを取得できる
         where(role: -Float::INFINITY..Team.roles[team.role])
