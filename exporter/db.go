@@ -7,7 +7,7 @@ import (
 )
 
 // ignoredTeams is a list of teams that should be ignored by exporter.
-var ignoredTeams = []string{"staff", "team99", "audience"}
+var ignoredTeams = []string{"staff", "team99", "guest"}
 
 type Repository struct {
 	db *bun.DB
