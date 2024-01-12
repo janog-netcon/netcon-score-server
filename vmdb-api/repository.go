@@ -50,10 +50,32 @@ func (r *Repository) findProblemEnvironmentBy(ctx context.Context, name string) 
 	return &result, nil
 }
 
-func (r *Repository) findProblemBy(ctx context.Context, code string) (*Problem, error) {
+func (r *Repository) findProblemBy(ctx context.Context, problemID uuid.UUID) (*Problem, error) {
+	var result Problem
+	err := r.db.NewSelect().Model(&result).
+		Where("id = ?", problemID).
+		Scan(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (r *Repository) findProblemByCode(ctx context.Context, code string) (*Problem, error) {
 	var result Problem
 	err := r.db.NewSelect().Model(&result).
 		Where("code = ?", code).
+		Scan(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (r *Repository) findAnswerBy(ctx context.Context, answerID uuid.UUID) (*Answer, error) {
+	var result Answer
+	err := r.db.NewSelect().Model(&result).
+		Where("id = ?", answerID).
 		Scan(ctx)
 	if err != nil {
 		return nil, err

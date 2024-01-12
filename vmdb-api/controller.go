@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
@@ -140,7 +141,7 @@ func (c *Controller) listLatestUnconfirmedAnswersForLocalProblem(w http.Response
 	for _, code := range strings.Split(value, ",") {
 		code = strings.TrimSpace(code)
 
-		problem, err := c.repo.findProblemBy(ctx, code)
+		problem, err := c.repo.findProblemByCode(ctx, code)
 		if err != nil {
 			slog.WarnContext(ctx, "failed to find Problem", "error", err, "code", code)
 			continue
@@ -164,22 +165,44 @@ func (c *Controller) listLatestUnconfirmedAnswersForLocalProblem(w http.Response
 		}
 
 		for _, answer := range latestAnswers {
-			bodies := []string{}
-			for _, b := range answer.Bodies {
-				bodies = append(bodies, b...)
-			}
-
-			response = append(response, listLatestUnconfirmedAnswersForLocalProblemResponseItem{
-				ID:          answer.ID,
-				ProblemID:   answer.ProblemID,
-				ProblemCode: problem.Code,
-				TeamID:      answer.TeamID,
-				CreatedAt:   answer.CreatedAt,
-				UpdatedAt:   answer.UpdatedAt,
-				Body:        strings.Join(bodies, "\n"),
-			})
+			response = append(response, newAnswerResponseFrom(answer, *problem))
 		}
 	}
+
+	if err := renderJSON(w, http.StatusOK, response); err != nil {
+		slog.ErrorContext(ctx, "failed to render JSON", "error", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
+type getAnswerInformationResponse answerResponse
+
+func (c *Controller) getAnswerInformation(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	answerIDStr := chi.URLParam(r, "answerID")
+	answerID, err := uuid.Parse(answerIDStr)
+	if err != nil {
+		slog.WarnContext(ctx, "invalid query parameters", "answer_id", answerIDStr)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	answer, err := c.repo.findAnswerBy(ctx, answerID)
+	if err != nil {
+		slog.WarnContext(ctx, "failed to find Answer", "error", err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	problem, err := c.repo.findProblemBy(ctx, answer.ProblemID)
+	if err != nil {
+		slog.ErrorContext(ctx, "failed to find Problem", "error", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	response := getAnswerInformationResponse(newAnswerResponseFrom(*answer, *problem))
 
 	if err := renderJSON(w, http.StatusOK, response); err != nil {
 		slog.ErrorContext(ctx, "failed to render JSON", "error", err)

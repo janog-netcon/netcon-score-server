@@ -75,10 +75,13 @@ func (c *Command) RunE(cmd *cobra.Command, _ []string) error {
 	r.Use(middleware.Heartbeat("/healthz"))
 	r.Use(middleware.Recoverer)
 
+	// 後方互換性のために、そのままのI/Fで提供する
 	r.Get("/", controller.hello)
 	r.Get("/problem-environments", controller.listProblemEnvironments)
 	r.Get("/answer-id", controller.getAnswerID)
+
 	r.Get("/local-problem-answers", controller.listLatestUnconfirmedAnswersForLocalProblem)
+	r.Get("/answers/{answerID}", controller.getAnswerInformation)
 
 	server := Server{
 		ListenAddr: c.listenAddr,
