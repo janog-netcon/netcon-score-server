@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
@@ -18,6 +19,33 @@ type Controller struct {
 
 func (c *Controller) hello(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(GREETING))
+}
+
+type answerResponse struct {
+	ID          uuid.UUID `json:"id"`
+	ProblemID   uuid.UUID `json:"problem_id"`
+	ProblemCode string    `json:"problem_code"`
+	TeamID      uuid.UUID `json:"team_id"`
+	Body        string    `json:"body"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+func newAnswerResponseFrom(answer Answer, problem Problem) answerResponse {
+	bodies := []string{}
+	for _, b := range answer.Bodies {
+		bodies = append(bodies, b...)
+	}
+
+	return answerResponse{
+		ID:          answer.ID,
+		ProblemID:   answer.ProblemID,
+		ProblemCode: problem.Code,
+		TeamID:      answer.TeamID,
+		CreatedAt:   answer.CreatedAt,
+		UpdatedAt:   answer.UpdatedAt,
+		Body:        strings.Join(bodies, "\n"),
+	}
 }
 
 type listProblemEnvironmentsResponse []ProblemEnvironment
@@ -65,8 +93,8 @@ func (c *Controller) getAnswerID(w http.ResponseWriter, r *http.Request) {
 
 	latestAnswer, err := c.repo.findLatestAnswerFor(
 		ctx,
-		problemEnvironment.ProblemID.String(),
-		problemEnvironment.TeamID.String(),
+		problemEnvironment.ProblemID,
+		problemEnvironment.TeamID,
 	)
 	if err != nil {
 		slog.ErrorContext(ctx, "failed to find latest Answer", "error", err)
@@ -90,19 +118,9 @@ func (c *Controller) getAnswerID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type listLatestUnconfirmedAnswersForLocalProblemResponse []listLatestUnconfirmedAnswersForLocalProblemResponseItem
+type listUnconfirmedAnswersForLocalProblemResponse []answerResponse
 
-type listLatestUnconfirmedAnswersForLocalProblemResponseItem struct {
-	ID          uuid.UUID `json:"id"`
-	ProblemID   uuid.UUID `json:"problem_id"`
-	ProblemCode string    `json:"problem_code"`
-	TeamID      uuid.UUID `json:"team_id"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
-	Body        string    `json:"body"`
-}
-
-func (c *Controller) listLatestUnconfirmedAnswersForLocalProblem(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) listUnscoredAnswersForLocalProblem(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	config, err := c.repo.findConfigBy(ctx, "local_problem_codes")
@@ -119,50 +137,62 @@ func (c *Controller) listLatestUnconfirmedAnswersForLocalProblem(w http.Response
 		return
 	}
 
-	response := listLatestUnconfirmedAnswersForLocalProblemResponse{}
+	response := listUnconfirmedAnswersForLocalProblemResponse{}
 	for _, code := range strings.Split(value, ",") {
 		code = strings.TrimSpace(code)
 
-		problem, err := c.repo.findProblemBy(ctx, code)
+		problem, err := c.repo.findProblemByCode(ctx, code)
 		if err != nil {
 			slog.WarnContext(ctx, "failed to find Problem", "error", err, "code", code)
 			continue
 		}
 
-		answers, err := c.repo.listLatestUnscoredAnswersFor(ctx, problem.ID)
+		answers, err := c.repo.listUnscoredAnswersFor(ctx, problem.ID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to list latest unconfirmed Answers", "error", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		latestAnswers := map[uuid.UUID]Answer{}
 		for _, answer := range answers {
-			if _, ok := latestAnswers[answer.TeamID]; !ok {
-				latestAnswers[answer.TeamID] = answer
-			}
-			if answer.CreatedAt.After(latestAnswers[answer.TeamID].CreatedAt) {
-				latestAnswers[answer.TeamID] = answer
-			}
-		}
-
-		for _, answer := range latestAnswers {
-			bodies := []string{}
-			for _, b := range answer.Bodies {
-				bodies = append(bodies, b...)
-			}
-
-			response = append(response, listLatestUnconfirmedAnswersForLocalProblemResponseItem{
-				ID:          answer.ID,
-				ProblemID:   answer.ProblemID,
-				ProblemCode: problem.Code,
-				TeamID:      answer.TeamID,
-				CreatedAt:   answer.CreatedAt,
-				UpdatedAt:   answer.UpdatedAt,
-				Body:        strings.Join(bodies, "\n"),
-			})
+			response = append(response, newAnswerResponseFrom(answer, *problem))
 		}
 	}
+
+	if err := renderJSON(w, http.StatusOK, response); err != nil {
+		slog.ErrorContext(ctx, "failed to render JSON", "error", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
+type getAnswerInformationResponse answerResponse
+
+func (c *Controller) getAnswerInformation(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	answerIDStr := chi.URLParam(r, "answerID")
+	answerID, err := uuid.Parse(answerIDStr)
+	if err != nil {
+		slog.WarnContext(ctx, "invalid query parameters", "answer_id", answerIDStr)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	answer, err := c.repo.findAnswerBy(ctx, answerID)
+	if err != nil {
+		slog.WarnContext(ctx, "failed to find Answer", "error", err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	problem, err := c.repo.findProblemBy(ctx, answer.ProblemID)
+	if err != nil {
+		slog.ErrorContext(ctx, "failed to find Problem", "error", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	response := getAnswerInformationResponse(newAnswerResponseFrom(*answer, *problem))
 
 	if err := renderJSON(w, http.StatusOK, response); err != nil {
 		slog.ErrorContext(ctx, "failed to render JSON", "error", err)

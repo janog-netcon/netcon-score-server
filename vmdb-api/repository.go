@@ -9,9 +9,6 @@ import (
 	"github.com/uptrace/bun"
 )
 
-// ignoredTeams is a list of teams that should be ignored by exporter.
-var ignoredTeams = []string{"staff", "team99", "audience"}
-
 type Repository struct {
 	db *bun.DB
 }
@@ -50,7 +47,18 @@ func (r *Repository) findProblemEnvironmentBy(ctx context.Context, name string) 
 	return &result, nil
 }
 
-func (r *Repository) findProblemBy(ctx context.Context, code string) (*Problem, error) {
+func (r *Repository) findProblemBy(ctx context.Context, problemID uuid.UUID) (*Problem, error) {
+	var result Problem
+	err := r.db.NewSelect().Model(&result).
+		Where("id = ?", problemID).
+		Scan(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (r *Repository) findProblemByCode(ctx context.Context, code string) (*Problem, error) {
 	var result Problem
 	err := r.db.NewSelect().Model(&result).
 		Where("code = ?", code).
@@ -61,14 +69,24 @@ func (r *Repository) findProblemBy(ctx context.Context, code string) (*Problem, 
 	return &result, nil
 }
 
-func (r *Repository) listLatestUnscoredAnswersFor(ctx context.Context, problemID uuid.UUID) ([]Answer, error) {
+func (r *Repository) findAnswerBy(ctx context.Context, answerID uuid.UUID) (*Answer, error) {
+	var result Answer
+	err := r.db.NewSelect().Model(&result).
+		Where("id = ?", answerID).
+		Scan(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (r *Repository) listUnscoredAnswersFor(ctx context.Context, problemID uuid.UUID) ([]Answer, error) {
 	var result []Answer
 	err := r.db.NewSelect().ColumnExpr("answers.*").
 		Table("answers").
 		Join("INNER JOIN scores").JoinOn("answers.id = scores.answer_id").
-		Where("point IS NULL").
 		Where("problem_id = ?", problemID).
-		Order("created_at DESC").
+		Where("point IS NULL").
 		Scan(ctx, &result)
 	if err != nil {
 		return nil, err
@@ -76,7 +94,7 @@ func (r *Repository) listLatestUnscoredAnswersFor(ctx context.Context, problemID
 	return result, nil
 }
 
-func (r *Repository) findLatestAnswerFor(ctx context.Context, problemID, teamID string) (*Answer, error) {
+func (r *Repository) findLatestAnswerFor(ctx context.Context, problemID uuid.UUID, teamID uuid.UUID) (*Answer, error) {
 	var result Answer
 	err := r.db.NewSelect().Model(&result).
 		Where("team_id = ?", teamID).
