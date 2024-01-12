@@ -22,9 +22,9 @@ module Mutations
         return { problem_environments: nil }
       end
 
-      # NOTE: ここはトランザクション外なので、同時に2つのリクエストが来たときは、ここで引っかからない
-      if ProblemEnvironment.exists?(problem_id: problem_id, team: self.current_team!, status: 'UNDER_CHALLENGE')
-        raise ProblemEnvironmentAlreadyAssigned.new(self.current_team!, problem_id)
+      # トランザクション外なので、同時にリクエストされた場合、同時に問題環境が作成される可能性がある
+      if ProblemEnvironment.exists?(team: self.current_team!, status: 'UNDER_CHALLENGE')
+        raise ProblemEnvironmentAlreadyAssigned, self.current_team!
       end
 
       # すでに割り当てられた問題環境がない場合に新しい環境を gateway に作らせる
