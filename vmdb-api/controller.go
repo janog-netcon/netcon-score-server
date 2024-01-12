@@ -20,6 +20,33 @@ func (c *Controller) hello(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(GREETING))
 }
 
+type answerResponse struct {
+	ID          uuid.UUID `json:"id"`
+	ProblemID   uuid.UUID `json:"problem_id"`
+	ProblemCode string    `json:"problem_code"`
+	TeamID      uuid.UUID `json:"team_id"`
+	Body        string    `json:"body"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+func newAnswerResponseFrom(answer Answer, problem Problem) answerResponse {
+	bodies := []string{}
+	for _, b := range answer.Bodies {
+		bodies = append(bodies, b...)
+	}
+
+	return answerResponse{
+		ID:          answer.ID,
+		ProblemID:   answer.ProblemID,
+		ProblemCode: problem.Code,
+		TeamID:      answer.TeamID,
+		CreatedAt:   answer.CreatedAt,
+		UpdatedAt:   answer.UpdatedAt,
+		Body:        strings.Join(bodies, "\n"),
+	}
+}
+
 type listProblemEnvironmentsResponse []ProblemEnvironment
 
 func (c *Controller) listProblemEnvironments(w http.ResponseWriter, r *http.Request) {
@@ -90,17 +117,7 @@ func (c *Controller) getAnswerID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type listLatestUnconfirmedAnswersForLocalProblemResponse []listLatestUnconfirmedAnswersForLocalProblemResponseItem
-
-type listLatestUnconfirmedAnswersForLocalProblemResponseItem struct {
-	ID          uuid.UUID `json:"id"`
-	ProblemID   uuid.UUID `json:"problem_id"`
-	ProblemCode string    `json:"problem_code"`
-	TeamID      uuid.UUID `json:"team_id"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
-	Body        string    `json:"body"`
-}
+type listLatestUnconfirmedAnswersForLocalProblemResponse []answerResponse
 
 func (c *Controller) listLatestUnconfirmedAnswersForLocalProblem(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
