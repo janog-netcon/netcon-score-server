@@ -1,6 +1,7 @@
 <template>
   <v-hover v-slot:default="{ hover }">
     <v-card
+      v-if="problem.isReadable"
       :disabled="!problem.isReadable"
       :to="problemURL"
       :color="color"
