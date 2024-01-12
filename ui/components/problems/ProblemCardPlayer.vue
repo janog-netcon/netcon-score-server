@@ -79,6 +79,9 @@ export default {
     },
   },
   computed: {
+    isChallenging() {
+      return this.problem.environments.filter((env) => env.status == "UNDER_CHALLENGE").length > 0
+    },
     scoredAnswers() {
       return this.problem.answers.filter((answer) => answer.hasPoint)
     },
@@ -114,7 +117,10 @@ export default {
       return `${this.maxScoreAnswer.percent}% ${this.maxScoreAnswer.point}/${this.problem.perfectPoint}点`
     },
     currentState() {
-      if (this.problem.answers.length === 0) {
+      if (this.isChallenging) {
+        this.changeColor('orange')
+        return '挑戦中'
+      } else if (this.problem.answers.length === 0) {
         this.changeColor('')
         return '未解答'
       } else if (this.maxScoreAnswer && this.maxScoreAnswer.percent >= 100) {

@@ -116,7 +116,7 @@ export default class Queries {
   }
 
   static problemsAnswersPenalties() {
-    return orm.Problem.eagerFetch({}, ['body', 'answers', 'penalties'])
+    return orm.Problem.eagerFetch({}, ['body', 'answers', 'penalties', "environments"])
   }
 
   static scoreboardsTeam() {

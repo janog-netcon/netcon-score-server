@@ -67,6 +67,7 @@ export default {
             'problems.body',
             'problems.answers',
             'problems.penalties',
+            'problems.environments'
           ]
         : ['problems.body', 'problems.category']
 
