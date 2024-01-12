@@ -80,7 +80,7 @@ func (c *Command) RunE(cmd *cobra.Command, _ []string) error {
 	r.Get("/problem-environments", controller.listProblemEnvironments)
 	r.Get("/answer-id", controller.getAnswerID)
 
-	r.Get("/local-problem-answers", controller.listLatestUnconfirmedAnswersForLocalProblem)
+	r.Get("/local-problem-answers", controller.listUnscoredAnswersForLocalProblem)
 	r.Get("/answers/{answerID}", controller.getAnswerInformation)
 
 	server := Server{

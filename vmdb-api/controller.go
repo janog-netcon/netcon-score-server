@@ -93,8 +93,8 @@ func (c *Controller) getAnswerID(w http.ResponseWriter, r *http.Request) {
 
 	latestAnswer, err := c.repo.findLatestAnswerFor(
 		ctx,
-		problemEnvironment.ProblemID.String(),
-		problemEnvironment.TeamID.String(),
+		problemEnvironment.ProblemID,
+		problemEnvironment.TeamID,
 	)
 	if err != nil {
 		slog.ErrorContext(ctx, "failed to find latest Answer", "error", err)
@@ -118,9 +118,9 @@ func (c *Controller) getAnswerID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type listLatestUnconfirmedAnswersForLocalProblemResponse []answerResponse
+type listUnconfirmedAnswersForLocalProblemResponse []answerResponse
 
-func (c *Controller) listLatestUnconfirmedAnswersForLocalProblem(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) listUnscoredAnswersForLocalProblem(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	config, err := c.repo.findConfigBy(ctx, "local_problem_codes")
@@ -137,7 +137,7 @@ func (c *Controller) listLatestUnconfirmedAnswersForLocalProblem(w http.Response
 		return
 	}
 
-	response := listLatestUnconfirmedAnswersForLocalProblemResponse{}
+	response := listUnconfirmedAnswersForLocalProblemResponse{}
 	for _, code := range strings.Split(value, ",") {
 		code = strings.TrimSpace(code)
 
@@ -147,24 +147,14 @@ func (c *Controller) listLatestUnconfirmedAnswersForLocalProblem(w http.Response
 			continue
 		}
 
-		answers, err := c.repo.listLatestUnscoredAnswersFor(ctx, problem.ID)
+		answers, err := c.repo.listUnscoredAnswersFor(ctx, problem.ID)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to list latest unconfirmed Answers", "error", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		latestAnswers := map[uuid.UUID]Answer{}
 		for _, answer := range answers {
-			if _, ok := latestAnswers[answer.TeamID]; !ok {
-				latestAnswers[answer.TeamID] = answer
-			}
-			if answer.CreatedAt.After(latestAnswers[answer.TeamID].CreatedAt) {
-				latestAnswers[answer.TeamID] = answer
-			}
-		}
-
-		for _, answer := range latestAnswers {
 			response = append(response, newAnswerResponseFrom(answer, *problem))
 		}
 	}

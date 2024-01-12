@@ -9,9 +9,6 @@ import (
 	"github.com/uptrace/bun"
 )
 
-// ignoredTeams is a list of teams that should be ignored by exporter.
-var ignoredTeams = []string{"staff", "team99", "audience"}
-
 type Repository struct {
 	db *bun.DB
 }
@@ -83,14 +80,13 @@ func (r *Repository) findAnswerBy(ctx context.Context, answerID uuid.UUID) (*Ans
 	return &result, nil
 }
 
-func (r *Repository) listLatestUnscoredAnswersFor(ctx context.Context, problemID uuid.UUID) ([]Answer, error) {
+func (r *Repository) listUnscoredAnswersFor(ctx context.Context, problemID uuid.UUID) ([]Answer, error) {
 	var result []Answer
 	err := r.db.NewSelect().ColumnExpr("answers.*").
 		Table("answers").
 		Join("INNER JOIN scores").JoinOn("answers.id = scores.answer_id").
-		Where("point IS NULL").
 		Where("problem_id = ?", problemID).
-		Order("created_at DESC").
+		Where("point IS NULL").
 		Scan(ctx, &result)
 	if err != nil {
 		return nil, err
@@ -98,7 +94,7 @@ func (r *Repository) listLatestUnscoredAnswersFor(ctx context.Context, problemID
 	return result, nil
 }
 
-func (r *Repository) findLatestAnswerFor(ctx context.Context, problemID, teamID string) (*Answer, error) {
+func (r *Repository) findLatestAnswerFor(ctx context.Context, problemID uuid.UUID, teamID uuid.UUID) (*Answer, error) {
 	var result Answer
 	err := r.db.NewSelect().Model(&result).
 		Where("team_id = ?", teamID).
