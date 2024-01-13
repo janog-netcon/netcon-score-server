@@ -29,7 +29,7 @@ func (r *Repository) findConfigBy(ctx context.Context, key string) (*Config, err
 }
 
 func (r *Repository) listProblemEnvironments(ctx context.Context) ([]ProblemEnvironment, error) {
-	var result []ProblemEnvironment
+	result := []ProblemEnvironment{}
 	if err := r.db.NewSelect().Model(&result).Scan(ctx); err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (r *Repository) findAnswerBy(ctx context.Context, answerID uuid.UUID) (*Ans
 }
 
 func (r *Repository) listUnscoredAnswersFor(ctx context.Context, problemID uuid.UUID) ([]Answer, error) {
-	var result []Answer
+	result := []Answer{}
 	err := r.db.NewSelect().ColumnExpr("answers.*").
 		Table("answers").
 		Join("INNER JOIN scores").JoinOn("answers.id = scores.answer_id").
