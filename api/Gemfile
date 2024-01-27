@@ -14,7 +14,7 @@ gem 'oj'
 gem 'graphql'
 gem 'graphql-batch', require: 'graphql/batch'
 
-gem 'redis', '~> 4.0'
+gem 'redis', '~> 5.0'
 gem 'redis-namespace'
 gem 'redis-objects'
 # redis session store
