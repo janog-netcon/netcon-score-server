@@ -1524,9 +1524,7 @@
     vuex "^3.1.1"
 
 "@vuex-orm/plugin-graphql@^1.0.0-rc.35":
-  version "1.0.0-rc.36"
-  resolved "https://registry.yarnpkg.com/@vuex-orm/plugin-graphql/-/plugin-graphql-1.0.0-rc.36.tgz#43f918dcb8bf56350ccba68a79bbc36687216731"
-  integrity sha512-IO4uh5nQg4p2AS0WHIRci/YAkOAQ5Ckpft0GGFOujr95AZg/9D7TVIoTOqQDSzBBdMEtiNZCYVltyVMdJU5ZEQ==
+  version "1.0.0-rc.42"
   dependencies:
     apollo-cache-inmemory "^1.1.7"
     app latest
