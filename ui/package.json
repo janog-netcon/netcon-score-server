@@ -27,7 +27,7 @@
     "inflection": "^1.12.0",
     "js-yaml": "^3.13.1",
     "markdown-it-abbr": "^1.0.4",
-    "markdown-it-emoji": "^1.4.0",
+    "markdown-it-emoji": "^3.0.0",
     "markdown-it-footnote": "^3.0.2",
     "markdown-it-sanitizer": "^0.4.3",
     "nuxt": "^2.0.0",
