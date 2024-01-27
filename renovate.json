@@ -4,6 +4,9 @@
     "config:recommended"
   ],
   "osvVulnerabilityAlerts": true,
+  "postUpdateOptions": [
+    "gomodTidy"
+  ],
   "reviewers": [
     "proelbtn"
   ]
