@@ -23,7 +23,7 @@ jobs:
       - name: Set up Docker buildx
         uses: docker/setup-buildx-action@v2
       - name: Build and push API container
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: ./api
           file: ./api/Dockerfile
@@ -54,7 +54,7 @@ jobs:
       - name: Set up Docker buildx
         uses: docker/setup-buildx-action@v2
       - name: Build and push UI container
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: ./ui
           file: ./ui/Dockerfile
@@ -85,7 +85,7 @@ jobs:
       - name: Set up Docker buildx
         uses: docker/setup-buildx-action@v2
       - name: Build and push vmdb-api container
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: ./vmdb-api
           file: ./vmdb-api/Dockerfile
@@ -116,7 +116,7 @@ jobs:
       - name: Set up Docker buildx
         uses: docker/setup-buildx-action@v2
       - name: Build and push exporter container
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: ./exporter
           file: ./exporter/Dockerfile
