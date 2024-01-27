@@ -24,7 +24,7 @@
     "event-source-polyfill": "^1.0.12",
     "graphql": "^14.4.2",
     "html2canvas": "=1.0.0-rc.5",
-    "inflection": "^1.12.0",
+    "inflection": "^3.0.0",
     "js-yaml": "^3.13.1",
     "markdown-it-abbr": "^1.0.4",
     "markdown-it-emoji": "^1.4.0",
