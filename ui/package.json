@@ -15,7 +15,7 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/markdownit": "^1.2.5",
-    "@vuex-orm/core": "^0.33.0",
+    "@vuex-orm/core": "^0.36.0",
     "@vuex-orm/plugin-graphql": "^1.0.0-rc.35",
     "apollo-client": "^2.6.3",
     "apollo-link": "^1.2.12",
