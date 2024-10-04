@@ -1,4 +1,4 @@
-FROM node:13.8.0-alpine AS develop
+FROM node:20.18.0-alpine AS develop
 
 LABEL maintainer "JANOG NETCON"
 CMD ["yarn", "start"]
