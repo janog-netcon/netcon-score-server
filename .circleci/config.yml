@@ -31,7 +31,7 @@ jobs:
       - image: circleci/postgres:11.3-alpine-postgis-ram
 
       # circleci/redisにしても早くならなかった
-      - image: redis:5.0.4-alpine
+      - image: redis:7.4.1-alpine
 
     steps:
       #  コンテナ内のworking_directoryに対象のブランチをコピーする
