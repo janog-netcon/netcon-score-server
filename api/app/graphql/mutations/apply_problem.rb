@@ -30,19 +30,22 @@ module Mutations
     argument :silent,                Boolean,                       required: false, default_value: false
 
     # rubocop:disable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
-    def resolve(code:, category_code:, previous_problem_code:,
+    def resolve(code:, category_code:, previous_problem_code:, # rubocop:disable Metrics/MethodLength
                 order:, team_isolate:, open_at_begin:, open_at_end:,
                 writer:, secret_text:,
                 mode:, title:, genre:, resettable:, text:, perfect_point:, solved_criterion:, candidates:, corrects:,
                 silent:)
-
       Acl.permit!(mutation: self, args: {})
 
-      unless category_code.nil?
+      if category_code.nil?
+        category = begin
+          Category.first
+        rescue StandardError
+          nil
+        end
+      else
         category = Category.find_by(code: category_code)
         raise RecordNotExists.new(Category, code: category_code) if category.nil?
-      else
-        category = Category.first rescue nil
       end
 
       unless previous_problem_code.nil?

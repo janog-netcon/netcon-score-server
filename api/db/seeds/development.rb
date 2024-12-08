@@ -7,7 +7,7 @@ def create_config
 
   configs = [
     { key: :registration_code,              value_type: :string,  value: SecureRandom.alphanumeric },
-    { key: :local_problem_codes,            value_type: :string,  value: "default_code" },
+    { key: :local_problem_codes,            value_type: :string,  value: 'default_code' },
 
     { key: :competition_section1_start_at,  value_type: :date,    value: Time.zone.parse('2012-09-03 10:00:00') },
     { key: :competition_section1_end_at,    value_type: :date,    value: Time.zone.parse('2112-09-03 12:00:00') },
@@ -68,7 +68,7 @@ def create_categories
 end
 
 def markdown_sample_text
-  <<~'MD'
+  <<~MD
     # Markdown
 
     * item1
@@ -212,24 +212,24 @@ def create_answers(problems, players)
   answers
 end
 
-def create_problem_environments(problems, teams)
+def create_problem_environments(problems, _teams)
   print 'creating problem_environments...'
-  envs = problems.each_with_object([]) {|problem, memo|
-  # envs = problems.take(10).each_with_object([]) {|problem, memo|
+  envs = problems.each_with_object([]) do |problem, memo|
+    # envs = problems.take(10).each_with_object([]) {|problem, memo|
     # teams.each do |team|
     #   memo << build_stubbed(:problem_environment, problem: problem, team: team)
     # end
 
     # Random.rand(1..4).times { memo << build_stubbed(:problem_environment, problem: problem, team: nil) }
-    Random.rand(2..5).times {
-      pe_ssh = build_stubbed(:problem_environment, problem: problem, team: nil, service: "SSH")
-      pe_https = build_stubbed(:problem_environment, problem: problem, team: nil, service: "HTTPS", name: pe_ssh.name, host: pe_ssh.host, user: pe_ssh.user, password: pe_ssh.password, status: pe_ssh.status)
+    Random.rand(2..5).times do
+      pe_ssh = build_stubbed(:problem_environment, problem: problem, team: nil, service: 'SSH')
+      pe_https = build_stubbed(:problem_environment, problem: problem, team: nil, service: 'HTTPS', name: pe_ssh.name, host: pe_ssh.host, user: pe_ssh.user, password: pe_ssh.password, status: pe_ssh.status)
       memo << pe_ssh
       memo << pe_https
       # memo << build_stubbed(:problem_environment, problem: problem, team: nil)
-    }
-  }
-    # .shuffle
+    end
+  end
+  # .shuffle
 
   ProblemEnvironment.import!(envs)
   puts 'done'

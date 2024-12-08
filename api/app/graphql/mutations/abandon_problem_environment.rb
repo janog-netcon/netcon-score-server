@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'English'
 require 'rest-client'
 
 module Mutations
@@ -12,7 +13,7 @@ module Mutations
     # 通知無効
     argument :silent,     Boolean, required: false, default_value: false
 
-    def resolve(problem_id:, silent:)
+    def resolve(problem_id:, silent:) # rubocop:disable Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
       problem = Problem.find_by(id: problem_id)
       raise RecordNotExists.new(Problem, id: problem_id) if problem.nil?
 
@@ -30,8 +31,6 @@ module Mutations
 
         # TODO: update! で例外出たらどうなるのか確認 (add_errors(pes)) を返す必要がありそう)
         pes.each {|pe| pe.update!(status: 'ABANDONED') }
-      rescue ActiveRecord::StatementInvalid => e
-        raise e
       end
 
       problem_environment_name = pes.map(&:name).uniq.first
@@ -48,7 +47,7 @@ module Mutations
         Rails.logger.error "DELETE request to gateway failed, problem_environment_name: #{problem_environment_name}, code: #{e.response.code}, body: #{e.response.body}"
         # 問題環境が削除されている場合、404が返ることがあるが、問題環境は削除されているので問題ない
         if e.response.code != 404
-          raise $!
+          raise $ERROR_INFO
         end
       end
 

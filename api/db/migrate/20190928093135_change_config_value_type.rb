@@ -3,7 +3,7 @@ class ChangeConfigValueType < ActiveRecord::Migration[5.2]
     change_table :configs, bulk: true do |t|
       # 運用中にマイグレーションすることは無いのでReversibleでなくてよい
       t.remove :value # rubocop:disable Rails/ReversibleMigration
-      t.json :value, null: false
+      t.json :value, null: false # rubocop:disable Rails/NotNullColumn
     end
   end
 end

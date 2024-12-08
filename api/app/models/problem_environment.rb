@@ -2,7 +2,8 @@
 
 class ProblemEnvironment < ApplicationRecord
   # インターフェースから見るとname, service, team, problemが複合プライマリーキー
-  validates :problem,  presence: true, uniqueness: { scope: %i[team_id name service] }
+  validates :problem, uniqueness: { scope: %i[team_id name service] } # rubocop:disable Rails/UniqueValidationWithoutIndex
+
   # teamがnilなら共通
   validates :team,     presence: false
   validates :name,     presence: true

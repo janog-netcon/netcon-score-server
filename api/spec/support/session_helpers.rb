@@ -25,8 +25,8 @@ module SessionHelpers
         # passwordは取得できないがFactoryBotで作成しているならnameと同じ
         let(:staff)    { Team.find(SessionHelpers.staff_id) }
         let(:audience) { Team.find(SessionHelpers.audience_id) }
-        let(:player1)  { Team.find(SessionHelpers.player1_id) }
-        let(:player2)  { Team.find(SessionHelpers.player2_id) }
+        let(:player1)  { Team.find(SessionHelpers.player1_id) } # rubocop:disable RSpec/IndexedLet
+        let(:player2)  { Team.find(SessionHelpers.player2_id) } # rubocop:disable RSpec/IndexedLet
         let(:team99)   { Team.find(SessionHelpers.team99_id) }
       end
 
@@ -37,7 +37,7 @@ module SessionHelpers
   ## 以降はrspecにextendされてcontextと同じ文脈で使えるようになる
 
   def context_as(team_name, &block)
-    context "when #{team_name}でログイン" do # rubocop:disable RSpec/EmptyExampleGroup
+    context "when #{team_name}でログイン" do
       let(:current_team) { public_send(team_name) }
 
       # このコンテキスト内ではログイン済みとしてクエリを処理する
@@ -50,23 +50,23 @@ module SessionHelpers
     end
   end
 
-  def context_as_staff(&block)
-    context_as('staff', &block)
+  def context_as_staff(&)
+    context_as('staff', &)
   end
 
-  def context_as_audience(&block)
-    context_as('audience', &block)
+  def context_as_audience(&)
+    context_as('audience', &)
   end
 
-  def context_as_player1(&block)
-    context_as('player1', &block)
+  def context_as_player1(&)
+    context_as('player1', &)
   end
 
-  def context_as_player2(&block)
-    context_as('player2', &block)
+  def context_as_player2(&)
+    context_as('player2', &)
   end
 
-  def context_as_team99(&block)
-    context_as('team99', &block)
+  def context_as_team99(&)
+    context_as('team99', &)
   end
 end

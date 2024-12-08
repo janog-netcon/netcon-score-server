@@ -11,7 +11,7 @@ namespace :factory_bot do # rubocop:disable Metrics/BlockLength
     when :boolean
       'n.odd?'
     when :string
-      '"%<name>s #{n}"' # rubocop:disable Lint/InterpolationCheck
+      '"%<name>s #{n}"'
     when :uuid
       SecureRandom.uuid
     when :json
@@ -19,7 +19,7 @@ namespace :factory_bot do # rubocop:disable Metrics/BlockLength
     when :datetime
       # モックやスタブでTime.currentが固定されているとunique制約に引っかかる
       'Time.current + n.second'
-    when /range\z/
+    when /range\z/ # rubocop:disable Lint/DuplicateBranch
       # int4range, datarange, tsrange, tstzrange, etc...
       '""'
     else
@@ -50,15 +50,15 @@ namespace :factory_bot do # rubocop:disable Metrics/BlockLength
     columns = model
       .columns
       .reject {|c| c.name.end_with?('_id') || model.primary_key == c.name }
-      .map {|a| { name: a.name, type: a.sql_type_metadata.type, null: a.null, default: (a.default || a.default_function) } }
+      .map {|a| { name: a.name, type: a.sql_type_metadata.type, null: a.null, default: a.default || a.default_function } }
 
     reflections = model
       .reflections
       .map {|(_, a)| { name: a.name, factory: a.options[:class_name]&.underscore, optional: a.options[:optional] } }
 
-    fields = columns.map(&method(:gen_sequence)) + reflections.map(&method(:gen_association))
+    fields = columns.map(&method(:gen_sequence)) + reflections.map(&method(:gen_association)) # rubocop:disable Performance/MethodObjectAsBlock
 
-    template = <<~'EOS'
+    template = <<~EOS
       # frozen_string_literal: true
 
       FactoryBot.define do

@@ -6,8 +6,8 @@ Team.create!(role: 'player', name: Team.special_team_name_team99, beginner: fals
 seed_file = Rails.root.join('db', 'seeds', "#{Rails.env}.rb")
 
 if File.readable?(seed_file)
-  Rails.logger.debug "load seed file: #{seed_file}"
+  Rails.logger.debug { "load seed file: #{seed_file}" }
   load(seed_file)
 else
-  Rails.logger.debug "seed file not found: #{seed_file}"
+  Rails.logger.debug { "seed file not found: #{seed_file}" }
 end

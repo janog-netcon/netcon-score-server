@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'English'
 module Mutations
   class ApplyScore < BaseMutation
     field :answer, Types::AnswerType, null: true
@@ -7,7 +8,7 @@ module Mutations
     argument :answer_id, ID,      required: true
     argument :percent,   Integer, required: false
 
-    def resolve(answer_id:, percent:)
+    def resolve(answer_id:, percent:) # rubocop:disable Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
       answer = Answer.find_by(id: answer_id)
       raise RecordNotExists.new(Answer, id: answer_id) if answer.nil?
 
@@ -37,8 +38,6 @@ module Mutations
 
           # TODO: update! で例外出たらどうなるのか確認 (add_errors(pes)) を返す必要がありそう)
           pes.each {|pe| pe.update!(status: new_status) }
-        rescue ActiveRecord::StatementInvalid => e
-          raise e
         end
 
         if percent == 100
@@ -57,8 +56,8 @@ module Mutations
           rescue RestClient::ExceptionWithResponse => e
             Rails.logger.error "DELETE request to gateway failed, problem_environment_name: #{problem_environment_name}, code: #{e.response.code}, body: #{e.response.body}"
             # 問題環境が削除されている場合、404が返ることがあるが、問題環境は削除されているので問題ない
-            if e.response.code != 404
-              raise $!
+            if e.response.code != 404 # rubocop:disable Metrics/BlockNesting
+              raise $ERROR_INFO
             end
           end
         end

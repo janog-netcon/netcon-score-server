@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Answer#bodiesとProblemBody#correctsは同じフォーマットなため共通部分を抜き出した
-RSpec.shared_context 'answer_bodies_variables' do # rubocop:disable Metrics/BlockLength, RSpec/ContextWording
+RSpec.shared_context 'answer_bodies_variables' do # rubocop:disable RSpec/ContextWording
   # rubocop:disable Style/WordArray
   let(:candidates_list) do
     cands = [['one', 'two', 'three'], ['foo', 'bar', 'hoge', 'fuga']].freeze

@@ -27,7 +27,7 @@ class Team < ApplicationRecord
   has_many :environments,          dependent: :destroy, class_name: 'ProblemEnvironment'
 
   # 値が大きいほど大体権限が高い
-  enum role: {
+  enum :role, {
     staff: 10,
     audience: 5,
     player: 1

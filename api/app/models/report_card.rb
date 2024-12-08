@@ -79,8 +79,8 @@ class ReportCard
       # 未提出はカウントしない
       Matrix[*records.map {|record| record[:each_score] }] # rubocop:disable Rails/Pluck
         .column_vectors
-        .map {|column| column.select(&:present?) }
-        .map {|column| column.size.zero? ? nil : (column.sum / column.size) }
+        .map(&:compact_blank)
+        .map {|column| column.empty? ? nil : (column.sum / column.size) }
     end
 
     def assign_default_value(record:)

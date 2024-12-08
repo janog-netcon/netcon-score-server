@@ -136,9 +136,7 @@ class Notification
             problem_id: record.issue.problem_id
           }
         ]
-      else
-        # raise UnhandledClass, mutation
-      end
+      else; nil; end
     end
 
     # Slack通知用のメッセージを作る

@@ -151,7 +151,7 @@ RSpec.describe Scoreboard, type: :request do
   end
 
   context 'when 問題が公開期間外(Problem#open_at)' do
-    let(:closed_problem) { create(:problem, open_at: (Time.current - 2.seconds)..(Time.current - 1.second)) }
+    let(:closed_problem) { create(:problem, open_at: (2.seconds.ago)..(1.second.ago)) }
 
     before(:each) do
       create(:answer, :created_at_after_delay, problem: closed_problem, team: player1)
@@ -161,16 +161,13 @@ RSpec.describe Scoreboard, type: :request do
     shared_examples 'all' do
       it 'スコアボードには反映される' do
         # 前提条件: 競技時間内だが、問題は非公開
-        expect(Config.competition?).to eq(true)
-        expect(closed_problem.body.readable?(team: player1)).to eq(false)
+        expect(Config.competition?).to be(true)
+        expect(closed_problem.body.readable?(team: player1)).to be(false)
 
         post_query 'scoreboards'
         expect(response_json).not_to have_gq_errors
         expect(response_gql.size).to eq(2)
-        expect(response_gql).to match_array([
-                                              include({ 'rank' => 1, 'teamId' => player1.id, 'score' => closed_problem.body.perfect_point }),
-                                              include({ 'rank' => 2, 'teamId' => player2.id, 'score' => 0 })
-                                            ])
+        expect(response_gql).to contain_exactly(include({ 'rank' => 1, 'teamId' => player1.id, 'score' => closed_problem.body.perfect_point }), include({ 'rank' => 2, 'teamId' => player2.id, 'score' => 0 }))
       end
     end
 
@@ -194,10 +191,7 @@ RSpec.describe Scoreboard, type: :request do
         post_query 'scoreboards'
         expect(response_json).not_to have_gq_errors
         expect(response_gql.size).to eq(2)
-        expect(response_gql).to match_array([
-                                              include({ 'rank' => 1, 'teamId' => player1.id }),
-                                              include({ 'rank' => 2, 'teamId' => player2.id })
-                                            ])
+        expect(response_gql).to contain_exactly(include({ 'rank' => 1, 'teamId' => player1.id }), include({ 'rank' => 2, 'teamId' => player2.id }))
       end
     end
 
@@ -206,11 +200,7 @@ RSpec.describe Scoreboard, type: :request do
         post_query 'scoreboards'
         expect(response_json).not_to have_gq_errors
         expect(response_gql.size).to eq(3)
-        expect(response_gql).to match_array([
-                                              include({ 'rank' => 1, 'teamId' => player1.id }),
-                                              include({ 'rank' => 3, 'teamId' => player2.id }),
-                                              include({ 'rank' => 1, 'teamId' => team99.id })
-                                            ])
+        expect(response_gql).to contain_exactly(include({ 'rank' => 1, 'teamId' => player1.id }), include({ 'rank' => 3, 'teamId' => player2.id }), include({ 'rank' => 1, 'teamId' => team99.id }))
       end
     end
 
@@ -238,10 +228,7 @@ RSpec.describe Scoreboard, type: :request do
           post_query 'scoreboards', field_with: 'team'
           expect(response_json).not_to have_gq_errors
           expect(response_gql.size).to eq(2)
-          expect(response_gql).to match_array([
-                                                include({ 'rank' => 1, 'team' => include({ 'beginner' => true }) }),
-                                                include({ 'rank' => 1, 'team' => include({ 'beginner' => false }) })
-                                              ])
+          expect(response_gql).to contain_exactly(include({ 'rank' => 1, 'team' => include({ 'beginner' => true }) }), include({ 'rank' => 1, 'team' => include({ 'beginner' => false }) }))
         end
       end
 
@@ -283,10 +270,7 @@ RSpec.describe Scoreboard, type: :request do
           post_query 'scoreboards'
           expect(response_json).not_to have_gq_errors
           expect(response_gql.size).to eq(2)
-          expect(response_gql).to match_array([
-                                                include({ 'rank' => 1, 'teamId' => player1.id }),
-                                                include({ 'rank' => 2, 'teamId' => player2.id })
-                                              ])
+          expect(response_gql).to contain_exactly(include({ 'rank' => 1, 'teamId' => player1.id }), include({ 'rank' => 2, 'teamId' => player2.id }))
         end
       end
 
@@ -308,10 +292,7 @@ RSpec.describe Scoreboard, type: :request do
           post_query 'scoreboards'
           expect(response_json).not_to have_gq_errors
           expect(response_gql.size).to eq(2)
-          expect(response_gql).to match_array([
-                                                include({ 'rank' => 1, 'teamId' => player1.id }),
-                                                include({ 'rank' => 1, 'teamId' => player2.id })
-                                              ])
+          expect(response_gql).to contain_exactly(include({ 'rank' => 1, 'teamId' => player1.id }), include({ 'rank' => 1, 'teamId' => player2.id }))
         end
       end
 
@@ -345,10 +326,10 @@ RSpec.describe Scoreboard, type: :request do
       end
 
       # チーム作成は重い
-      let!(:player3) { create(:team, :player, name: 'player3', beginner: false) }
-      let!(:player4) { create(:team, :player, name: 'player4', beginner: false) }
-      let!(:player5) { create(:team, :player, name: 'player5', beginner: false) }
-      let!(:player6) { create(:team, :player, name: 'player6', beginner: false) }
+      let!(:player3) { create(:team, :player, name: 'player3', beginner: false) } # rubocop:disable RSpec/IndexedLet
+      let!(:player4) { create(:team, :player, name: 'player4', beginner: false) } # rubocop:disable RSpec/IndexedLet
+      let!(:player5) { create(:team, :player, name: 'player5', beginner: false) } # rubocop:disable RSpec/IndexedLet
+      let!(:player6) { create(:team, :player, name: 'player6', beginner: false) } # rubocop:disable RSpec/IndexedLet
 
       shared_examples 'all' do
         it '同じ順位になり次の順位はその分ずれる' do
@@ -358,14 +339,7 @@ RSpec.describe Scoreboard, type: :request do
           post_query 'scoreboards'
           expect(response_json).not_to have_gq_errors
           expect(response_gql.size).to eq(6)
-          expect(response_gql).to match_array([
-                                                include({ 'rank' => 1, 'teamId' => player1.id }),
-                                                include({ 'rank' => 1, 'teamId' => player2.id }),
-                                                include({ 'rank' => 1, 'teamId' => player3.id }),
-                                                include({ 'rank' => 4, 'teamId' => player4.id }),
-                                                include({ 'rank' => 4, 'teamId' => player5.id }),
-                                                include({ 'rank' => 6, 'teamId' => player6.id })
-                                              ])
+          expect(response_gql).to contain_exactly(include({ 'rank' => 1, 'teamId' => player1.id }), include({ 'rank' => 1, 'teamId' => player2.id }), include({ 'rank' => 1, 'teamId' => player3.id }), include({ 'rank' => 4, 'teamId' => player4.id }), include({ 'rank' => 4, 'teamId' => player5.id }), include({ 'rank' => 6, 'teamId' => player6.id }))
         end
       end
 
@@ -427,10 +401,7 @@ RSpec.describe Scoreboard, type: :request do
           post_query 'scoreboards'
           expect(response_json).not_to have_gq_errors
           expect(response_gql.size).to eq(2)
-          expect(response_gql).to match_array([
-                                                include({ 'teamId' => player1.id, 'rank' => 1, 'score' => answer.score.point }),
-                                                include({ 'teamId' => player2.id, 'rank' => 2, 'score' => 0 })
-                                              ])
+          expect(response_gql).to contain_exactly(include({ 'teamId' => player1.id, 'rank' => 1, 'score' => answer.score.point }), include({ 'teamId' => player2.id, 'rank' => 2, 'score' => 0 }))
         end
       end
 
@@ -454,10 +425,7 @@ RSpec.describe Scoreboard, type: :request do
           post_query 'scoreboards'
           expect(response_json).not_to have_gq_errors
           expect(response_gql.size).to eq(2)
-          expect(response_gql).to match_array([
-                                                include({ 'teamId' => player1.id, 'rank' => 1, 'score' => answer.score.point }),
-                                                include({ 'teamId' => player2.id, 'rank' => 2, 'score' => 0 })
-                                              ])
+          expect(response_gql).to contain_exactly(include({ 'teamId' => player1.id, 'rank' => 1, 'score' => answer.score.point }), include({ 'teamId' => player2.id, 'rank' => 2, 'score' => 0 }))
         end
       end
 
@@ -490,9 +458,9 @@ RSpec.describe Scoreboard, type: :request do
 
             let(:problem) { create(:problem) }
             let(:created_at) { Time.current - Config.grading_delay_sec }
-            let!(:answer1) { create(:answer, problem: problem, team: player1, created_at: created_at - 3.seconds) }
-            let!(:answer2) { create(:answer, problem: problem, team: player1, created_at: created_at - 2.seconds) }
-            let!(:answer3) { create(:answer, problem: problem, team: player1, created_at: created_at - 1.second) }
+            let!(:answer1) { create(:answer, problem: problem, team: player1, created_at: created_at - 3.seconds) } # rubocop:disable RSpec/IndexedLet
+            let!(:answer2) { create(:answer, problem: problem, team: player1, created_at: created_at - 2.seconds) } # rubocop:disable RSpec/IndexedLet
+            let!(:answer3) { create(:answer, problem: problem, team: player1, created_at: created_at - 1.second) } # rubocop:disable RSpec/IndexedLet
 
             it '最高得点を採用' do
               expect(Answer.count).to eq(3)
@@ -503,10 +471,7 @@ RSpec.describe Scoreboard, type: :request do
               post_query 'scoreboards'
               expect(response_json).not_to have_gq_errors
               expect(response_gql.size).to eq(2)
-              expect(response_gql).to match_array([
-                                                    include({ 'teamId' => player1.id, 'rank' => 1, 'score' => answer1.score.point }),
-                                                    include({ 'teamId' => player2.id, 'rank' => 2, 'score' => 0 })
-                                                  ])
+              expect(response_gql).to contain_exactly(include({ 'teamId' => player1.id, 'rank' => 1, 'score' => answer1.score.point }), include({ 'teamId' => player2.id, 'rank' => 2, 'score' => 0 }))
             end
           end
 
@@ -523,9 +488,9 @@ RSpec.describe Scoreboard, type: :request do
           end
 
           let(:problem) { create(:problem) }
-          let!(:answer1) { create(:answer, problem: problem, team: player1, created_at: Time.current - Config.grading_delay_sec - 2.seconds) }
-          let!(:answer2) { create(:answer, problem: problem, team: player1, created_at: Time.current - Config.grading_delay_sec - 1.second) }
-          let!(:answer3) { create(:answer, problem: problem, team: player1, created_at: Time.current) }
+          let!(:answer1) { create(:answer, problem: problem, team: player1, created_at: Time.current - Config.grading_delay_sec - 2.seconds) } # rubocop:disable RSpec/IndexedLet
+          let!(:answer2) { create(:answer, problem: problem, team: player1, created_at: Time.current - Config.grading_delay_sec - 1.second) } # rubocop:disable RSpec/IndexedLet
+          let!(:answer3) { create(:answer, problem: problem, team: player1, created_at: Time.current) } # rubocop:disable RSpec/IndexedLet
 
           shared_examples 'not player' do
             it '最高得点を採用' do
@@ -537,10 +502,7 @@ RSpec.describe Scoreboard, type: :request do
               post_query 'scoreboards'
               expect(response_json).not_to have_gq_errors
               expect(response_gql.size).to eq(2)
-              expect(response_gql).to match_array([
-                                                    include({ 'teamId' => player1.id, 'rank' => 1, 'score' => answer3.score.point }),
-                                                    include({ 'teamId' => player2.id, 'rank' => 2, 'score' => 0 })
-                                                  ])
+              expect(response_gql).to contain_exactly(include({ 'teamId' => player1.id, 'rank' => 1, 'score' => answer3.score.point }), include({ 'teamId' => player2.id, 'rank' => 2, 'score' => 0 }))
             end
           end
 
@@ -554,10 +516,7 @@ RSpec.describe Scoreboard, type: :request do
               post_query 'scoreboards'
               expect(response_json).not_to have_gq_errors
               expect(response_gql.size).to eq(2)
-              expect(response_gql).to match_array([
-                                                    include({ 'teamId' => player1.id, 'rank' => 1, 'score' => answer1.score.point }),
-                                                    include({ 'teamId' => player2.id, 'rank' => 2, 'score' => 0 })
-                                                  ])
+              expect(response_gql).to contain_exactly(include({ 'teamId' => player1.id, 'rank' => 1, 'score' => answer1.score.point }), include({ 'teamId' => player2.id, 'rank' => 2, 'score' => 0 }))
             end
           end
 
@@ -582,9 +541,9 @@ RSpec.describe Scoreboard, type: :request do
           end
 
           let(:problem) { create(:problem) }
-          let!(:answer1) { create(:answer, problem: problem, team: player1, created_at: Time.current + 1.second) }
-          let!(:answer2) { create(:answer, problem: problem, team: player1, created_at: Time.current + 2.seconds) }
-          let!(:answer3) { create(:answer, problem: problem, team: player1, created_at: Time.current + 3.seconds) }
+          let!(:answer1) { create(:answer, problem: problem, team: player1, created_at: 1.second.from_now) } # rubocop:disable RSpec/IndexedLet
+          let!(:answer2) { create(:answer, problem: problem, team: player1, created_at: 2.seconds.from_now) } # rubocop:disable RSpec/IndexedLet
+          let!(:answer3) { create(:answer, problem: problem, team: player1, created_at: 3.seconds.from_now) } # rubocop:disable RSpec/IndexedLet
 
           it '採点済み最終解答のみ採用' do
             expect(Answer.count).to eq(3)
@@ -595,10 +554,7 @@ RSpec.describe Scoreboard, type: :request do
             post_query 'scoreboards'
             expect(response_json).not_to have_gq_errors
             expect(response_gql.size).to eq(2)
-            expect(response_gql).to match_array([
-                                                  include({ 'teamId' => player1.id, 'rank' => 1, 'score' => answer2.score.point }),
-                                                  include({ 'teamId' => player2.id, 'rank' => 2, 'score' => 0 })
-                                                ])
+            expect(response_gql).to contain_exactly(include({ 'teamId' => player1.id, 'rank' => 1, 'score' => answer2.score.point }), include({ 'teamId' => player2.id, 'rank' => 2, 'score' => 0 }))
           end
         end
 
@@ -608,12 +564,12 @@ RSpec.describe Scoreboard, type: :request do
     end
 
     context 'when 複数の問題に解答ある' do
-      let(:problem1) { create(:problem) }
-      let(:problem2) { create(:problem) }
+      let(:problem1) { create(:problem) } # rubocop:disable RSpec/IndexedLet
+      let(:problem2) { create(:problem) } # rubocop:disable RSpec/IndexedLet
       let(:created_at) { Time.current - Config.grading_delay_sec }
-      let(:answer11) { create(:answer, problem: problem1, team: player1, created_at: created_at) }
-      let(:answer12) { create(:answer, problem: problem2, team: player1, created_at: created_at) }
-      let(:answer21) { create(:answer, problem: problem1, team: player2, created_at: created_at) }
+      let(:answer11) { create(:answer, problem: problem1, team: player1, created_at: created_at) } # rubocop:disable RSpec/IndexedLet
+      let(:answer12) { create(:answer, problem: problem2, team: player1, created_at: created_at) } # rubocop:disable RSpec/IndexedLet
+      let(:answer21) { create(:answer, problem: problem1, team: player2, created_at: created_at) } # rubocop:disable RSpec/IndexedLet
 
       before(:each) do
         answer11.grade(percent: 100)
@@ -632,10 +588,7 @@ RSpec.describe Scoreboard, type: :request do
           post_query 'scoreboards'
           expect(response_json).not_to have_gq_errors
           expect(response_gql.size).to eq(2)
-          expect(response_gql).to match_array([
-                                                include({ 'teamId' => player1.id, 'rank' => 1, 'score' => answer11.score.point + answer12.score.point }),
-                                                include({ 'teamId' => player2.id, 'rank' => 2, 'score' => answer21.score.point })
-                                              ])
+          expect(response_gql).to contain_exactly(include({ 'teamId' => player1.id, 'rank' => 1, 'score' => answer11.score.point + answer12.score.point }), include({ 'teamId' => player2.id, 'rank' => 2, 'score' => answer21.score.point }))
         end
       end
 
@@ -665,10 +618,7 @@ RSpec.describe Scoreboard, type: :request do
           post_query 'scoreboards'
           expect(response_json).not_to have_gq_errors
           expect(response_gql.size).to eq(2)
-          expect(response_gql).to match_array([
-                                                include({ 'teamId' => player1.id, 'rank' => 1, 'score' => -10 }),
-                                                include({ 'teamId' => player2.id, 'rank' => 2, 'score' => -20 })
-                                              ])
+          expect(response_gql).to contain_exactly(include({ 'teamId' => player1.id, 'rank' => 1, 'score' => -10 }), include({ 'teamId' => player2.id, 'rank' => 2, 'score' => -20 }))
         end
       end
 
@@ -688,10 +638,7 @@ RSpec.describe Scoreboard, type: :request do
           post_query 'scoreboards'
           expect(response_json).not_to have_gq_errors
           expect(response_gql.size).to eq(2)
-          expect(response_gql).to match_array([
-                                                include({ 'teamId' => player1.id, 'rank' => 1, 'score' => 0 }),
-                                                include({ 'teamId' => player2.id, 'rank' => 1, 'score' => 0 })
-                                              ])
+          expect(response_gql).to contain_exactly(include({ 'teamId' => player1.id, 'rank' => 1, 'score' => 0 }), include({ 'teamId' => player2.id, 'rank' => 1, 'score' => 0 }))
         end
       end
 
@@ -738,7 +685,7 @@ RSpec.describe Scoreboard, type: :request do
 
     describe 'Config.scoreboard.hide_at' do
       before(:each) do
-        Config.scoreboard_hide_at = Time.current - 1.second
+        Config.scoreboard_hide_at = 1.second.ago
       end
 
       shared_examples 'not player' do
@@ -778,9 +725,9 @@ RSpec.describe Scoreboard, type: :request do
       end
 
       # チーム作成は重い
-      let!(:player3) { create(:team, :player, name: 'player3', beginner: false) }
-      let!(:player4) { create(:team, :player, name: 'player4', beginner: false) }
-      let!(:player5) { create(:team, :player, name: 'player5', beginner: false) } # rubocop:disable RSpec/LetSetup
+      let!(:player3) { create(:team, :player, name: 'player3', beginner: false) } # rubocop:disable RSpec/IndexedLet
+      let!(:player4) { create(:team, :player, name: 'player4', beginner: false) } # rubocop:disable RSpec/IndexedLet
+      let!(:player5) { create(:team, :player, name: 'player5', beginner: false) } # rubocop:disable RSpec/IndexedLet,RSpec/LetSetup
 
       shared_examples 'not player' do
         it '全て見える' do

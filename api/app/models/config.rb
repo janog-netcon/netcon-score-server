@@ -8,7 +8,7 @@ class Config < ApplicationRecord
   validate :validate_value
   validate :reject_update_value_type, on: :update
 
-  enum value_type: {
+  enum :value_type, {
     boolean: 10,
     integer: 20,
     string: 30,
@@ -100,7 +100,7 @@ class Config < ApplicationRecord
         get!(key)
       end
 
-      define_singleton_method("#{key}=") do |value|
+      define_singleton_method(:"#{key}=") do |value|
         set!(key, value)
       end
     end
@@ -110,7 +110,7 @@ class Config < ApplicationRecord
     end
 
     def insufficient_keys
-      @required_keys.map(&:to_s) - all.pluck(:key)
+      @required_keys.map(&:to_s) - pluck(:key)
     end
   end
 

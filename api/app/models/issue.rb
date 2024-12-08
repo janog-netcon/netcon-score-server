@@ -2,14 +2,13 @@
 
 class Issue < ApplicationRecord
   validates :status,  presence: true
-  validates :problem, presence: true, uniqueness: { scope: :team_id }
-  validates :team,    presence: true
+  validates :problem, uniqueness: { scope: :team_id }
 
   # 状態遷移条件
   # unsolved: 未対応
   # in_progress: 対応中
   # solved: 解決
-  enum status: {
+  enum :status, {
     unsolved: 1,
     in_progress: 2,
     solved: 3
@@ -45,7 +44,7 @@ class Issue < ApplicationRecord
       self.status = 'in_progress' if team.staff?
     when 'in_progress'
       self.status = 'unsolved' if team.player?
-    when 'solved'
+    when 'solved' # rubocop:disable Lint/DuplicateBranch
       self.status = 'unsolved' if team.player?
     else
       raise UnhandledIssueStatus, status

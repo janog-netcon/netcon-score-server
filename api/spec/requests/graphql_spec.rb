@@ -35,8 +35,6 @@ RSpec.describe 'GraphQL', type: :request do
   end
 
   context 'when not logged-in' do
-    let(:current_team) {}
-
     it 'fail in sending GraphQL query' do
       post_query 'me'
       expect(response_json).to have_gq_errors('UNAUTHORIZED')

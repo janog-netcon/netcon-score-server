@@ -3,6 +3,5 @@
 # https://techlife.cookpad.com/entry/a-guide-to-monkey-patchers
 # 基本的にはrefineを使う
 
-Dir[Rails.root.join('lib/monkey_patches/**/*.rb')]
-  .sort
+Rails.root.glob('lib/monkey_patches/**/*.rb')
   .each {|file| require file }

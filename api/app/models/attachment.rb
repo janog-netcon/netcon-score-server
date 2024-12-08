@@ -9,7 +9,6 @@ class Attachment < ApplicationRecord
   validates :content_type, presence: true
   validates :data,         presence: true
   validates :size,         presence: true
-  validates :team,         presence: true
 
   belongs_to :team
 

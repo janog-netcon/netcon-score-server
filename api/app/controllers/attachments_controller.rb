@@ -69,7 +69,7 @@ class AttachmentsController < ApplicationController
       render json: '"file" field is required', status: :bad_request
     elsif !file.is_a?(ActionDispatch::Http::UploadedFile)
       render json: '"file" field accept only file', status: :bad_request
-    elsif current_team.player? && 20.megabyte < file.size
+    elsif current_team.player? && 20.megabytes < file.size
       # サイズ制限(適当)
       render json: 'file size must be 20MB or less', status: :bad_request
     elsif token.present? && !current_team.staff?
