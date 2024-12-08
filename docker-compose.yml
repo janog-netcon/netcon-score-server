@@ -75,14 +75,6 @@ services:
     env_file: .env
     ports: ['127.0.0.1:8903:6379']
 
-  yamllint:
-    build:
-      context: yamllint/
-    volumes:
-      - './:/usr/src/app'
-    command: echo "yamllint is disabled"
-    # command: yamllint -c /usr/src/app/.yamllint /usr/src/app
-
   push:
     labels:
       traefik.enable: true
