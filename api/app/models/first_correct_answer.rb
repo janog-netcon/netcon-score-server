@@ -2,9 +2,7 @@
 
 # 各チームの各問題の最初の正答を記録する
 class FirstCorrectAnswer < ApplicationRecord
-  validates :answer,  presence: true
-  validates :problem, presence: true, uniqueness: { scope: :team_id }
-  validates :team,    presence: true
+  validates :problem, uniqueness: { scope: :team_id }
 
   belongs_to :answer
   belongs_to :problem

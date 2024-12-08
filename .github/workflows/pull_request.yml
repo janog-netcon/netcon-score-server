@@ -1,0 +1,65 @@
+name: Lint
+on: [pull_request]
+
+jobs:
+  lint-api-rubocop:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup actions environment for API
+      uses: ./.github/actions/setup-api
+    - working-directory: ./api
+      run: bundle exec rubocop
+
+  lint-api-brakeman:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup actions environment for API
+      uses: ./.github/actions/setup-api
+    - working-directory: ./api
+      run: bundle exec brakeman
+
+  lint-api-bundle-audit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup actions environment for API
+      uses: ./.github/actions/setup-api
+    - working-directory: ./api
+      run: bundle exec bundle-audit check --update
+
+  lint-ui-yarn:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup actions environment for UI
+      uses: ./.github/actions/setup-ui
+    - working-directory: ./ui
+      run: yarn lint
+
+  build-api:
+    needs: [lint-api-rubocop, lint-api-brakeman, lint-api-bundle-audit]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+    - uses: actions/checkout@v4
+    - name: Deploy API container
+      uses: ./.github/actions/build-api
+      with:
+        tags: |
+          asia-northeast1-docker.pkg.dev/networkcontest/janog55/network-score-server-api:commit-${{ github.sha }}
+
+  build-ui:
+    needs: [lint-ui-yarn]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+    - uses: actions/checkout@v4
+    - name: Deploy UI container
+      uses: ./.github/actions/build-ui
+      with:
+        tags: |
+          asia-northeast1-docker.pkg.dev/networkcontest/janog55/network-score-server-ui:commit-${{ github.sha }}

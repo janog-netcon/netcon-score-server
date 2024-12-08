@@ -2,8 +2,7 @@
 
 class Penalty < ApplicationRecord
   # compiste unique index
-  validates :problem,    presence: true, uniqueness: { scope: %i[team_id created_at] }
-  validates :team,       presence: true
+  validates :problem, uniqueness: { scope: %i[team_id created_at] }
   validate :reject_not_resettable
 
   belongs_to :problem

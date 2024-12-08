@@ -5,7 +5,7 @@ class Score < ApplicationRecord
   validates :point,   presence: false, allow_nil: true
   validates :percent, presence: false, allow_nil: true, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
   validates :solved,  boolean: true
-  validates :answer,  presence: true, uniqueness: true
+  validates :answer, uniqueness: true
 
   belongs_to :answer
   has_one :team, through: :answer

@@ -97,7 +97,7 @@ module Readable
         when 'Notice'
           # 通知は全体宛のもののみ取得可能
           return where(team: [nil])
-        else
+        else # rubocop:disable Lint/DuplicateBranch
           # 他のパラメータは取得不可
           return none
         end
@@ -114,11 +114,11 @@ module Readable
 
         # joins(:answer).merge(Answer.delay_filter).where(answers: { team: team })
         where(answer: Answer.readable_records(team: team).delay_filter)
-      when 'Issue'
+      when 'Issue' # rubocop:disable Lint/DuplicateBranch
         where(team: team, problem: Problem.opened(team: team))
       when 'IssueComment'
         where(issue: Issue.readable_records(team: team))
-      when 'Penalty'
+      when 'Penalty' # rubocop:disable Lint/DuplicateBranch
         where(team: team, problem: Problem.opened(team: team))
       when 'ProblemBody', 'ProblemSupplement'
         where(problem: Problem.opened(team: team))
@@ -136,10 +136,10 @@ module Readable
       when 'FirstCorrectAnswer'
         # 使用予定なし
         raise UnhandledClass, self
-      when 'Scoreboard', 'Session'
+      when 'Scoreboard', 'Session' # rubocop:disable Lint/DuplicateBranch
         # このクラスはモデル本体に記載
         raise UnhandledClass, self
-      else
+      else # rubocop:disable Lint/DuplicateBranch
         raise UnhandledClass, self
       end
     end

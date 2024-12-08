@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'English'
 module Mutations
   class AcquireProblemEnvironment < BaseMutation
     field :problem_environments, [Types::ProblemEnvironmentType], null: true
@@ -10,7 +11,7 @@ module Mutations
     # 通知無効
     argument :silent,     Boolean, required: false, default_value: false
 
-    def resolve(problem_id:, silent:)
+    def resolve(problem_id:, silent:) # rubocop:disable Metrics/CyclomaticComplexity,Metrics/MethodLength
       problem = Problem.find_by(id: problem_id)
       raise RecordNotExists.new(Problem, id: problem_id) if problem.nil?
 
@@ -51,20 +52,20 @@ module Mutations
           raise ProblemEnvironmentNotReady, problem_id
         end
 
-        raise $!
+        raise $ERROR_INFO
       end
 
       response_json = JSON.parse(res.body)
       pe = ProblemEnvironment.create(
-        host: response_json.dig('host'),
-        user: response_json.dig('user'),
-        password: response_json.dig('password'),
+        host: response_json['host'],
+        user: response_json['user'],
+        password: response_json['password'],
         problem_id: problem_id,
         team: self.current_team!,
         secret_text: '',
-        name: response_json.dig('name'),
+        name: response_json['name'],
         service: 'SSH',
-        port: response_json.dig('port'),
+        port: response_json['port'],
         status: 'UNDER_CHALLENGE'
       )
 

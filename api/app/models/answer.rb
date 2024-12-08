@@ -3,9 +3,8 @@
 class Answer < ApplicationRecord
   validates :bodies,     presence: true, answer_bodies: true
   validates :confirming, boolean:  true
-  validates :problem,    presence: true, uniqueness: { scope: %i[team_id created_at] }
-  validates :team,       presence: true
-  validates :score,      presence: false
+  validates :problem, uniqueness: { scope: %i[team_id created_at] }
+  validates :score, presence: false
 
   belongs_to :problem
   belongs_to :team
@@ -36,7 +35,7 @@ class Answer < ApplicationRecord
     when 'textbox'
       # 計算精度注意
       score.percent = percent
-      score.point = percent && percent * problem.body.perfect_point / 100
+      score.point = percent && (percent * problem.body.perfect_point / 100)
     when 'radio_button', 'checkbox'
       # 計算精度注意
       score.percent = 100 * correct_count / problem.body.corrects.size

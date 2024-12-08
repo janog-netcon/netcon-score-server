@@ -8,10 +8,11 @@ FactoryBot.define do
     team { nil }
     problem { nil }
 
-    status {
+    # NOT_READY READY UNDER_CHALLENGE UNDER_SCORING ABANDONED
+    status do
       # "ABANDONED"
-      "UNDER_CHALLENGE"
-    } # NOT_READY READY UNDER_CHALLENGE UNDER_SCORING ABANDONED
+      'UNDER_CHALLENGE'
+    end
     sequence(:host) {|n| "host#{n}.local" }
     sequence(:user) {|n| "user#{n}" }
     sequence(:password) {|n| "password#{n}" }

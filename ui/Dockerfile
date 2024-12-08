@@ -1,4 +1,4 @@
-FROM node:13.8.0-alpine AS develop
+FROM node:23.3.0-alpine AS develop
 
 LABEL maintainer "JANOG NETCON"
 CMD ["yarn", "start"]
@@ -16,9 +16,9 @@ ENV PATH /usr/local/share/node_modules/.bin:$PATH
 # RUN apk add --update --no-cache --virtual .build-dep git && apk del .build-dep
 
 # for node-gyp
-RUN apk add --no-cache --virtual .build-dep g++ make python
+RUN apk add --no-cache g++ make python3 py3-setuptools
 
-ADD package.json yarn.lock .yarnrc /usr/src/app/
+ADD package.json yarn.lock /usr/src/app/
 RUN yarn install
 
 # 本当は消したほうが良いが、パッケージのアップデートでハマるので残す

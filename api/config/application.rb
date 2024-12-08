@@ -14,7 +14,6 @@ require 'action_controller/railtie'
 # require 'action_text/engine'
 # require 'action_view/railtie'
 # require 'action_cable/engine'
-require 'sprockets/railtie'
 # require 'rails/test_unit/railtie'
 
 # Require the gems listed in Gemfile, including any gems
@@ -41,7 +40,7 @@ module Api
 
     # DBにはUTCで保存し、ActiveRecordではTZに合わせる
     config.active_record.default_timezone = :utc
-    config.time_zone = ENV.fetch('TZ')
+    config.time_zone = ENV.fetch('TZ', 'Asia/Tokyo')
 
     # cache無効
     config.action_controller.perform_caching = false
@@ -52,6 +51,6 @@ module Api
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
-    config.gateway_url = ENV.fetch("GATEWAY_URL", "http://gateway:80/")
+    config.gateway_url = ENV.fetch('GATEWAY_URL', 'http://gateway:80/')
   end
 end

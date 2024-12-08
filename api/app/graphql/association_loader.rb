@@ -27,7 +27,7 @@ class AssociationLoader < GraphQL::Batch::Loader
     # preload_associationを通さないレコード取得は情報漏洩する可能性がある
     # return Promise.resolve(read_association(record)) if association_loaded?(record)
 
-    super(record)
+    super
   end
 
   # We want to load the associations on all records, even if they have the same id

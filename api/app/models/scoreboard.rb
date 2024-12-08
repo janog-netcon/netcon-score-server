@@ -33,13 +33,12 @@ class Scoreboard
       # 自身のレコードのみ見せる
       records = [team_record] if Config.scoreboard_hide_at <= DateTime.current
 
-      records.map {|record|
+      records.filter_map do |record|
         display_mode = select_display_mode(team_record: team_record, record: record, records: records)
         next unless display_mode
 
         filter_record(record: record, display_mode: display_mode)
-      }
-        .compact
+      end
     end
 
     def select_display_mode(team_record:, record:, records:)

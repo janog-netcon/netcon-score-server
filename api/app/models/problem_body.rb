@@ -8,13 +8,12 @@ class ProblemBody < ApplicationRecord
   validates :text,             presence: true
   validates :perfect_point,    presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0   }
   validates :solved_criterion, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 50, less_than_or_equal_to: 100 }
-  validates :problem,          presence: true
   validates :candidates,       allow_empty: true
   validates :corrects,         allow_empty: true, answer_bodies: true
 
   belongs_to :problem
 
-  enum mode: {
+  enum :mode, {
     textbox: 10,
     radio_button: 20,
     checkbox: 30
@@ -52,7 +51,7 @@ class ProblemBody < ApplicationRecord
     # これらが変更されていたら再採点する必要がある
     # 正解の選択肢の変更には対応するがcandidates自体の変更には対応しない(解答の書き換えが必要なため)
     # saved_changesはafter_*で有効
-    (saved_changes.keys & %w[perfect_point solved_criterion corrects]).present?
+    saved_changes.keys.intersect?(%w[perfect_point solved_criterion corrects])
   end
 
   def regrade_answers

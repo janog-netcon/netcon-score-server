@@ -18,10 +18,11 @@ module Mutations
 
       if answer.update(args.merge(bodies: bodies, confirming: false, team: self.current_team!))
         # for local problem
-        if Config.local_problem_codes.split(",").exclude?(problem.code)
-          pes = ProblemEnvironment.lock.where(problem_id: problem_id, status: "UNDER_CHALLENGE", team: self.current_team!)
-          raise RecordNotExists.new(ProblemEnvironment, problem_id: problem_id, status: "UNDER_CHALLENGE", team_id: self.current_team!.id) if pes.empty?
-          pes.each { |pe| pe.update!(status: "UNDER_SCORING") }
+        if Config.local_problem_codes.split(',').exclude?(problem.code)
+          pes = ProblemEnvironment.lock.where(problem_id: problem_id, status: 'UNDER_CHALLENGE', team: self.current_team!)
+          raise RecordNotExists.new(ProblemEnvironment, problem_id: problem_id, status: 'UNDER_CHALLENGE', team_id: self.current_team!.id) if pes.empty?
+
+          pes.each {|pe| pe.update!(status: 'UNDER_SCORING') }
         end
 
         # TODO: answer.gradeをジョブで実行する -> after create hook

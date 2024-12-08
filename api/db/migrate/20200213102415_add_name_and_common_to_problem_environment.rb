@@ -1,7 +1,7 @@
 class AddNameAndCommonToProblemEnvironment < ActiveRecord::Migration[6.0]
   def change
     change_table :problem_environments, bulk: true do |t|
-      t.string :name, null: false
+      t.string :name, null: false # rubocop:disable Rails/NotNullColumn
       t.index %i[problem_id team_id name], unique: true
     end
 

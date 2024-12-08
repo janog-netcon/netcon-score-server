@@ -34,7 +34,7 @@ class SessionsController < ApplicationController
   end
 
   # 動的にTeamを作成しない前提で設計したのでいろいろガタガタ
-  def signup
+  def signup # rubocop:disable Metrics/MethodLength
     if Config.registration_code != signup_params[:registrationCode]
       head :forbidden
       return

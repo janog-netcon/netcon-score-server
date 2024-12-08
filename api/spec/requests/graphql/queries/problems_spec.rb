@@ -8,12 +8,12 @@ RSpec.describe 'problems', type: :request do
   context_as_staff do
     let(:problem) { create(:problem) }
 
-    it 'get problems' do
+    it 'get problems' do # rubocop:disable RSpec/NoExpectationExample
       # TODO: impl
       post_query 'problems'
     end
 
-    it 'get problem' do
+    it 'get problem' do # rubocop:disable RSpec/NoExpectationExample
       # TODO: impl
       post_query 'problem', variables: { id: problem.id }
     end

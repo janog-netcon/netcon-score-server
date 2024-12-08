@@ -9,7 +9,7 @@ class CreateTables < ActiveRecord::Migration[5.2]
 
     create_table :answers, id: :uuid do |t|
       t.json       'bodies',     null: false
-      t.boolean    'confirming', null: false
+      t.boolean    'confirming', null: false, default: false
       t.references :problem,     null: false, type: :uuid
       t.references :team,        null: false, type: :uuid
       t.timestamps               null: false
@@ -19,7 +19,7 @@ class CreateTables < ActiveRecord::Migration[5.2]
 
     create_table :scores, id: :uuid do |t|
       t.integer    'point',  null: true
-      t.boolean    'solved', null: false
+      t.boolean    'solved', null: false, default: false
       t.references :answer,  null: false, type: :uuid, index: { unique: true }
       t.timestamps           null: false
     end
@@ -28,7 +28,7 @@ class CreateTables < ActiveRecord::Migration[5.2]
       t.string     'filename',    null: false
       t.string     'description', null: false
       t.string     'token',       null: false
-      t.binary     'data',        null: false, limit: 20.megabyte
+      t.binary     'data',        null: false, limit: 20.megabytes
       t.references :team,         null: false, type: :uuid
       t.timestamps                null: false
     end
@@ -58,7 +58,7 @@ class CreateTables < ActiveRecord::Migration[5.2]
 
     create_table :issue_comments, id: :uuid do |t|
       t.string     'text',       null: false, limit: 8192
-      t.boolean    'from_staff', null: false
+      t.boolean    'from_staff', null: false, default: false
       t.references :issue,       null: false, type: :uuid
       t.timestamps               null: false
     end
@@ -66,7 +66,7 @@ class CreateTables < ActiveRecord::Migration[5.2]
     create_table :notices, id: :uuid do |t|
       t.string     'title',      null: false
       t.string     'text',       null: false, limit: 8192
-      t.boolean    'pinned',     null: false
+      t.boolean    'pinned',     null: false, default: false
       t.references :target_team, null: true, type: :uuid
       t.timestamps               null: false
     end
@@ -84,7 +84,7 @@ class CreateTables < ActiveRecord::Migration[5.2]
       t.string     'writer',          null: true
       t.string     'secret_text',     null: false, limit: 8192
       t.integer    'order',           null: false
-      t.boolean    'team_private',    null: false
+      t.boolean    'team_private',    null: false # rubocop:disable Rails/ThreeStateBooleanColumn
       t.tsrange    'open_at',         null: true
       t.references :previous_problem, null: true,  type: :uuid
       t.references :category,         null: true,  type: :uuid

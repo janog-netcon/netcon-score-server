@@ -75,11 +75,10 @@ module Types
 
       # scalarやenumなど値としてそのまま使えるキーを返す
       def non_composite_field_names
-        self.fields.map {|key, field|
+        self.fields.filter_map do |key, field|
           type = self.get_type_class(field.type)
           type.kind.composite? ? nil : key
-        }
-          .compact
+        end
       end
 
       # フィールド一覧をクエリとして使える形式で返す
