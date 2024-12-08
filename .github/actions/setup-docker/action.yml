@@ -1,0 +1,17 @@
+runs:
+  using: composite
+  steps:
+    # Setup docker buildx
+    - uses: docker/setup-buildx-action@v3
+
+    # To deploy to Artifact Registry, authenticate with workload identity federation
+    - uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: "projects/907031882243/locations/global/workloadIdentityPools/github/providers/github"
+        service_account: "github-actions-score-server-ci@networkcontest.iam.gserviceaccount.com"
+
+    # Add credential files to deploy to Artifact Registry
+    - uses: google-github-actions/setup-gcloud@v2
+    - name: Authenticate Docker with gcloud
+      shell: bash
+      run: gcloud auth configure-docker asia-northeast1-docker.pkg.dev -q

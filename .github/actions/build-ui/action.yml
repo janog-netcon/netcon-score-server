@@ -1,0 +1,19 @@
+inputs:
+  tags:
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup docker
+      uses: ./.github/actions/setup-docker
+
+    - name: Build and push UI container
+      uses: docker/build-push-action@v6
+      with:
+        context: ./ui
+        file: ./ui/Dockerfile
+        push: true
+        tags: ${{ inputs.tags }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
