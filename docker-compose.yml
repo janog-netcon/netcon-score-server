@@ -51,6 +51,7 @@ services:
     env_file: .env
     build:
       context: ui/
+      dockerfile: Dockerfile.dev
     ports: ['127.0.0.1:8901:3000']
     stdin_open: true
     tty: true
