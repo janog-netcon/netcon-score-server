@@ -102,7 +102,7 @@ services:
     ports: ['127.0.0.1:8905:8080']
 
   grafana:
-    image: grafana/grafana:10.2.3
+    image: grafana/grafana:10.4.14
     volumes:
       - grafana:/var/lib/grafana
     ports: ['0.0.0.0:8906:3000']
