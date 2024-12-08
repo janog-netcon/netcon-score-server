@@ -118,7 +118,7 @@ services:
     ports: ['0.0.0.0:8906:3000']
 
   prometheus:
-    image: prom/prometheus:v2.48.1
+    image: prom/prometheus:v2.55.1
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus:/prometheus
