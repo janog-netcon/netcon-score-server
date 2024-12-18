@@ -2,11 +2,11 @@
   <v-app-bar app dense color="secondary" elevation="1">
     <navigation-link to="/" active-class="" class="mr-2 ml-2">
       <v-img
-        :src="require('~/assets/img/JANOG53_logo.png')"
+        :src="require('~/assets/img/JANOG55_logo.png')"
         max-height="40px"
         max-width="160px"
         class="m-2"
-        alt="JANOG53"
+        alt="JANOG55"
       />
       <div
         style="color: #1a1a1a; font-weight: 700; font-size: 22px; line-height: 1; letter-spacing: -1px; margin: auto 10px auto 5px;"
@@ -18,6 +18,7 @@
     <div
       style="font-weight: bold; margin: auto 8px 8px 0px"
     >Supported by:</div>
+  <!--
     <v-btn href="https://www.aten.com/jp/ja/" class="mr-1 px-0" tile text height="48px">
       <img
         :src="require('~/assets/img/JANOG53_aten.png')"
@@ -53,6 +54,7 @@
         alt="古河電気工業株式会社"
       />
     </v-btn>
+  -->
     <template v-if="isWide">
       <navigation-link
         v-for="nav in navigations"

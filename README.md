@@ -1,7 +1,7 @@
 NETCON Score Server
 ---
 
-The contest site for [JANOG53 NETCON](https://www.janog.gr.jp/meeting/janog53).
+The contest site for [JANOG55 NETCON](https://www.janog.gr.jp/meeting/janog55).
 
 It's called also *score server*.  The main feature of this is to propose problem and marking.
 
@@ -36,4 +36,3 @@ API and SPA
 ## Usage and How to Contribute
 
 See [Wiki](https://github.com/ictsc/ictsc-score-server/wiki)
-
