@@ -4,6 +4,7 @@ export default {
       competitionTime: [],
       gradingDelaySec: 0,
       guidePage: '',
+      guidePageEn: '',
       hideAllScore: false,
       realtimeGrading: false,
       resetDelaySec: 0,
@@ -17,6 +18,7 @@ export default {
 
       state.gradingDelaySec = contestInfo.gradingDelaySec
       state.guidePage = contestInfo.guidePage
+      state.guidePageEn = contestInfo.guidePageEn
       state.hideAllScore = contestInfo.hideAllScore
       state.realtimeGrading = contestInfo.realtimeGrading
       state.resetDelaySec = contestInfo.resetDelaySec
@@ -45,6 +47,7 @@ export default {
     competitionTime: (state) => state.competitionTime,
     gradingDelaySec: (state) => state.gradingDelaySec,
     guidePage: (state) => state.guidePage,
+    guidePageEn: (state) => state.guidePageEn,
     hideAllScore: (state) => state.hideAllScore,
     realtimeGrading: (state) => state.realtimeGrading,
     resetDelaySec: (state) => state.resetDelaySec,

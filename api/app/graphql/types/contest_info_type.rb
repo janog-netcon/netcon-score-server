@@ -10,5 +10,6 @@ module Types
     field :hide_all_score,        Boolean,             null: false
     field :realtime_grading,      Boolean,             null: false
     field :guide_page,            String,              null: false
+    field :guide_page_en,         String,              null: false
   end
 end
