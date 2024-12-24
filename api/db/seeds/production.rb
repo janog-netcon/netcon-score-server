@@ -19,6 +19,7 @@ def create_config
     { key: :competition_section4_end_at,    value_type: :date,    value: Time.zone.parse('2100-01-01 00:00:00') },
 
     { key: :guide_page,                     value_type: :string,  value: Config.guide_page_default_value },
+    { key: :guide_page_en,                  value_type: :string,  value: Config.guide_page_default_value },
     { key: :grading_delay_sec,              value_type: :integer, value: 0 },
     { key: :reset_delay_sec,                value_type: :integer, value: 30 },
     { key: :hide_all_score,                 value_type: :boolean, value: true },

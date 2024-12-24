@@ -222,5 +222,6 @@ class Config < ApplicationRecord
   record_accessor :hide_all_score
   record_accessor :realtime_grading # 有効解答を最終解答にするか最高得点にするかもこれで指定
   record_accessor :guide_page
+  record_accessor :guide_page_en   # 英語版ページ用のguide_page
   record_accessor :penalty_weight
 end
