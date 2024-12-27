@@ -70,7 +70,7 @@ export default {
         this.notifySuccess({ message: 'ログインしました' })
         // locationを直接使うことで強制リロード
         // ストアもリセットされる
-        window.location = '/guide'
+        window.location = '/guide/ja'
       } else {
         this.notifyWarning({
           message: 'ユーザ名かパスワードが正しくありません',
