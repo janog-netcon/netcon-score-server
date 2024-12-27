@@ -138,8 +138,7 @@ export default {
         { to: '/issues', text: '質問', if: this.isNotAudience },
         { to: '/answers', text: '解答', if: this.isStaff },
         { to: '/summary', text: '状況', if: this.isStaff },
-        { to: '/guide/ja', text: 'ガイド' },
-        { to: '/guide/en', text: 'Guide' },
+        { to: '/guide', text: 'ガイド' },
         { to: '/teams', text: 'ユーザ' },
         { to: '/settings', icon: 'mdi-cog-outline', if: this.isStaff },
         {
