@@ -82,6 +82,7 @@ export default {
   },
   data() {
     const storageKey = `config-${this.config.key}`
+    console.log(storageKey)
     const configValue = this.$jsonStorage.get(
       storageKey,
       this.config.parsedValue
