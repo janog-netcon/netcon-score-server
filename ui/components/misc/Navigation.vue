@@ -18,43 +18,49 @@
     <div
       style="font-weight: bold; margin: auto 8px 8px 0px"
     >Supported by:</div>
-  <!--
-    <v-btn href="https://www.aten.com/jp/ja/" class="mr-1 px-0" tile text height="48px">
-      <img
-        :src="require('~/assets/img/JANOG53_aten.png')"
-        style="margin: auto 4px; max-height: 28px"
-        alt="ATENジャパン株式会社"
-      />
-    </v-btn>
     <v-btn href="https://www.exfo.com/" class="mr-1 px-0" tile text height="48px">
       <img
-        :src="require('~/assets/img/JANOG53_exfo.png')"
-        style="margin: auto 4px; max-height: 21px"
+        :src="require('~/assets/img/JANOG55_exfo.png')"
+        style="margin: auto 2px; max-height: 36px"
         alt="EXFO JAPAN株式会社"
-      />
-    </v-btn>
-    <v-btn href="https://www.seikoh-giken.co.jp/" class="mr-1 px-0" tile text height="48px">
-      <img
-        :src="require('~/assets/img/JANOG53_seikoh_giken.png')"
-        style="margin: auto 4px; max-height: 34px"
-        alt="株式会社精工技研"
       />
     </v-btn>
     <v-btn href="https://www.haradacorp.co.jp/business/aif-infra/" class="mr-1 px-0" tile text height="48px">
       <img
-        :src="require('~/assets/img/JANOG53_harada.jpg')"
-        style="margin: auto 4px; max-height: 32px"
+        :src="require('~/assets/img/JANOG55_harada.jpg')"
+        style="margin: auto 2px; max-height: 32px"
         alt="原田産業株式会社"
       />
     </v-btn>
-    <v-btn href="https://www.furukawa.co.jp/" class="mr-1 px-0" tile text height="48px">
+    <v-btn href="#" class="mr-1 px-0" tile text height="48px">
       <img
-        :src="require('~/assets/img/JANOG53_furukawa.png')"
-        style="margin: auto 4px; max-height: 20px"
-        alt="古河電気工業株式会社"
+        :src="require('~/assets/img/JANOG55_ase_net.png')"
+        style="margin: auto 2px; max-height: 42px"
+        alt="ASE-NET"
       />
     </v-btn>
-  -->
+    <!-- TODO: Fix link pages -->
+    <v-btn href="#" class="mr-1 px-0" tile text height="48px">
+      <img
+        :src="require('~/assets/img/JANOG55_sticklers.jpg')"
+        style="margin: auto 2px; max-height: 32px"
+        alt="ASE-NET"
+      />
+    </v-btn>
+    <v-btn href="https://www.keysight.com/jp/ja/home.html" class="mr-1 px-0" tile text height="48px">
+      <img
+        :src="require('~/assets/img/JANOG55_keysight.png')"
+        style="margin: auto 2px; max-height: 36px"
+        alt="キーサイト・テクノロジー"
+      />
+    </v-btn>
+    <v-btn href="https://www.seikoh-giken.co.jp/" class="mr-1 px-0" tile text height="48px">
+      <img
+        :src="require('~/assets/img/JANOG55_seikoh_giken.png')"
+        style="margin: auto 2px; max-height: 32px"
+        alt="株式会社 精工技研"
+      />
+    </v-btn>
     <template v-if="isWide">
       <navigation-link
         v-for="nav in navigations"
