@@ -18,21 +18,21 @@
     <div
       style="font-weight: bold; margin: auto 8px 8px 0px"
     >Supported by:</div>
-    <v-btn href="https://www.exfo.com/" class="mr-1 px-0" tile text height="48px">
+    <v-btn href="https://www.exfo.com/en/" class="mr-1 px-0" tile text height="48px">
       <img
         :src="require('~/assets/img/JANOG55_exfo.png')"
         style="margin: auto 2px; max-height: 36px"
         alt="EXFO JAPAN株式会社"
       />
     </v-btn>
-    <v-btn href="https://www.haradacorp.co.jp/business/aif-infra/" class="mr-1 px-0" tile text height="48px">
+    <v-btn href="https://infocom.haradacorp.co.jp/" class="mr-1 px-0" tile text height="48px">
       <img
         :src="require('~/assets/img/JANOG55_harada.jpg')"
         style="margin: auto 2px; max-height: 32px"
         alt="原田産業株式会社"
       />
     </v-btn>
-    <v-btn href="#" class="mr-1 px-0" tile text height="48px">
+    <v-btn href="https://www.asenet.co.jp/" class="mr-1 px-0" tile text height="48px">
       <img
         :src="require('~/assets/img/JANOG55_ase_net.png')"
         style="margin: auto 2px; max-height: 42px"
@@ -40,14 +40,14 @@
       />
     </v-btn>
     <!-- TODO: Fix link pages -->
-    <v-btn href="#" class="mr-1 px-0" tile text height="48px">
+    <v-btn href="https://www.asenet.co.jp/sticklers/" class="mr-1 px-0" tile text height="48px">
       <img
         :src="require('~/assets/img/JANOG55_sticklers.jpg')"
         style="margin: auto 2px; max-height: 32px"
         alt="ASE-NET"
       />
     </v-btn>
-    <v-btn href="https://www.keysight.com/jp/ja/home.html" class="mr-1 px-0" tile text height="48px">
+    <v-btn href="https://www.keysight.co.jp" class="mr-1 px-0" tile text height="48px">
       <img
         :src="require('~/assets/img/JANOG55_keysight.png')"
         style="margin: auto 2px; max-height: 36px"
