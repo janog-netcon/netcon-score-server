@@ -19,7 +19,8 @@
     </v-row>
 
     <v-row>
-      <markdown :content="guidePage" />
+      <markdown v-if="language === 'ja'" :content="guidePage" />
+      <markdown v-if="language === 'en'" :content="guidePageEn" />
     </v-row>
 
     <config-modal
@@ -36,6 +37,7 @@
   </v-container>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import orm from '~/orm'
 import ConfigModal from '~/components/misc/ConfigModal'
 import Markdown from '~/components/commons/Markdown'
@@ -60,18 +62,13 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('contestInfo', ['guidePage']),
+    ...mapGetters('contestInfo', ['guidePageEn']),
     title() {
       if (this.language === 'ja') {
         return 'ガイド'
       } else {
         return 'Guide'
-      }
-    },
-    guidePage() {
-      if (this.language === "ja") {
-        return JSON.parse(orm.Config.find('guide_page')?.value || "\"\"")
-      } else {
-        return JSON.parse(orm.Config.find('guide_page_en')?.value || "\"\"")
       }
     },
     configGuidePageJa() {
