@@ -48,7 +48,39 @@ func newAnswerResponseFrom(answer Answer, problem Problem) answerResponse {
 	}
 }
 
-type listProblemEnvironmentsResponse []ProblemEnvironment
+type listProblemEnvironmentsResponse []problemEnvironmentResponse
+
+type problemEnvironmentResponse struct {
+	// The following fields are derived from original ProblemEnvironment
+	ID        uuid.UUID `bun:"id" json:"id"`
+	Host      string    `bun:"host" json:"host"`
+	ProblemID uuid.UUID `bun:"problem_id" json:"problem_id"`
+	TeamID    uuid.UUID `bun:"team_id" json:"team_id"`
+	Name      string    `bun:"name" json:"name"`
+	CreatedAt time.Time `bun:"created_at" json:"created_at"`
+	UpdatedAt time.Time `bun:"updated_at" json:"updated_at"`
+
+	// This field is calculated from the latest Answer
+	LatestAnswerBody string `json:"latest_answer_body"`
+}
+
+func newProblemEnvironmentResponseFrom(problemEnvironment ProblemEnvironment, latestAnswer Answer) problemEnvironmentResponse {
+	bodies := []string{}
+	for _, b := range latestAnswer.Bodies {
+		bodies = append(bodies, b...)
+	}
+
+	return problemEnvironmentResponse{
+		ID:               problemEnvironment.ID,
+		Host:             problemEnvironment.Host,
+		ProblemID:        problemEnvironment.ProblemID,
+		TeamID:           problemEnvironment.TeamID,
+		Name:             problemEnvironment.Name,
+		CreatedAt:        problemEnvironment.CreatedAt,
+		UpdatedAt:        problemEnvironment.UpdatedAt,
+		LatestAnswerBody: strings.Join(bodies, "\n"),
+	}
+}
 
 func (c *Controller) listProblemEnvironments(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -60,7 +92,17 @@ func (c *Controller) listProblemEnvironments(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	response := listProblemEnvironmentsResponse(problemEnvironments)
+	response := listProblemEnvironmentsResponse{}
+	for _, pe := range problemEnvironments {
+		latestAnswer, err := c.repo.findLatestAnswerFor(ctx, pe.ProblemID, pe.TeamID)
+		if err != nil {
+			slog.ErrorContext(ctx, "failed to find latest Answer", "error", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		response = append(response, newProblemEnvironmentResponseFrom(pe, *latestAnswer))
+	}
 
 	if err := renderJSON(w, http.StatusOK, response); err != nil {
 		slog.ErrorContext(ctx, "failed to render JSON", "error", err)
