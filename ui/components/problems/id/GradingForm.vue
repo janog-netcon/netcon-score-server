@@ -1,7 +1,7 @@
 <template>
   <v-col>
     <v-row justify="space-between">
-      <template v-if="problem.modeIsTextbox">
+      <template>
         <grading-slider v-model="percent" :sending="sending">
           <template v-slot:prepend>
             <!-- 基準突破チェック + 説明ツールチップ -->
