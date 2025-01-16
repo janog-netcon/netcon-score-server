@@ -31,19 +31,9 @@ class Answer < ApplicationRecord
     score = self.score || Score.new
     score.answer ||= self
 
-    # 精度とフィルタ設計の上、採点時に実際の得点を計算する必要がある
-    case problem.body.mode
-    when 'textbox'
-      # 計算精度注意
-      score.percent = percent
-      score.point = percent && percent * problem.body.perfect_point / 100
-    when 'radio_button', 'checkbox'
-      # 計算精度注意
-      score.percent = 100 * correct_count / problem.body.corrects.size
-      score.point = problem.body.perfect_point * correct_count / problem.body.corrects.size
-    else
-      raise UnhandledProblemBodyMode, problem.body.mode
-    end
+    # 問題形式にかかわらず、percentを計算する。計算精度注意。
+    score.percent = percent
+    score.point = percent && percent * problem.body.perfect_point / 100
 
     # nil許容
     score.update(solved: problem.body.solved_criterion <= score.percent.to_i)
