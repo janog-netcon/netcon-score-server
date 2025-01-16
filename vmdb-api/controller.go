@@ -52,13 +52,14 @@ type listProblemEnvironmentsResponse []problemEnvironmentResponse
 
 type problemEnvironmentResponse struct {
 	// The following fields are derived from original ProblemEnvironment
-	ID        uuid.UUID `bun:"id" json:"id"`
-	Host      string    `bun:"host" json:"host"`
-	ProblemID uuid.UUID `bun:"problem_id" json:"problem_id"`
-	TeamID    uuid.UUID `bun:"team_id" json:"team_id"`
-	Name      string    `bun:"name" json:"name"`
-	CreatedAt time.Time `bun:"created_at" json:"created_at"`
-	UpdatedAt time.Time `bun:"updated_at" json:"updated_at"`
+	ID          uuid.UUID `json:"id"`
+	InnerStatus *string   `json:"inner_status"`
+	Host        string    `json:"host"`
+	ProblemID   uuid.UUID `json:"problem_id"`
+	TeamID      uuid.UUID `json:"team_id"`
+	Name        string    `json:"name"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 
 	// This field is calculated from the latest Answer
 	LatestAnswerBody string `json:"latest_answer_body"`
@@ -72,6 +73,7 @@ func newProblemEnvironmentResponseFrom(problemEnvironment ProblemEnvironment, la
 
 	return problemEnvironmentResponse{
 		ID:               problemEnvironment.ID,
+		InnerStatus:      problemEnvironment.InnerStatus,
 		Host:             problemEnvironment.Host,
 		ProblemID:        problemEnvironment.ProblemID,
 		TeamID:           problemEnvironment.TeamID,
