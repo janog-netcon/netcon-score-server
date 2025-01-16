@@ -11,5 +11,6 @@ module Types
     field :realtime_grading,      Boolean,             null: false
     field :guide_page,            String,              null: false
     field :guide_page_en,         String,              null: false
+    field :local_problem_codes,   String,              null: false
   end
 end

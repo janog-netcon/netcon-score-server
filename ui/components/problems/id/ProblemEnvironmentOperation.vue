@@ -1,35 +1,47 @@
 <template>
   <div>
-    <!-- VM作成・削除ボタン -->
-    <v-btn 
-      contained
-      color="success"
-      @click="acquireProblemEnvironmentVM(problem.id)"
-      v-if="isSolve"
-      width="100%"
-    >
-      この問題にチャレンジする (接続情報を取得します)
-    </v-btn>
-    <v-btn 
-      contained
-      color="error"
-      @click="abandonProblemEnvironmentVM(problem.id)"
-      v-if="isRetire"
-      width="100%"
-    >
-      この問題を諦める (ペナルティはありません / 再チャレンジもできます)
-    </v-btn>
-    <v-btn
-      contained
-      disabled
-      v-if="isLock"
-      width="100%"
-    >
-      ロック中 (採点待ち、もしくは他の問題にチャレンジ中です)
-    </v-btn>
+    <div v-if="!isLocalProblem">
+      <!-- VM作成・削除ボタン -->
+      <v-btn
+        contained
+        color="success"
+        @click="acquireProblemEnvironmentVM(problem.id)"
+        v-if="isSolve"
+        width="100%"
+      >
+        この問題にチャレンジする (接続情報を取得します)
+      </v-btn>
+      <v-btn
+        contained
+        color="error"
+        @click="abandonProblemEnvironmentVM(problem.id)"
+        v-if="isRetire"
+        width="100%"
+      >
+        この問題を諦める (ペナルティはありません / 再チャレンジもできます)
+      </v-btn>
+      <v-btn
+        contained
+        disabled
+        v-if="isLock"
+        width="100%"
+      >
+        ロック中 (採点待ち、もしくは他の問題にチャレンジ中です)
+      </v-btn>
+    </div>
+    <div v-else>
+      <v-btn
+        contained
+        disabled
+        width="100%"
+      >
+        この問題は現地問題です。現地にてチャレンジしてください。
+      </v-btn>
+    </div>
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import EnvironmentModal from '~/components/misc/EnvironmentModal'
 import ExpandableButton from '~/components/commons/ExpandableButton'
 import PlusButton from '~/components/commons/PlusButton'
@@ -60,6 +72,15 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('contestInfo', ['localProblemCodes']),
+    isLocalProblem() {
+      for (const code of this.localProblemCodes.split(",")) {
+        if (this.problem.code === code) {
+          return true
+        }
+      }
+      return false
+    },
     //「棄権ボタン」を表示するかどうか
     isRetire() {
       //採点中・削除中は表示しない
