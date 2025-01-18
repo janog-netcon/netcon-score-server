@@ -4,6 +4,9 @@ export default {
   server: {
     host: '0.0.0.0',
   },
+  htmlAttrs: {
+    lang: 'ja',
+  },
   head: {
     title: 'スコアサーバー',
     titleTemplate: '%s | JANOG55 NETCON',
