@@ -38,7 +38,7 @@ export default {
       if (await this.fetchCurrentSession()) {
         await this.fetchContestInfo()
         // this.$nuxt.$loading.finish()
-      } else {
+      } else if (this.$route.path !== '/signup') {
         this.$router.push('/login')
       }
     })
