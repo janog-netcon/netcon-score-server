@@ -65,10 +65,13 @@ type problemEnvironmentResponse struct {
 	LatestAnswerBody string `json:"latest_answer_body"`
 }
 
-func newProblemEnvironmentResponseFrom(problemEnvironment ProblemEnvironment, latestAnswer Answer) problemEnvironmentResponse {
+func newProblemEnvironmentResponseFrom(problemEnvironment ProblemEnvironment, latestAnswer *Answer) problemEnvironmentResponse {
 	bodies := []string{}
-	for _, b := range latestAnswer.Bodies {
-		bodies = append(bodies, b...)
+
+	if latestAnswer != nil {
+		for _, b := range latestAnswer.Bodies {
+			bodies = append(bodies, b...)
+		}
 	}
 
 	return problemEnvironmentResponse{
@@ -103,7 +106,7 @@ func (c *Controller) listProblemEnvironments(w http.ResponseWriter, r *http.Requ
 			return
 		}
 
-		response = append(response, newProblemEnvironmentResponseFrom(pe, *latestAnswer))
+		response = append(response, newProblemEnvironmentResponseFrom(pe, latestAnswer))
 	}
 
 	if err := renderJSON(w, http.StatusOK, response); err != nil {
