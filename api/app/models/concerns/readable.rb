@@ -45,7 +45,7 @@ module Readable
       when 'Category'
         %w[code] unless team.staff?
       when 'Problem'
-        %w[code secret_text writer] unless team.staff?
+        %w[secret_text writer] unless team.staff?
       when 'ProblemBody'
         %w[corrects genre] if team.player?
       when 'ProblemEnvironment'
