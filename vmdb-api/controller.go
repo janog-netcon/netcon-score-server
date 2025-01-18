@@ -55,6 +55,7 @@ type problemEnvironmentResponse struct {
 	ID          uuid.UUID `json:"id"`
 	InnerStatus *string   `json:"inner_status"`
 	Host        string    `json:"host"`
+	Port        uint16    `json:"port"`
 	ProblemID   uuid.UUID `json:"problem_id"`
 	TeamID      uuid.UUID `json:"team_id"`
 	Name        string    `json:"name"`
@@ -78,6 +79,7 @@ func newProblemEnvironmentResponseFrom(problemEnvironment ProblemEnvironment, la
 		ID:               problemEnvironment.ID,
 		InnerStatus:      problemEnvironment.InnerStatus,
 		Host:             problemEnvironment.Host,
+		Port:             problemEnvironment.Port,
 		ProblemID:        problemEnvironment.ProblemID,
 		TeamID:           problemEnvironment.TeamID,
 		Name:             problemEnvironment.Name,
