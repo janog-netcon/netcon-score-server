@@ -84,7 +84,7 @@ func (r *Repository) listUnscoredAnswersFor(ctx context.Context, problemID uuid.
 	result := []Answer{}
 	err := r.db.NewSelect().ColumnExpr("answers.*").
 		Table("answers").
-		Join("INNER JOIN scores").JoinOn("answers.id = scores.answer_id").
+		Join("LEFT JOIN scores").JoinOn("answers.id = scores.answer_id").
 		Where("problem_id = ?", problemID).
 		Where("point IS NULL").
 		Scan(ctx, &result)
