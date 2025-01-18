@@ -74,7 +74,7 @@ export default {
       password: '',
       organization: '',
       passwordVisible: false,
-      registrationCode: '',
+      registrationCode: this.$route.query.registration_code || '',
       registrationCodeVisible: false,
       loading: false,
 
