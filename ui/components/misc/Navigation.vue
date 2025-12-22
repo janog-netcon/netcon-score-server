@@ -1,23 +1,31 @@
 <template>
   <v-app-bar app dense color="secondary" elevation="1">
-    <navigation-link to="/" active-class="" class="mr-2 ml-2">
+    <navigation-link to="/" active-class="" class="mr-4 ml-4">
       <v-img
-        :src="require('~/assets/img/JANOG55_logo.png')"
-        max-height="40px"
+        :src="require('~/assets/img/JANOG57_logo.png')"
+        max-height="24px"
         max-width="160px"
         class="m-2"
-        alt="JANOG55"
+        alt="JANOG57"
       />
       <div
-        style="color: #1a1a1a; font-weight: 700; font-size: 22px; line-height: 1; letter-spacing: -1px; margin: auto 10px auto 5px;"
+        style="color: #1a1a1a; font-weight: 700; font-size: 20px; line-height: 1; letter-spacing: -1px; margin: auto 10px auto 5px;"
       >NETCON</div>
     </navigation-link>
 
     <v-spacer />
 
     <div
-      style="font-weight: bold; margin: auto 8px 8px 0px"
+      style="font-weight: bold; margin: auto 8px"
     >Supported by:</div>
+    <v-btn href="https://www.sakura.ad.jp/" class="mr-2 px-0" tile text height="48px">
+      <img
+        :src="require('~/assets/img/JANOG57_sakura.svg')"
+        style="margin: auto 2px; min-height: 40px; max-height: 40px"
+        alt="さくらインターネット株式会社"
+      />
+    </v-btn>
+    <!--
     <v-btn href="https://www.exfo.com/en/" class="mr-1 px-0" tile text height="48px">
       <img
         :src="require('~/assets/img/JANOG55_exfo.png')"
@@ -39,7 +47,6 @@
         alt="ASE-NET"
       />
     </v-btn>
-    <!-- TODO: Fix link pages -->
     <v-btn href="https://www.asenet.co.jp/sticklers/" class="mr-1 px-0" tile text height="48px">
       <img
         :src="require('~/assets/img/JANOG55_sticklers.jpg')"
@@ -61,6 +68,7 @@
         alt="株式会社 精工技研"
       />
     </v-btn>
+    -->
     <template v-if="isWide">
       <navigation-link
         v-for="nav in navigations"
