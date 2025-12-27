@@ -44,7 +44,7 @@ class ScoreAggregator
       teams
         .map {|team| build_record(team: team, team_answers: teams_answers[team.id], penalty_score: teams_penalty_scores[team.id]) }
         .group_by {|record| record[:team].beginner }
-        .sum {|_key, records| assign_rank(records: records) }
+        .sum([]) {|_key, records| assign_rank(records: records) }
     end
 
     private
