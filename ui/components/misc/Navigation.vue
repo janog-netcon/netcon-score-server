@@ -2,7 +2,7 @@
   <v-app-bar app dense color="secondary" elevation="1">
     <navigation-link to="/" active-class="" class="mr-4 ml-4">
       <v-img
-        :src="require('~/assets/img/JANOG57_logo.png')"
+        :src="require('~/assets/img/JANOG57_logo.svg')"
         max-height="24px"
         max-width="160px"
         class="m-2"
