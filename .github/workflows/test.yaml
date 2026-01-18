@@ -30,7 +30,7 @@ jobs:
           # Wait for DB to be ready is usually handled by entrypoints or retries,
           # but ensuring the container is up might be good.
           # Here we just run the rake task which will spin up services via depends_on.
-          docker compose run --rm api bundle exec rake db:create db:schema:load
+          docker compose run --rm api sh -c "dockerize -wait tcp://db:5432 -timeout 60s && bundle exec rake db:create db:schema:load"
 
       - name: Run RSpec
         run: |
@@ -47,7 +47,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '14'
+          node-version: '13'
           cache: 'yarn'
           cache-dependency-path: ui/yarn.lock
 
