@@ -78,6 +78,7 @@ RSpec.configure do |config|
 
   # example単位でロールバック
   config.around(:each) do |example|
+    DatabaseCleaner.strategy = example.metadata[:truncation] ? :truncation : :transaction
     DatabaseCleaner.cleaning { example.run }
   end
 
