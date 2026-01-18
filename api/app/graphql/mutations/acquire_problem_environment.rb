@@ -22,7 +22,8 @@ module Mutations
         return { problem_environments: nil }
       end
 
-      # トランザクション外なので、同時にリクエストされた場合、同時に問題環境が作成される可能性がある
+      # トランザクション外なので、ここでは簡易チェックのみを行う。
+      # 重複して作成した場合は、後続の処理で検知して削除する
       if ProblemEnvironment.exists?(team: self.current_team!, status: 'UNDER_CHALLENGE')
         raise ProblemEnvironmentAlreadyAssigned, self.current_team!
       end
@@ -55,22 +56,39 @@ module Mutations
       end
 
       response_json = JSON.parse(res.body)
-      pe = ProblemEnvironment.create(
-        host: response_json.dig('host'),
-        user: response_json.dig('user'),
-        password: response_json.dig('password'),
-        problem_id: problem_id,
-        team: self.current_team!,
-        secret_text: '',
-        name: response_json.dig('name'),
-        service: 'SSH',
-        port: response_json.dig('port'),
-        status: 'UNDER_CHALLENGE'
-      )
 
-      Notification.notify(mutation: self.graphql_name, record: [pe]) unless silent
+      self.current_team!.with_lock do
+        if ProblemEnvironment.exists?(team: self.current_team!, status: 'UNDER_CHALLENGE')
+          # 競合によりすでに作成されていた場合は、今作った環境は不要なので削除する
+          # 削除に失敗しても、後続の処理で例外を投げるので、ログに出すだけで良い
+          # あまりお行儀は良くないが、確保されたまま残っていても別の問題環境が作成されるだけなので、再削除まではしない
+          begin
+            delete_endpoint = Pathname(Rails.configuration.gateway_url) / "problem/#{response_json.dig('name')}"
+            RestClient::Request.execute(method: :delete, url: delete_endpoint.to_s, headers: { accept: :json })
+          rescue RestClient::ExceptionWithResponse => e
+            Rails.logger.error "DELETE request to gateway failed (cleanup), code: #{e.response.code}, body: #{e.response.body}"
+          end
 
-      { problem_environments: [pe] }
+          raise ProblemEnvironmentAlreadyAssigned, self.current_team!
+        end
+
+        pe = ProblemEnvironment.create(
+          host: response_json.dig('host'),
+          user: response_json.dig('user'),
+          password: response_json.dig('password'),
+          problem_id: problem_id,
+          team: self.current_team!,
+          secret_text: '',
+          name: response_json.dig('name'),
+          service: 'SSH',
+          port: response_json.dig('port'),
+          status: 'UNDER_CHALLENGE'
+        )
+
+        Notification.notify(mutation: self.graphql_name, record: [pe]) unless silent
+
+        { problem_environments: [pe] }
+      end
     end
   end
 end
