@@ -1,0 +1,61 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  test-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create .env
+        run: |
+          echo "POSTGRES_PASSWORD=password" > .env
+          echo "POSTGRES_USER=user" >> .env
+          echo "POSTGRES_DB=netcon" >> .env
+          echo "POSTGRES_HOST=db" >> .env
+          echo "RAILS_ENV=test" >> .env
+
+      - name: Build and Setup
+        run: |
+          docker compose build api
+          docker compose pull db redis
+
+      - name: Setup DB
+        run: |
+          # Wait for DB to be ready is usually handled by entrypoints or retries,
+          # but ensuring the container is up might be good.
+          # Here we just run the rake task which will spin up services via depends_on.
+          docker compose run --rm api bundle exec rake db:create db:schema:load
+
+      - name: Run RSpec
+        run: |
+          docker compose run --rm api bundle exec rspec
+
+  test-ui:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ui
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'yarn'
+          cache-dependency-path: ui/yarn.lock
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run Lint
+        run: yarn lint
+
+      - name: Run Tests
+        run: npx jest
