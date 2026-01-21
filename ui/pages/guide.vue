@@ -34,6 +34,34 @@
       v-model="showModalEn"
       :config="configGuidePageEn"
     />
+
+    <v-row justify="center" align="center">
+      <span class="headline mt-12">
+        Supported By:
+      </span>
+    </v-row>
+
+    <v-row justify="center" align="center" class="mb-12">
+      <v-col
+        v-for="(logo, i) in logos"
+        :key="i"
+        cols="3"
+        class="text-center pa-4"
+      >
+        <a
+          :href="logo.href"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="d-inline-block"
+        >
+          <img
+            :src="logo.src"
+            :style="logo.style"
+            style="height: 80px; max-width: min(90%, 240px); object-fit: contain; mix-blend-mode: multiply;"
+          />
+        </a>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 <script>
@@ -76,6 +104,54 @@ export default {
     },
     configGuidePageEn() {
       return orm.Config.find('guide_page_en')
+    },
+    logos() {
+      return [
+        {
+          src: require('~/assets/img/JANOG57_sakura.svg'),
+          href: 'https://www.sakura.ad.jp/',
+        },
+        {
+          src: require('~/assets/img/JANOG57_keysight.png'),
+          href: 'https://www.keysight.co.jp'
+        },
+        {
+          src: require('~/assets/img/JANOG57_ASE-Net.png'),
+          href: 'https://www.asenet.co.jp/',
+          style: "height: 100px;"
+        },
+        {
+          src: require('~/assets/img/JANOG57_Sticklers.jpg'),
+          href: 'https://www.asenet.co.jp/sticklers/',
+        },
+        {
+          src: require('~/assets/img/JANOG57_HARADA.jpg'),
+          href: 'https://infocom.haradacorp.co.jp/',
+        },
+        {
+          src: require('~/assets/img/JANOG57_EXFO.png'),
+          href: 'https://www.exfo.com/en/',
+        },
+        {
+          src: require('~/assets/img/JANOG57_furukawa.png'),
+          href: 'https://www.furukawa.co.jp/',
+        },
+        {
+          src: require('~/assets/img/JANOG57_76.png'),
+        },
+        {
+          src: require('~/assets/img/JANOG57_NIPPON_SEISEN.png'),
+          style: "max-width: min(100%, 300px);"
+        },
+        {
+          src: require('~/assets/img/JANOG57_SEICOH_GIKEN.png'),
+          style: "height: 70px;"
+        },
+        {
+          src: require('~/assets/img/JANOG57_fortinet.png'),
+          style: "max-width: min(100%, 300px);"
+        },
+      ]
     },
   },
   watch: {
