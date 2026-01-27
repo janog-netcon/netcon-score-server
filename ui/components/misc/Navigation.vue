@@ -15,16 +15,6 @@
 
     <v-spacer />
 
-    <div
-      style="font-weight: bold; margin: auto 8px"
-    >Supported by:</div>
-    <v-btn href="https://www.sakura.ad.jp/" class="mr-2 px-0" tile text height="48px">
-      <img
-        :src="require('~/assets/img/JANOG57_sakura.svg')"
-        style="margin: auto 2px; min-height: 40px; max-height: 40px"
-        alt="さくらインターネット株式会社"
-      />
-    </v-btn>
 
     <template v-if="isWide">
       <navigation-link
