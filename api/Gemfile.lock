@@ -154,8 +154,6 @@ GEM
     nokogiri (1.15.4)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    nokogiri (1.15.4-x86_64-linux)
-      racc (~> 1.4)
     oj (3.16.3)
       bigdecimal (>= 3.0)
     parallel (1.23.0)
@@ -378,7 +376,7 @@ DEPENDENCIES
   tzinfo-data
 
 RUBY VERSION
-   ruby 3.2.2p53
+   ruby 3.4.8p72
 
 BUNDLED WITH
    2.3.5
