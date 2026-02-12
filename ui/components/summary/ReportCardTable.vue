@@ -81,7 +81,7 @@ export default {
   name: 'ReportCardTable',
   computed: {
     reportCards() {
-      return orm.ReportCard.all()
+      return orm.ReportCard.query().orderBy('rank').all()
     },
     problemTitles() {
       if (this.reportCards.length === 0) {

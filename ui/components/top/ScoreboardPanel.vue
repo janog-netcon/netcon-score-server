@@ -35,7 +35,7 @@ export default {
   },
   computed: {
     scoreboards() {
-      return orm.Scoreboard.query().with('team').all()
+      return orm.Scoreboard.query().with('team').orderBy('rank').all()
     },
     beginnerScoreboards() {
       return this.scoreboards.filter((sb) => sb.team.beginner)
