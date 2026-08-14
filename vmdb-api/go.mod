@@ -2,7 +2,7 @@ module github.com/janog-netcon/netcno-score-server/vmdb-api
 
 go 1.23
 
-toolchain go1.23.2
+toolchain go1.25.13
 
 require (
 	github.com/go-chi/chi/v5 v5.0.11
