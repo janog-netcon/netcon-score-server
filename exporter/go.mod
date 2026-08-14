@@ -2,7 +2,7 @@ module github.com/janog-netcon/netcno-score-server/exporter
 
 go 1.23
 
-toolchain go1.23.2
+toolchain go1.25.13
 
 require (
 	github.com/prometheus/client_golang v1.17.0
