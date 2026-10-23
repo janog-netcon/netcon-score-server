@@ -1,8 +1,6 @@
 module github.com/janog-netcon/netcno-score-server/vmdb-api
 
-go 1.23
-
-toolchain go1.23.2
+go 1.25.0
 
 require (
 	github.com/go-chi/chi/v5 v5.0.11
@@ -31,5 +29,5 @@ require (
 	github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc // indirect
 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
-	golang.org/x/sys v0.27.0 // indirect
+	golang.org/x/sys v0.44.0 // indirect
 )
